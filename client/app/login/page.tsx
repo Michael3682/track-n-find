@@ -50,7 +50,7 @@ export default function Login() {
     }
 
     return (
-        <div className="w-screen h-screen flex items-center justify-center bg-[rgb(240,240,240)]">
+        <div className="w-screen h-screen flex items-center justify-center bg-[rgb(235,235,235)]">
             <div className="border border-black/30 shadow-lg rounded-md p-10 bg-white">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

@@ -98,7 +98,7 @@ const components: { title: string; href: string; description: string }[] = [
 export default function Homepage() {
 
     return (
-        <div className="w-screen h-screen px-20 py-5 bg-[rgb(240,240,240)]">
+        <div className="w-screen h-screen px-20 py-5 bg-[rgb(235,235,235)]">
             <NavigationMenu>
                 <NavigationMenuList className="flex-wrap">
                     <NavigationMenuItem>
