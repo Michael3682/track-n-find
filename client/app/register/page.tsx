@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/form"
 
 
-interface LoginFormState {
+interface SignupFormState {
     studentid: string
+    name: string
     password: string
 }
 
@@ -26,27 +27,31 @@ const formSchema = z.object({
     studentid: z.string()
         .regex(/^\d+$/, { message: "Student ID must contain only numbers." })
         .min(9, { message: "Student ID should be 9 characters long." }),
-    password: z.string() //Will be change 
+    name: z.string().min(2, {
+        message: "Name must be at least 2 characters long."
+    }),
+    password: z.string()
         .min(8, { message: "Password must be at least 8 characters long." })
         .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter." })
         .regex(/[0-9]/, { message: "Password must contain at least one number." })
         .regex(/[@$!%*?&]/, { message: "Password must contain at least one special character." })
 })
 
-export default function Login() {
+export default function Register() {
     const router = useRouter()
 
-    const form = useForm<LoginFormState>({
+    const form = useForm<SignupFormState>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             studentid: "",
+            name: "",
             password: "",
         },
     })
 
     function onSubmit() {
         router.push('/homepage')
-        console.log("You successfully logged in!")
+        console.log("You successfully created an account!")
     }
 
     return (
@@ -59,7 +64,7 @@ export default function Login() {
                             <h1 className="text-4xl font-extrabold tracking-tight">
                                 TrackNFind
                             </h1>
-                            <small className="text-sm text-black/80 leading-none font-medium">Welcome back! Login to your account.</small>
+                            <small className="text-sm text-black/80 leading-none font-medium">Hello! Create an account.</small>
                         </div>
                         <FormField
                             control={form.control}
@@ -76,18 +81,31 @@ export default function Login() {
                         />
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="Enter your password" {...field} onChange={e => field.onChange(e.target.value)}/>
+                                        <Input placeholder="Enter your name" {...field} onChange={e => field.onChange(e.target.value)}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <Button className="mt-10 w-100 bg-blue-700 rounded cursor-pointer" type="submit">Log In</Button>
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="Enter your password" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button className="mt-10 w-100 bg-blue-700 rounded cursor-pointer" type="submit">Sign Up</Button>
                         <div className="w-full flex items-center justify-center gap-2">
                             <hr className="w-full border-gray-400" />
                             <p className="text-sm text-black/80 leading-none font-medium">or</p>
@@ -95,8 +113,8 @@ export default function Login() {
                         </div>
                         <Button className="w-100 rounded cursor-pointer" type="submit"><img src="google--icon.png" alt="google icon" /> Continue with Google</Button>
                         <p className="text-center text-sm text-black/80 leading-none font-medium">
-                            Don't have an account?
-                            <a className="text-sm text-blue-700 leading-none font-medium cursor-pointer" onClick={() => router.push('/register')}> Sign Up</a>
+                            Already have an account?
+                            <a className="text-sm text-blue-700 leading-none font-medium cursor-pointer" onClick={() => router.push('/login')}> Log In</a>
                         </p>
                     </form>
                 </Form>
