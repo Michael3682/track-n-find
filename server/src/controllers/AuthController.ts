@@ -124,8 +124,33 @@ class AuthController {
             res.status(err.status || 500).json({
                 success: false,
                 message: "Internal Server Error",
+                user: null
             })
         }
+    }
+
+    async logout(req: Request, res: Response) {
+        try {
+            res.clearCookie('auth_token', {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none'
+            })
+
+            res.json({
+                success: true, 
+                message: "Logged out"
+            })
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+            })
+        }
+    }
+
+    async getAuthUser(req: Request, res: Response) {
+        res.json({ message: "Authenticated",  user: req.user })
     }
 }
 

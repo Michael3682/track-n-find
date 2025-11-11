@@ -24,10 +24,14 @@
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/types"
   ],
   "exclude": [
     "node_modules",
     "dist"
+  ],
+  "files": [
+    "src/types/express/index.d.ts"
   ]
 }
