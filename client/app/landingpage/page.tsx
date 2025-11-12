@@ -14,30 +14,30 @@ export default function LandingPage() {
     const router = useRouter()
 
     return (
-        <div className="w-auto h-auto flex flex-col bg-[rgb(235,235,235)]">
-            <div className="h-screen flex flex-col items-center justify-center gap-5 relative text-[rgb(235,235,235)]">
+        <div className="w-auto h-auto flex flex-col bg-[rgb(245,245,245)]">
+            <div className="h-screen flex flex-col items-center justify-center gap-5 relative text-[rgb(245,245,245)]">
                 <img className="w-screen h-screen absolute top-0 left-0 object-cover brightness-20 z-0 pointer-events-none" src="landing-page--hero-section---background.jpg" alt="" />
                 <div className="h-fit flex items-center justify-center gap-2 py-5 absolute top-0 z-50">
-                    <img className="h-9" src="track-n-find--logo.png" alt="log" />
-                    <h1 className="text-center text-2xl font-extrabold tracking-tight">
+                    <img className="h-10" src="track-n-find--logo.png" alt="log" />
+                    <h1 className="text-2xl font-mediumbold tracking-tight">
                         TrackNFind
                     </h1>
                 </div>
-                <div className="w-full h-screen flex flex-col items-start justify-center px-20 gap-5 z-10">
-                    <h1 className="text-start font-extrabold tracking-tight lg:text-6xl md:text-5xl">
+                <div className="w-full h-screen flex flex-col items-start justify-center px-20 gap-3 z-10">
+                    <h1 className="text-start font-extrabold tracking-tight lg:text-7xl md:text-5xl">
                         Track What’s Lost,
                         <br />
                         Find What’s Found.
                     </h1>
-                    <h1 className="lg:text-base font-medium md:text-sm">
-                        Our app helps you quickly report lost items and find what you’ve misplaced at school.
+                    <h1 className="lg:text-xl font-medium md:text-sm text-muted-foreground">
+                        Join TrackNFind to connect with others and track down lost items quickly.
                         <br />
-                        It’s simple, secure, and community-driven.
+                        Lost something? Or found something? Let the community know!
                     </h1>
-                    <Button className="lg:px-9 lg:py-6 lg:text-lg rounded bg-blue-700 cursor-pointer hover:bg-blue-700 md:text-md md:px-8 md:py-5" onClick={() => router.push('/login')}>Get Started</Button>
+                    <Button className="lg:mt-5 lg:px-9 lg:py-6 lg:text-lg rounded-md bg-blue-700 cursor-pointer hover:bg-blue-700 md:text-md md:px-8 md:py-5" onClick={() => router.push('/login')}>Get Started</Button>
                 </div>
             </div>
-            <div className="w-full h-1/2 px-20 py-30">
+            <div className="w-full h-1/2 px-20 py-30 bg-[rgb(245,245,245)]">
                 <h1 className="text-center text-3xl font-extrabold tracking-tight mb-15">
                     Why Use TrackNFind?
                 </h1>
@@ -62,8 +62,8 @@ export default function LandingPage() {
                     </Card>
                 </div>
             </div>
-            <footer className="bg-[rgb(10,10,10)] text-[rgb(235,235,235)] px-20 py-20">
-                <div className="max-w-7xl mx-auto px-6">
+            <footer className="bg-[rgb(10,10,10)] text-[rgb(245,245,245)] px-20 py-10">
+                <div className="max-w-7xl mx-auto px-6">    
                     <div className="flex flex-col sm:flex-row justify-between items-center">
                         <div className="text-center sm:text-left">
                             <h1 className="text-6xl font-bold">TrackNFind</h1>
@@ -77,7 +77,7 @@ export default function LandingPage() {
                         </div>
                     </div>
                 </div>
-                <hr className="my-20 border-white/10" />
+                <hr className="my-10 border-white/10" />
                 <div className="mt-10 text-center text-muted-foreground text-sm">
                     <p>© 2025 TrackNFind. All rights reserved.</p>
                 </div>
