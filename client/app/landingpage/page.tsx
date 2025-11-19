@@ -1,14 +1,9 @@
 'use client'
 
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import { Card, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card"
 
 export default function LandingPage() {
     const router = useRouter()
@@ -34,7 +29,7 @@ export default function LandingPage() {
                         <br />
                         Lost something? Or found something? Let the community know!
                     </h1>
-                    <Button className="lg:mt-5 lg:px-9 lg:py-6 lg:text-lg rounded-md bg-blue-700 cursor-pointer hover:bg-blue-700 md:text-md md:px-8 md:py-5" onClick={() => router.push('/login')}>Get Started</Button>
+                    <Button className="lg:mt-5 lg:px-9 lg:py-6 lg:text-lg rounded-md bg-blue-700 cursor-pointer hover:bg-blue-600 md:text-md md:px-8 md:py-5" onClick={() => router.push('/login')}>Get Started</Button>
                 </div>
             </div>
             <div className="w-full h-1/2 px-20 py-30 bg-[rgb(245,245,245)]">
@@ -63,7 +58,7 @@ export default function LandingPage() {
                 </div>
             </div>
             <footer className="bg-[rgb(10,10,10)] text-[rgb(245,245,245)] px-20 py-10">
-                <div className="max-w-7xl mx-auto px-6">    
+                <div className="max-w-7xl mx-auto px-6">
                     <div className="flex flex-col sm:flex-row justify-between items-center">
                         <div className="text-center sm:text-left">
                             <h1 className="text-6xl font-bold">TrackNFind</h1>
