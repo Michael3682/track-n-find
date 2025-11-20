@@ -1,5 +1,13 @@
-import { redirect } from "next/navigation"
+"use client"
+
+import LandingPage from "@/components/pages/LandingPage";
+import Homepage from "@/components/pages/HomePage";
+import { useAuth } from "@/contexts/auth/AuthContext";
+
 
 export default function Home() {
-  redirect('/landingpage')
+  const { user } = useAuth()
+
+  if(!user) return <LandingPage />
+  return <Homepage />
 }
