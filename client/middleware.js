@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const protectedRoutes = [];
-const guestRoutes = ['/login', '/signup', '/reset-password', '/forgot-password']
+const guestRoutes = ['/login', '/register', '/reset-password', '/forgot-password']
 
 export async function middleware(request) {
     const token = request.cookies.get('auth_token')?.value;
