@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser'
 import routes from "@/routes"
+import { setupSwagger } from "./swagger";
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser())
+
+setupSwagger(app)
 
 app.use("/api", routes)
 

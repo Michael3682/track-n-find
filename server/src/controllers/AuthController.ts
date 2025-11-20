@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { signupSchema, loginSchema } from '@/lib/validations/auth';
 import AuthService from '@/services/auth'
 
@@ -149,8 +149,53 @@ class AuthController {
         }
     }
 
+    /**
+     * @swagger
+     * /auth/v1/me:
+     *   get:
+     *     summary: Get authenticated user
+     *     tags:
+     *       - Auth
+     *     responses:
+     *       200:
+     *         description: Returns the authenticated user
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Authenticated
+     *                 user:
+     *                   type: object
+     *                   properties:
+     *                     id:
+     *                       type: string
+     *                     name:
+     *                       type: string
+     *                     email:
+     *                       type: string
+     *                     role:
+     *                       type: string
+     *                     createdAt:
+     *                       type: string
+     *                       format: date-time
+     *                     updatedAt:
+     *                       type: string
+     *                       format: date-time
+     */
     async getAuthUser(req: Request, res: Response) {
-        res.json({ message: "Authenticated",  user: req.user })
+        const userId = (req.user as JwtPayload).id
+        const userData = await AuthService.getUserById(userId)
+
+        if (!userData) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const { password, ...user } = userData
+
+        res.json({ message: "Authenticated",  user })
     }
 }
 
