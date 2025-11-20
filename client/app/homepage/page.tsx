@@ -142,7 +142,7 @@ export default function Homepage() {
                     <h1 className="text-4xl font-normal text-start text-[rgb(20,20,20)]">
                         Recent Lost Items
                     </h1>
-                    <div className="h-full w-full flex justify-between gap-5 mt-10">
+                    <div className="h-full w-full flex justify-between gap-5 mt-10 shadow-lg">
                         {items.map((item) => (
                             <Card key={item.id} className="w-1/4 h-max rounded-md bg-transparent shadow-none border-none">
                                 <CardHeader>
