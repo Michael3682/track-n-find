@@ -6,6 +6,56 @@ import AuthService from '@/services/auth'
 
 
 class AuthController {
+    /**
+     * @swagger
+     * /auth/v1/signup:
+     *   post:
+     *     summary: User signup
+     *     tags:
+     *       - Auth
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required:
+     *               - studentId
+     *               - name
+     *               - password
+     *             properties:
+     *               studentId:
+     *                 type: string
+     *                 example: 202310123
+     *               name:
+     *                 type: string
+     *                 example: Juan Dela Cruz
+     *               password:
+     *                 type: string
+     *                 example: mysecurepassword
+     *     responses:
+     *       201:
+     *         description: User created successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 message:
+     *                   type: string
+     *                   example: User created
+     *                 user:
+     *                   type: object
+     *       400:
+     *         description: Validation error
+     *       409:
+     *         description: Student ID already exists
+     *       500:
+     *         description: Internal Server Error
+     */
     async signup(req: Request, res: Response) {
         try {
             const { value: { studentId, name, password }, error } = signupSchema.validate(req.body)
@@ -63,6 +113,52 @@ class AuthController {
         }
     }
 
+    /**
+     * @swagger
+     * /auth/v1/login:
+     *   post:
+     *     summary: User login
+     *     tags:
+     *       - Auth
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required:
+     *               - studentId
+     *               - password
+     *             properties:
+     *               studentId:
+     *                 type: string
+     *                 example: 202310123
+     *               password:
+     *                 type: string
+     *                 example: mysecurepassword
+     *     responses:
+     *       200:
+     *         description: Login successful
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 message:
+     *                   type: string
+     *                   example: Login Successful
+     *                 user:
+     *                   type: object
+     *       400:
+     *         description: Incorrect password or validation error
+     *       404:
+     *         description: User not found
+     *       500:
+     *         description: Internal Server Error
+     */
     async login(req: Request, res: Response) {
         try {
             const { value: { studentId, password }, error } = loginSchema.validate(req.body)
@@ -129,6 +225,30 @@ class AuthController {
         }
     }
 
+    /**
+     * @swagger
+     * /auth/v1/logout:
+     *   post:
+     *     summary: Logout user (clears auth cookie)
+     *     tags:
+     *       - Auth
+     *     responses:
+     *       200:
+     *         description: Logout successful
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 message:
+     *                   type: string
+     *                   example: Logged out
+     *       500:
+     *         description: Internal Server Error
+     */
     async logout(req: Request, res: Response) {
         try {
             res.clearCookie('auth_token', {
