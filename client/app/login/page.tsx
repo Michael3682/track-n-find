@@ -8,16 +8,18 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
+import { login } from "@/lib/authService"
+import { useAuth } from "@/contexts/auth/AuthContext"
 
 interface LoginFormState {
-    studentid: string
+    studentId: string
     password: string
 }
 
 const formSchema = z.object({
-    studentid: z.string()
+    studentId: z.string()
         .regex(/^\d+$/, { message: "Student ID must contain only numbers." })
-        .min(9, { message: "Student ID should be 9 characters long." }),
+        .min(8, { message: "Student ID should be 9 characters long." }),
     password: z.string() //Will be change 
         .min(8, { message: "Password must be at least 8 characters long." })
         .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter." })
@@ -26,19 +28,30 @@ const formSchema = z.object({
 })
 
 export default function Login() {
+    const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false)
     const router = useRouter()
+    const { refetch } = useAuth()
 
     const form = useForm<LoginFormState>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            studentid: "",
+            studentId: "",
             password: "",
         },
     })
 
-    function onSubmit() {
-        router.push('/homepage')
-        console.log("You successfully logged in!")
+    async function onSubmit() {
+        setIsLoggingIn(true)
+        const [data, err] = await login(form.getValues())
+    
+        if(data.success) {
+            await refetch()
+            router.refresh()
+            setIsLoggingIn(false)
+            console.log("You successfully logged in!")
+        }
+
+        setIsLoggingIn(false)
     }
 
     return (
@@ -55,10 +68,10 @@ export default function Login() {
                         </div>
                         <FormField
                             control={form.control}
-                            name="studentid"
+                            name="studentId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>StudentID</FormLabel>
+                                    <FormLabel>Student ID</FormLabel>
                                     <FormControl>
                                         <Input maxLength={9} placeholder="Ex. 123456789" {...field} onChange={e => field.onChange(e.target.value)} />
                                     </FormControl>
@@ -79,7 +92,7 @@ export default function Login() {
                                 </FormItem>
                             )}
                         />
-                        <Button className="mt-10 w-100 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer" type="submit">Log In</Button>
+                        <Button className="mt-10 w-100 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50" type="submit" disabled={isLoggingIn}>{isLoggingIn ? 'Logging in' : "Log in"}</Button>
                         <div className="w-full flex items-center justify-center gap-2">
                             <hr className="w-full border-gray-400" />
                             <p className="text-sm text-black/80 leading-none font-medium">or</p>

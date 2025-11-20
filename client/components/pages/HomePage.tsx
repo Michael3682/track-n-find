@@ -7,10 +7,15 @@ import { useState, useEffect, useRef } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { logout } from "@/lib/authService"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth/AuthContext"
 
 export default function Homepage() {
     const [isClicked, setIsClicked] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
+    const router = useRouter()
+    const { refetch } = useAuth()
     const items = [
         {
             id: 1,
@@ -48,6 +53,17 @@ export default function Homepage() {
         else {
             setIsScrolled(false)
         }
+    }
+
+    const handleLogout = async () => {
+       const [data, err] = await logout()
+
+       if(err || !data.success) {
+        return console.log('There is a problem logging out')
+       }
+
+       await refetch()
+       router.refresh()
     }
 
     useEffect(() => {
@@ -94,8 +110,8 @@ export default function Homepage() {
                         <Link href="/profile">Profile</Link>
                     </Button>
                 </div>
-                <Button className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer">
-                    <Link className="flex p-2 items-center gap-2" href="/login"><LogOut />Logout</Link>
+                <Button className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer" onClick={() => handleLogout()}>
+                    <Link className="flex p-2 items-center gap-2" href="/"><LogOut />Logout</Link>
                 </Button>
             </div>
             <div className="h-screen px-20 flex justify-start items-center relative">
