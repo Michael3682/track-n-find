@@ -8,18 +8,20 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
+import { signup } from "@/lib/authService"
+import { useAuth } from "@/contexts/auth/AuthContext"
 
 
 interface SignupFormState {
-    studentid: string
+    studentId: string
     name: string
     password: string
 }
 
 const formSchema = z.object({
-    studentid: z.string()
+    studentId: z.string()
         .regex(/^\d+$/, { message: "Student ID must contain only numbers." })
-        .min(9, { message: "Student ID should be 9 characters long." }),
+        .min(8, { message: "Student ID should be 8 characters long." }),
     name: z.string().min(2, {
         message: "Name must be at least 2 characters long."
     }),
@@ -31,20 +33,31 @@ const formSchema = z.object({
 })
 
 export default function Register() {
+    const [isSigningUp, setIsSigningUp] = useState<boolean>(false)
+    const { refetch } = useAuth()
     const router = useRouter()
 
     const form = useForm<SignupFormState>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            studentid: "",
+            studentId: "",
             name: "",
             password: "",
         },
     })
 
-    function onSubmit() {
-        router.push('/homepage')
-        console.log("You successfully created an account!")
+    async function onSubmit() {
+        setIsSigningUp(true)
+        const [data, err] = await signup(form.getValues())
+    
+        if(data.success) {
+            await refetch()
+            router.refresh()
+            setIsSigningUp(false)
+            console.log("You successfully created an account!")
+        }
+
+        setIsSigningUp(false)
     }
 
     return (
@@ -61,7 +74,7 @@ export default function Register() {
                         </div>
                         <FormField
                             control={form.control}
-                            name="studentid"
+                            name="studentId"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>StudentID</FormLabel>
@@ -98,7 +111,7 @@ export default function Register() {
                                 </FormItem>
                             )}
                         />
-                        <Button className="mt-10 w-100 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer" type="submit">Sign Up</Button>
+                        <Button className="mt-10 w-100 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50" type="submit" disabled={isSigningUp}>{isSigningUp ? 'Signing up' : "Sign up"}</Button>
                         <div className="w-full flex items-center justify-center gap-2">
                             <hr className="w-full border-gray-400" />
                             <p className="text-sm text-black/80 leading-none font-medium">or</p>
