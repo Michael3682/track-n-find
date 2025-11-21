@@ -36,7 +36,9 @@ interface ReportFoundItemState {
 const formSchema = z.object({
    item: z
       .string()
-      .min(1, { message: "You must enter the name of the item that you found." }),
+      .min(1, {
+         message: "You must enter the name of the item that you found.",
+      }),
    description: z.string(),
    dateFound: z.date(),
    locationFound: z.string(),
@@ -264,7 +266,7 @@ export default function ReportLost() {
                   />
                </div>
                <Button
-                  className="w-full mt-10 bg-blue-700 hover:bg-blue-600"
+                  className="w-full mt-10 bg-blue-600 hover:bg-blue-700"
                   type="submit">
                   Submit Report
                </Button>
