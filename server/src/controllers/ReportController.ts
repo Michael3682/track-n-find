@@ -198,6 +198,103 @@ class ReportController {
       });
     }
   }
+
+  /**
+ * @swagger
+ * /report/found/v1:
+ *   get:
+ *     summary: Get all found & unclaimed items
+ *     description: Returns all items of type FOUND with status UNCLAIMED.
+ *     tags:
+ *       - Reports
+ *     responses:
+ *       200:
+ *         description: List of found items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 foundItems:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Item'
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Item:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "c83e99c5-8b72-4d96-b7ee-4d45b0b9a673"
+ *         name:
+ *           type: string
+ *           example: "Black Wallet"
+ *         description:
+ *           type: string
+ *           example: "A black leather wallet with IDs inside"
+ *         category:
+ *           type: string
+ *           nullable: true
+ *           example: "Accessories"
+ *         date_time:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-21T14:30:00.000Z"
+ *         location:
+ *           type: string
+ *           example: "Library 2nd Floor"
+ *         attachments:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+ *         status:
+ *           type: string
+ *           enum: [UNCLAIMED, CLAIMED]
+ *           example: "UNCLAIMED"
+ *         type:
+ *           type: string
+ *           enum: [FOUND, LOST]
+ *           example: "FOUND"
+ *         associated_person:
+ *           type: string
+ *           example: "John Doe"
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-21T14:31:00.000Z"
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-21T14:31:00.000Z"
+ */
+  async getFoundItems(req: Request, res: Response) {
+    try {
+        const foundItems = await ReportService.getFoundItems()
+
+        res.json({
+            success: true,
+            foundItems
+        })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
 }
 
 export default new ReportController();
