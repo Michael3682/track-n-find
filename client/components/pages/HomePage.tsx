@@ -117,12 +117,6 @@ export default function Homepage() {
                     <Link className="flex p-2 items-center gap-2" href="/"><LogOut />Logout</Link>
                 </Button>
             </div>
-            <Button className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer">
-               <Link className="flex p-2 items-center gap-2" href="/login">
-                  <LogOut />
-                  Logout
-               </Link>
-            </Button>
          </div>
          <div className="h-screen px-20 flex justify-start items-center relative">
             <div className="w-full h-full flex flex-col justify-center items-center gap-3 z-10">
