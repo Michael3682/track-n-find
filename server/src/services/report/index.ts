@@ -12,16 +12,8 @@ class ReportService {
     description: string;
     userId: string;
   }) {
-    // data.date is always a string: "2025-11-21" OR "2025-11-21T00:00:00.000Z"
-    const isoDate = data.date.split("T")[0]; // extract YYYY-MM-DD
-
-    // data.time must be "HH:mm"
+    const isoDate = data.date.split("T")[0];
     const dateTime = new Date(`${isoDate}T${data.time}:00`);
-
-    // console.log("RAW BODY:", req.body);
-    console.log("JOI VALUE DATE:", data.date);
-    console.log("JOI VALUE TIME:", data.time);
-    console.log("COMBINED STRING:", `${data.date}T${data.time}:00`);
 
     return ReportRepository.create({
       name: data.itemName,
@@ -34,6 +26,10 @@ class ReportService {
       associated_person: data.userId,
       category: "",
     });
+  }
+
+  async getFoundItems() {
+    return ReportRepository.findFoundItems()
   }
 }
 
