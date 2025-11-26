@@ -1,123 +1,40 @@
 "use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ChevronUp, LogOut, Mail, Pin, Phone } from "lucide-react"
-import { useState, useEffect, useRef } from "react"
-import { Separator } from "@/components/ui/separator"
-import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { logout } from "@/lib/authService"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth/AuthContext"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Mail, Pin, Phone } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { NavigationBar } from "@/components/navigationbar";
+import {
+   Card,
+   CardHeader,
+   CardTitle,
+   CardDescription,
+   CardAction,
+} from "@/components/ui/card";
 
 export default function Homepage() {
-    const [isClicked, setIsClicked] = useState(false)
-    const [isScrolled, setIsScrolled] = useState(false)
-    const router = useRouter()
-    const { refetch } = useAuth()
-    const items = [
-        {
-            id: 1,
-            name: "Item A",
-            url: "/"
-        },
-        {
-            id: 2,
-            name: "Item B",
-            url: "/"
-        },
-        {
-            id: 3,
-            name: "Item C",
-            url: "/"
-        }
-    ]
-
-   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-   const handleDropdownToggle = () => {
-      setIsClicked(!isClicked);
-   };
-
-   const handleClickOutside = (e: MouseEvent) => {
-      if (
-         dropdownRef.current &&
-         !dropdownRef.current.contains(e.target as Node)
-      ) {
-         setIsClicked(false);
-      }
-   };
-
-   const handleScroll = () => {
-      if (window.scrollY > 50) {
-         setIsScrolled(true);
-      } else {
-         setIsScrolled(false);
-      }
-   };
-
-    const handleLogout = async () => {
-       const [data, err] = await logout()
-
-       if(err || !data.success) {
-        return console.log('There is a problem logging out')
-       }
-
-       await refetch()
-       router.refresh()
-    }
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside)
-        document.addEventListener('scroll', handleScroll)
-
-      return () => {
-         document.removeEventListener("mousedown", handleClickOutside);
-         document.removeEventListener("scroll", handleScroll);
-      };
-   }, []);
+   const items = [
+      {
+         id: 1,
+         name: "Item A",
+         url: "/",
+      },
+      {
+         id: 2,
+         name: "Item B",
+         url: "/",
+      },
+      {
+         id: 3,
+         name: "Item C",
+         url: "/",
+      },
+   ];
 
    return (
-      <div>
-        <div className="w-auto h-auto bg-[rgb(245,245,245)] relative">
-            <div className={`w-screen flex justify-between items-center gap-10 px-10 py-1 fixed z-50 ${isScrolled ? 'bg-[rgb(245,245,245)]' : 'bg-transparent'} transition-all duration-400 ease-linear`}>
-                <Button variant="ghost" className="h-auto pl-0 cursor-pointer hover:bg-transparent">
-                    <Link href="/homepage">
-                        <img className="h-8" src="track-n-find--logo.png" alt="logo" />
-                    </Link>
-                </Button>
-                <div className="flex gap-5 items-center p-2 overflow-hidden background-blur-2xl">
-                    <Button className={`rounded-md cursor-pointer ${isScrolled ? 'text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]' : 'text-[rgb(245,245,245)]'} transition-all duration-150 ease-linear`} variant="ghost">
-                        <Link className="py-0" href="/home">Home</Link>
-                    </Button>
-                    <Button className={`rounded-md cursor-pointer ${isScrolled ? 'text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]' : 'text-[rgb(245,245,245)]'} transition-all duration-150 ease-linear`} variant="ghost">
-                        <Link href="/browse">Browse</Link>
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button className={`rounded-md cursor-pointer ${isScrolled ? 'text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]' : 'text-[rgb(245,245,245)]'} transition-all duration-150 ease-linear`} variant="ghost" onPointerDown={handleDropdownToggle}>
-                                Report
-                                <ChevronUp className={isClicked ? "rotate-180 transition-transform duration-75 ease-linear" : "rotate-0 transition-transform duration-75 ease-linear"} />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent ref={dropdownRef} className="p-2 space-y-2">
-                            <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-[rgb(20,20,20)]">Lost Item</DropdownMenuItem>
-                            <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-[rgb(20,20,20)]">Found Item</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button className={`rounded-md cursor-pointer ${isScrolled ? 'text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]' : 'text-[rgb(245,245,245)]'} transition-all duration-150 ease-linear`} variant="ghost">
-                        <Link href="/messages">Messages</Link>
-                    </Button>
-                    <Button className={`rounded-md cursor-pointer ${isScrolled ? 'text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]' : 'text-[rgb(245,245,245)]'} transition-all duration-150 ease-linear`} variant="ghost">
-                        <Link href="/profile">Profile</Link>
-                    </Button>
-                </div>
-                <Button className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer" onClick={() => handleLogout()}>
-                    <Link className="flex p-2 items-center gap-2" href="/"><LogOut />Logout</Link>
-                </Button>
-            </div>
-         </div>
+      <div className="w-auto h-auto bg-[rgb(245,245,245)] relative">
+         <NavigationBar />
          <div className="h-screen px-20 flex justify-start items-center relative">
             <div className="w-full h-full flex flex-col justify-center items-center gap-3 z-10">
                <h1 className="w-max text-6xl font-bold text-center text-[rgb(245,245,245)]">
