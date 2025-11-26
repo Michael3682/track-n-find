@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { NavigationBar } from "@/components/navigationbar";
 import {
    Form,
    FormControl,
@@ -92,10 +93,11 @@ export default function ReportLost() {
       console.log("Full form:", data);
    };
    return (
-      <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
+      <div className="w-screen h-screen flex justify-center bg-[rgb(245,245,245)]">
+         <NavigationBar />
          <Form {...form}>
             <form
-               className="w-125 h-max flex flex-col items-center justify-center gap-5 border border-black/30 shadow-lg rounded-xl p-10 bg-white"
+               className="w-125 h-max flex flex-col items-center justify-center gap-5 border border-black/30 shadow-lg rounded-xl p-10 mt-30 bg-white"
                onSubmit={form.handleSubmit(onSubmit)}>
                <h1 className="text-4xl font-extrabold tracking-tight mb-10">
                   Report Lost Item

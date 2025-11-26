@@ -1,38 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { CardSheet } from "@/components/card-sheet";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NavigationBar } from "@/components/navigationbar";
 import {
    SidebarInset,
    SidebarProvider,
    SidebarTrigger,
    useSidebar,
 } from "@/components/ui/sidebar";
-import {
-   Card,
-   CardDescription,
-   CardHeader,
-   CardTitle,
-} from "@/components/ui/card";
-import {
-   Sheet,
-   SheetContent,
-   SheetHeader,
-   SheetTitle,
-   SheetTrigger,
-   SheetFooter,
-} from "@/components/ui/sheet";
 
 export default function Page() {
    const [searchItem, setSearchItem] = useState("");
 
    return (
-      <div className="w-auto h-auto">
-         <SidebarProvider>
+      <div className="w-auto h-auto relative overflow-x-hidden">
+         <NavigationBar />
+         <SidebarProvider className="mt-15">
             <SidebarGroupContent
                searchItem={searchItem}
                setSearchItem={setSearchItem}
@@ -51,108 +36,15 @@ function SidebarGroupContent({
 }) {
    const { open } = useSidebar();
 
-   const items = Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
-      name: `Item ${i + 1}`,
-      description:
-         "A black leather business bag was turned in to our office earlier today. The bag features a structured rectangular design with silver-toned hardware and a reinforced handle.",
-      dateTimeFound: new Date().toLocaleString(),
-      location: "Tent",
-      status: "UNCLAIMED",
-      user: "User",
-      img: "vercel.svg",
-      link: `/messages`,
-   }));
-
-   const filteredItems = items.filter((item) =>
-      item.name.toLowerCase().includes(searchItem.toLowerCase())
-   );
    return (
       <>
          <AppSidebar searchItem={searchItem} setSearchItem={setSearchItem} />
          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b border-t px-4">
                <SidebarTrigger className="-ml-1" />
                <p>{open ? "Hide Filters" : "Show Filters"}</p>
             </header>
-            <div className="flex flex-wrap gap-10 p-10">
-               {filteredItems.map((item) => (
-                  <Sheet key={item.id}>
-                     <SheetTrigger className="cursor-pointer p-0" asChild>
-                        <Card className="w-70 bg-transparent overflow-hidden border border-none rounded-sm shadow-none hover:shadow-lg transition-all duration-100 ease-linear">
-                           <CardHeader className="bg-primary-foreground p-5">
-                              <CardTitle>
-                                 <img
-                                    className="invert aspect-video h-50"
-                                    src={item.img}
-                                    alt="image"
-                                 />
-                              </CardTitle>
-                           </CardHeader>
-                           <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
-                              {item.name}
-                           </CardDescription>
-                        </Card>
-                     </SheetTrigger>
-                     <SheetContent side="center">
-                        <SheetHeader className="space-y-5">
-                           <img
-                              className="invert aspect-video"
-                              src={item.img}
-                              alt="image"
-                           />
-                           <div className="space-y-5">
-                              <SheetTitle className="text-3xl">
-                                 {item.name}
-                                 <p className="text-xs font-light text-muted-foreground">
-                                    Reported By:{" "}
-                                    <span className="font-normal">
-                                       {item.user}
-                                    </span>
-                                 </p>
-                              </SheetTitle>
-                              <div className="space-y-7">
-                                 <p className="text-lg text-muted-foreground">
-                                    {item.description}
-                                 </p>
-                                 <Separator />
-                                 <div className="space-y-2">
-                                    <p className="mt-5 text-base font-medium text-[rgb(20,20,20)] flex justify-between">
-                                       Reported on:{" "}
-                                       <span className="font-normal">
-                                          {item.dateTimeFound}
-                                       </span>
-                                    </p>
-                                    <p className="text-base font-medium text-[rgb(20,20,20)]  flex justify-between">
-                                       Location:{" "}
-                                       <span className="font-normal">
-                                          {item.location}
-                                       </span>
-                                    </p>
-                                    <p className="text-base font-medium text-[rgb(20,20,20)]  flex justify-between">
-                                       Status:{" "}
-                                       <span className="font-semibold text-red-500">
-                                          {item.status}
-                                       </span>
-                                    </p>
-                                 </div>
-                              </div>
-                           </div>
-                        </SheetHeader>
-                        <SheetFooter>
-                           <Button
-                              className="cursor-pointer"
-                              type="submit"
-                              asChild>
-                              <Link href={`${item.link}/${item.id}`}>
-                                 Message User
-                              </Link>
-                           </Button>
-                        </SheetFooter>
-                     </SheetContent>
-                  </Sheet>
-               ))}
-            </div>
+            <CardSheet searchItem={searchItem} />
          </SidebarInset>
       </>
    );

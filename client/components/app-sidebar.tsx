@@ -66,7 +66,7 @@ export function AppSidebar({
    setSearchItem: (q: string) => void;
 } & React.ComponentProps<typeof Sidebar>) {
    return (
-      <Sidebar {...props}>
+      <Sidebar className="mt-15 border" {...props}>
          <SidebarHeader>
             <SidebarGroupLabel>Filter by Search</SidebarGroupLabel>
             <SearchForm
