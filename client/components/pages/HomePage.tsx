@@ -43,7 +43,7 @@ export default function Homepage() {
                <p className="text-lg text-center w-3xl font-normal text-balance text-[rgb(200,200,200)]">
                   Easily report, search, and reunite lost items in your school
                </p>
-               <Button className="mt-3 p-5 rounded-md bg-blue-700 cursor-pointer hover:bg-blue-600">
+               <Button className="mt-3 p-5 rounded-md bg-blue-600 cursor-pointer hover:bg-blue-700">
                   <Link className="text-base" href="/browse">
                      Start Searching
                   </Link>
@@ -81,7 +81,7 @@ export default function Homepage() {
                            {item.name}
                         </CardDescription>
                         <CardAction className="px-5">
-                           <Button className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer">
+                           <Button className="bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer">
                               <Link href={item.url}>View Details</Link>
                            </Button>
                         </CardAction>
@@ -112,7 +112,7 @@ export default function Homepage() {
                            {item.name}
                         </CardDescription>
                         <CardAction className="px-5">
-                           <Button className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer">
+                           <Button className="bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer">
                               <Link href={item.url}>View Details</Link>
                            </Button>
                         </CardAction>

@@ -58,7 +58,7 @@ export function NavigationBar({ className }: { className?: string }) {
             className
          )}>
          <Button variant="ghost" className="h-auto pl-0 cursor-pointer">
-            <Link href="/homepage">
+            <Link href="/">
                <img 
                   className="h-8 contrast-150"
                   src="/track-n-find--logo.png"
@@ -70,7 +70,7 @@ export function NavigationBar({ className }: { className?: string }) {
             <Button
                variant="ghost"
                className="rounded-md cursor-pointer hover:bg-black/3">
-               <Link className="py-0" href="/home">
+               <Link className="py-0" href="/">
                   Home
                </Link>
             </Button>
