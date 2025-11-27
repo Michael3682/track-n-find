@@ -30,6 +30,11 @@ export default function Homepage() {
          name: "Item C",
          url: "/",
       },
+      {
+         id: 4,
+         name: "Item C",
+         url: "/",
+      },
    ];
 
    return (
@@ -58,16 +63,16 @@ export default function Homepage() {
                <source src="/videos/background.mp4" type="video/mp4" />
             </video>
          </div>
-         <div className="w-full h-full px-10 py-20 flex flex-col gap-20">
+         <div className="w-full h-full px-50 py-20 flex flex-col gap-20">
             <div>
                <h1 className="text-4xl font-normal text-start text-[rgb(20,20,20)]">
                   Recent Found Items
                </h1>
-               <div className="h-full w-full flex justify-between gap-5 mt-10">
+               <div className="h-full w-full flex gap-5 mt-10">
                   {items.map((item) => (
                      <Card
                         key={item.id}
-                        className="w-1/4 h-max rounded-md bg-transparent shadow-none border-none">
+                        className="w-1/4 h-max rounded-md bg-transparent shadow-lg border-none">
                         <CardHeader>
                            <CardTitle>
                               <img

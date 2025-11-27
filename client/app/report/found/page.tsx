@@ -1,6 +1,7 @@
 "use client";
 
 import { file, z } from "zod";
+import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,7 @@ const formSchema = z.object({
 export default function ReportLost() {
    const [open, setOpen] = useState(false);
    const [progress, setProgress] = useState<number[]>([])
+   const [isSubmitting, setIsSubmitting] = useState(false);
    const { user } = useAuth()
 
    const form = useForm<ReportFoundItemState>({
@@ -86,6 +88,7 @@ export default function ReportLost() {
    };
 
    const onSubmit = async () => {
+      setIsSubmitting(true);
       const formValues = form.getValues();
 
       const yyyy = formValues.date.getFullYear();
@@ -106,6 +109,26 @@ export default function ReportLost() {
       };
 
       const [data, err] = await reportFound(updatedData);
+
+      if (err || !data.success) {
+         setIsSubmitting(false);
+         toast.error("Something wrong.");
+      }
+
+      if (data.success) {
+         setIsSubmitting(false);
+         toast.success("Found item has been reported.");
+
+         form.reset({
+            itemName: "",
+            date: new Date(),
+            time: "",
+            location: "",
+            description: "",
+            attachments: [],
+            userId: "",
+         });
+      }
 
       console.log(data);
    };
@@ -292,9 +315,10 @@ export default function ReportLost() {
                   />
                </div>
                <Button
-                  className="w-full mt-10 bg-blue-600 hover:bg-blue-700"
-                  type="submit">
-                  Submit Report
+                  className="w-full mt-10 bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  type="submit"
+                  disabled={isSubmitting}>
+                  {isSubmitting ? "Submitting Report" : "Submit Report"}
                </Button>
             </form>
          </Form>

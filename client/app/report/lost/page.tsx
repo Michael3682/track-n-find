@@ -1,12 +1,14 @@
 "use client";
 
-import { z } from "zod";
+import { file, z } from "zod";
+import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { reportLost } from "@/lib/reportService";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,75 +26,118 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import { uploadItemImage } from "@/lib/bucket";
+import { useAuth } from "@/contexts/auth/AuthContext";
 
 interface ReportLostItemState {
-   item: string;
+   itemName: string;
+   date: Date;
+   time: string;
+   location: string;
    description: string;
-   dateLost: Date;
-   locationLost: string;
-   photo: File | null;
+   attachments?: File[];
+   userId: string;
 }
 
 const formSchema = z.object({
-   item: z
-      .string()
-      .min(1, { message: "You must enter the name of the item that's lost." }),
-   description: z.string(),
-   dateLost: z.date(),
-   locationLost: z.string(),
-   photo: z
-      .any()
-      .nullable()
-      .refine((file) => !file || file instanceof File, {
-         message: "Must be a file",
-      }),
+   itemName: z.string().min(1, {
+      message: "You must enter the name of the item that you lost.",
+   }),
+   date: z.date(),
+   time: z.string(),
+   location: z.string(),
+   description: z.string().min(1, {
+      message: "Required",
+   }),
+   attachments: z.array(z.file()).optional(),
+   userId: z.string(),
 });
 
 export default function ReportLost() {
    const [open, setOpen] = useState(false);
-   const [time, setTime] = useState("");
+   const [progress, setProgress] = useState<number[]>([]);
+   const [isSubmitting, setIsSubmitting] = useState(false);
+   const { user } = useAuth();
 
    const form = useForm<ReportLostItemState>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         item: "",
+         itemName: "",
+         date: new Date(),
+         time: "",
+         location: "",
          description: "",
-         dateLost: new Date(),
-         locationLost: "",
-         photo: null,
+         attachments: [],
+         userId: "",
       },
    });
 
-   const updateDateTime = (date?: Date, timeStr?: string) => {
-      if (!date || !timeStr) return;
+   console.log(form)
 
-      const [h, m, s] = timeStr.split(":").map(Number);
+   const updateDateTime = (date?: Date) => {
+      if (!date) return;
 
       const updated = new Date(date);
 
-      updated.setHours(h || 0);
-      updated.setMinutes(m || 0);
-      updated.setSeconds(s || 0);
-
-      form.setValue("dateLost", updated);
+      form.setValue("date", updated);
    };
 
-   const onSubmit = (data: ReportLostItemState) => {
-      console.log("RAW Date object:", data.dateLost);
-      console.log(
-         "Readable date:",
-         data.dateLost.toLocaleString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-         })
-      );
-      console.log("Full form:", data);
+   const convertFileToBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+         const reader = new FileReader();
+         reader.onload = () => resolve(reader.result as string);
+         reader.onerror = reject;
+         reader.readAsDataURL(file);
+      });
+   };
+
+   const onSubmit = async () => {
+      setIsSubmitting(true)
+      const formValues = form.getValues();
+
+      const yyyy = formValues.date.getFullYear();
+      const mm = String(formValues.date.getMonth() + 1).padStart(2, "0");
+      const dd = String(formValues.date.getDate()).padStart(2, "0");
+
+      const files = formValues.attachments;
+
+      let urls;
+      if (files && files.length > 0 && user) {
+         urls = await uploadItemImage(files, user, setProgress);
+      }
+
+      const updatedData = {
+         ...formValues,
+         date: `${yyyy}-${mm}-${dd}`,
+         attachments: urls,
+      };
+
+      const [data, err] = await reportLost(updatedData);
+
+      if (err || !data.success) {
+         setIsSubmitting(false);
+         toast.error("Something wrong.");
+      }
+
+      if (data.success) {
+         setIsSubmitting(false);
+         toast.success("Lost item has been reported.");
+
+         form.reset({
+            itemName: "",
+            date: new Date(),
+            time: "",
+            location: "",
+            description: "",
+            attachments: [],
+            userId: "",
+         });
+      }
+
+      console.log(data);
    };
    return (
-      <div className="w-screen h-screen flex justify-center bg-[rgb(245,245,245)]">
+      <div className="w-screen h-screen flex justify-center bg-[rgb(245,245,245)] overflow-x-hidden">
          <NavigationBar />
          <Form {...form}>
             <form
@@ -101,10 +146,10 @@ export default function ReportLost() {
                <h1 className="text-4xl font-extrabold tracking-tight mb-10">
                   Report Lost Item
                </h1>
-               <div className="space-y-5">
+               <div className="space-y-5 w-full">
                   <FormField
                      control={form.control}
-                     name="item"
+                     name="itemName"
                      render={({ field }) => (
                         <FormItem className="w-full">
                            <FormLabel>Item</FormLabel>
@@ -121,54 +166,69 @@ export default function ReportLost() {
                         </FormItem>
                      )}
                   />
-                  <FormField
-                     control={form.control}
-                     name="dateLost"
-                     render={({ field }) => (
-                        <FormItem className="w-full">
-                           <FormControl>
-                              <div className="w-full flex gap-4">
-                                 <div className="w-full flex flex-col gap-3">
-                                    <Label
-                                       htmlFor="date-picker"
-                                       className="px-1">
-                                       Date
-                                    </Label>
-                                    <Popover open={open} onOpenChange={setOpen}>
-                                       <PopoverTrigger asChild>
-                                          <Button
-                                             variant="outline"
-                                             id="date-picker"
-                                             className="w-full justify-between font-normal">
-                                             {field.value
-                                                ? field.value.toLocaleDateString(
-                                                     "en-US",
-                                                     {
-                                                        year: "numeric",
-                                                        month: "long",
-                                                        day: "numeric",
-                                                     }
-                                                  )
-                                                : "Select date"}
-                                             <ChevronDownIcon />
-                                          </Button>
-                                       </PopoverTrigger>
-                                       <PopoverContent
-                                          className="w-auto overflow-hidden p-0"
-                                          align="start">
-                                          <Calendar
-                                             mode="single"
-                                             selected={field.value}
-                                             captionLayout="dropdown"
-                                             onSelect={(date) => {
-                                                if (!date) return;
-                                                updateDateTime(date, time);
-                                                setOpen(false);
-                                             }}
-                                          />
-                                       </PopoverContent>
-                                    </Popover>
+                  <div className="flex gap-5">
+                     <FormField
+                        control={form.control}
+                        name="date"
+                        render={({ field }) => (
+                           <FormItem className="w-full">
+                              <FormControl>
+                                 <div className="w-full flex gap-4">
+                                    <div className="w-full flex flex-col gap-3">
+                                       <Label
+                                          htmlFor="date-picker"
+                                          className="px-1">
+                                          Date
+                                       </Label>
+                                       <Popover
+                                          open={open}
+                                          onOpenChange={setOpen}>
+                                          <PopoverTrigger asChild>
+                                             <Button
+                                                variant="outline"
+                                                id="date-picker"
+                                                className="w-full justify-between font-normal">
+                                                {field.value
+                                                   ? field.value.toLocaleDateString(
+                                                        "en-US",
+                                                        {
+                                                           year: "numeric",
+                                                           month: "short",
+                                                           day: "numeric",
+                                                        }
+                                                     )
+                                                   : "Select date"}
+                                                <ChevronDownIcon />
+                                             </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent
+                                             className="w-auto overflow-hidden p-0"
+                                             align="start">
+                                             <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                captionLayout="dropdown"
+                                                onSelect={(date) => {
+                                                   if (!date) return;
+                                                   updateDateTime(date);
+                                                   setOpen(false);
+                                                }}
+                                             />
+                                          </PopoverContent>
+                                       </Popover>
+                                    </div>
                                  </div>
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+                     <FormField
+                        control={form.control}
+                        name="time"
+                        render={({ field }) => (
+                           <FormItem className="w-max ">
+                              <FormControl>
                                  <div className="flex flex-col gap-3">
                                     <Label
                                        htmlFor="time-picker"
@@ -178,26 +238,22 @@ export default function ReportLost() {
                                     <Input
                                        type="time"
                                        id="time-picker"
-                                       defaultValue={time}
+                                       {...field}
                                        onChange={(e) => {
-                                          setTime(e.target.value);
-                                          updateDateTime(
-                                             field.value,
-                                             e.target.value
-                                          );
+                                          field.onChange(e.target.value);
                                        }}
                                        className="w-full bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                                     />
                                  </div>
-                              </div>
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+                  </div>
                   <FormField
                      control={form.control}
-                     name="locationLost"
+                     name="location"
                      render={({ field }) => (
                         <FormItem className="w-full">
                            <FormLabel>Location Lost</FormLabel>
@@ -216,7 +272,7 @@ export default function ReportLost() {
                   />
                   <FormField
                      control={form.control}
-                     name="photo"
+                     name="attachments"
                      render={({ field }) => (
                         <FormItem className="w-full">
                            <FormLabel>Upload Photo</FormLabel>
@@ -225,18 +281,17 @@ export default function ReportLost() {
                                  <Input
                                     type="file"
                                     accept="image/*"
-                                    onChange={(e) => {
+                                    onChange={async (e) => {
                                        const file = e.target.files?.[0];
-                                       field.onChange(file);
+                                       if (!file) return;
+
+                                       // const base64 = await convertFileToBase64(
+                                       //    file
+                                       // );
+
+                                       field.onChange([file]);
                                     }}
                                  />
-                                 {field.value && (
-                                    <img
-                                       src={URL.createObjectURL(field.value)}
-                                       alt="Preview"
-                                       className="h-32 w-32 object-cover rounded-md border"
-                                    />
-                                 )}
                               </div>
                            </FormControl>
                            <FormMessage />
@@ -251,7 +306,7 @@ export default function ReportLost() {
                            <FormLabel>Description</FormLabel>
                            <FormControl>
                               <Textarea
-                                 placeholder="Ex. Lost black wallet. It’s a worn bi-fold with a small scratch. Contains Westlake University student ID, a few bank cards, some cash, and a small photo of a dog."
+                                 placeholder="Ex. I lost a black wallet. It’s a worn bi-fold with a small scratch. Contains Westlake University student ID, a few bank cards, some cash, and a small photo of a dog."
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -264,9 +319,10 @@ export default function ReportLost() {
                   />
                </div>
                <Button
-                  className="w-full mt-10 bg-blue-600 hover:bg-blue-700"
-                  type="submit">
-                  Submit Report
+                  className="w-full mt-10 bg-blue-600 hover:bg-blue-700 cursor-pointer disabled:opacity-50"
+                  type="submit"
+                  disabled={isSubmitting}>
+                  {isSubmitting ? "Submitting Report" : "Submit Report"}
                </Button>
             </form>
          </Form>

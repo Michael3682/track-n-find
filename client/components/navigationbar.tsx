@@ -59,7 +59,7 @@ export function NavigationBar({ className }: { className?: string }) {
          )}>
          <Button variant="ghost" className="h-auto pl-0 cursor-pointer">
             <Link href="/">
-               <img 
+               <img
                   className="h-8 contrast-150"
                   src="/track-n-find--logo.png"
                   alt="logo"
@@ -87,11 +87,7 @@ export function NavigationBar({ className }: { className?: string }) {
                      onPointerDown={handleDropdownToggle}>
                      Report
                      <ChevronUp
-                        className={
-                           isClicked
-                              ? "rotate-0"
-                              : "rotate-180"
-                        }
+                        className={isClicked ? "rotate-0" : "rotate-180"}
                      />
                   </Button>
                </DropdownMenuTrigger>
@@ -116,9 +112,11 @@ export function NavigationBar({ className }: { className?: string }) {
             </Button>
          </div>
          <Button
-            className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer"
+            className="border bg-transparent rounded-md text-black hover:bg-transparent hover:text-red-500 hover:shadow-md cursor-pointer"
             onClick={() => handleLogout()}>
-            <Link className="flex p-2 items-center gap-2" href="/">
+            <Link
+               className="flex p-2 items-center gap-2 text-inherit"
+               href="/">
                <LogOut />
                Logout
             </Link>
