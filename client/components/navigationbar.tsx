@@ -15,7 +15,6 @@ import {
 
 export function NavigationBar({ className }: { className?: string }) {
    const [isClicked, setIsClicked] = useState(false);
-   const [isScrolled, setIsScrolled] = useState(false);
    const router = useRouter();
    const { refetch } = useAuth();
 
@@ -34,14 +33,6 @@ export function NavigationBar({ className }: { className?: string }) {
       }
    };
 
-   const handleScroll = () => {
-      if (window.scrollY > 50) {
-         setIsScrolled(true);
-      } else {
-         setIsScrolled(false);
-      }
-   };
-
    const handleLogout = async () => {
       const [data, err] = await logout();
 
@@ -55,71 +46,51 @@ export function NavigationBar({ className }: { className?: string }) {
 
    useEffect(() => {
       document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("scroll", handleScroll);
 
       return () => {
          document.removeEventListener("mousedown", handleClickOutside);
-         document.removeEventListener("scroll", handleScroll);
       };
    }, []);
    return (
       <div
          className={cn(
-            `w-screen flex justify-between items-center gap-10 px-10 fixed py-1 z-50 border border-b border-transparent ${
-               isScrolled
-                  ? "bg-[rgb(245,245,245)] border-black/10"
-                  : "bg-black/50 backdrop-blur-xl"
-            } transition-all duration-300 ease-linear`,
+            `w-full flex justify-between items-center gap-10 px-10 top-0 fixed z-50 border-b bg-[rgb(245,245,245)] border-black/10 transition-colors duration-300 ease-linear`,
             className
          )}>
-         <Button
-            variant="ghost"
-            className="h-auto pl-0 cursor-pointer hover:bg-transparent">
-            <Link href="/homepage">
-               <img
-                  className="h-8 contrast-150 drop-shadow drop-shadow-white"
-                  src="track-n-find--logo.png"
+         <Button variant="ghost" className="h-auto pl-0 cursor-pointer">
+            <Link href="/">
+               <img 
+                  className="h-8 contrast-150"
+                  src="/track-n-find--logo.png"
                   alt="logo"
                />
             </Link>
          </Button>
          <div className="flex gap-5 items-center p-2 overflow-hidden background-blur-2xl">
             <Button
-               className={`rounded-md cursor-pointer ${
-                  isScrolled
-                     ? "text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]"
-                     : "text-[rgb(245,245,245)]"
-               } transition-all duration-150 ease-linear`}
-               variant="ghost">
-               <Link className="py-0" href="/home">
+               variant="ghost"
+               className="rounded-md cursor-pointer hover:bg-black/3">
+               <Link className="py-0" href="/">
                   Home
                </Link>
             </Button>
             <Button
-               className={`rounded-md cursor-pointer ${
-                  isScrolled
-                     ? "text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]"
-                     : "text-[rgb(245,245,245)]"
-               } transition-all duration-150 ease-linear`}
-               variant="ghost">
+               variant="ghost"
+               className="rounded-md cursor-pointer hover:bg-black/3">
                <Link href="/browse">Browse</Link>
             </Button>
             <DropdownMenu>
                <DropdownMenuTrigger asChild>
                   <Button
-                     className={`rounded-md cursor-pointer ${
-                        isScrolled
-                           ? "text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]"
-                           : "text-[rgb(245,245,245)]"
-                     } transition-all duration-150 ease-linear`}
                      variant="ghost"
+                     className="rounded-md cursor-pointer hover:bg-black/3"
                      onPointerDown={handleDropdownToggle}>
                      Report
                      <ChevronUp
                         className={
                            isClicked
-                              ? "rotate-180 transition-transform duration-75 ease-linear"
-                              : "rotate-0 transition-transform duration-75 ease-linear"
+                              ? "rotate-0"
+                              : "rotate-180"
                         }
                      />
                   </Button>
@@ -134,26 +105,18 @@ export function NavigationBar({ className }: { className?: string }) {
                </DropdownMenuContent>
             </DropdownMenu>
             <Button
-               className={`rounded-md cursor-pointer ${
-                  isScrolled
-                     ? "text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]"
-                     : "text-[rgb(245,245,245)]"
-               } transition-all duration-150 ease-linear`}
-               variant="ghost">
+               variant="ghost"
+               className="rounded-md cursor-pointer hover:bg-black/3">
                <Link href="/messages">Messages</Link>
             </Button>
             <Button
-               className={`rounded-md cursor-pointer ${
-                  isScrolled
-                     ? "text-[rgb(20,20,20)] hover:bg-black/90 hover:text-[rgb(245,245,245)]"
-                     : "text-[rgb(245,245,245)]"
-               } transition-all duration-150 ease-linear`}
-               variant="ghost">
+               variant="ghost"
+               className="rounded-md cursor-pointer hover:bg-black/3">
                <Link href="/profile">Profile</Link>
             </Button>
          </div>
          <Button
-            className="bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer"
+            className="bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer"
             onClick={() => handleLogout()}>
             <Link className="flex p-2 items-center gap-2" href="/">
                <LogOut />
