@@ -1,6 +1,6 @@
 "use client";
 
-import { z } from "zod";
+import { file, z } from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,8 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import { uploadItemImage } from "@/lib/bucket";
+import { useAuth } from "@/contexts/auth/AuthContext";
 
 interface ReportFoundItemState {
    itemName: string;
@@ -32,7 +34,7 @@ interface ReportFoundItemState {
    time: string;
    location: string;
    description: string;
-   attachments?: string[];
+   attachments?: File[];
    userId: string;
 }
 
@@ -44,12 +46,14 @@ const formSchema = z.object({
    time: z.string(),
    location: z.string(),
    description: z.string(),
-   attachments: z.array(z.string()).optional(),
+   attachments: z.array(z.file()).optional(),
    userId: z.string(),
 });
 
 export default function ReportLost() {
    const [open, setOpen] = useState(false);
+   const [progress, setProgress] = useState<number[]>([])
+   const { user } = useAuth()
 
    const form = useForm<ReportFoundItemState>({
       resolver: zodResolver(formSchema),
@@ -88,9 +92,17 @@ export default function ReportLost() {
       const mm = String(formValues.date.getMonth() + 1).padStart(2, "0");
       const dd = String(formValues.date.getDate()).padStart(2, "0");
 
+      const files = formValues.attachments
+
+      let urls;
+      if(files && files.length > 0 && user) {
+         urls = await uploadItemImage(files, user, setProgress)
+      }
+
       const updatedData = {
          ...formValues,
          date: `${yyyy}-${mm}-${dd}`,
+         attachments: urls
       };
 
       const [data, err] = await reportFound(updatedData);
@@ -246,11 +258,11 @@ export default function ReportLost() {
                                        const file = e.target.files?.[0];
                                        if (!file) return;
 
-                                       const base64 = await convertFileToBase64(
-                                          file
-                                       );
+                                       // const base64 = await convertFileToBase64(
+                                       //    file
+                                       // );
 
-                                       field.onChange([base64]);
+                                       field.onChange([file]);
                                     }}
                                  />
                               </div>

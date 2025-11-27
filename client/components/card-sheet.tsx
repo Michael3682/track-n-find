@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -15,24 +17,33 @@ import {
    SheetTrigger,
    SheetFooter,
 } from "@/components/ui/sheet";
+import { getFoundItems } from "@/lib/reportService";
+import { useEffect, useState } from "react";
+
+type Item = {
+      id: string,
+      name: string,
+      description: string,
+      category: string,
+      date_time: string,
+      location: string,
+      attachments: string[],
+      status: "CLAIMED" | "UNCLAIMED",
+      type: "FOUND" | "LOST",
+      associated_person: string
+    }
 
 export function CardSheet({searchItem}: {searchItem: string}) {
-   const items = Array.from({ length: 20 }, (_, i) => ({
-      id: i + 1,
-      name: `Item ${i + 1}`,
-      description:
-         "A black leather business bag was turned in to our office earlier today. The bag features a structured rectangular design with silver-toned hardware and a reinforced handle.",
-      dateTimeFound: new Date().toLocaleString(),
-      location: "Tent",
-      status: "UNCLAIMED",
-      user: "User",
-      img: "vercel.svg",
-      link: `/messages`,
-   }));
+   const [items, setItems] = useState<Item[]>([])
 
    const filteredItems = items.filter((item) =>
       item.name.toLowerCase().includes(searchItem.toLowerCase())
    );
+
+   useEffect(() => {
+      getFoundItems().then(([data]) => setItems(data.foundItems))
+   }, [])
+
    return (
       <div className="flex flex-wrap justify-center gap-10 p-10">
          {filteredItems.map((item) => (
@@ -42,8 +53,8 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                      <CardHeader className="bg-primary-foreground p-5">
                         <CardTitle>
                            <img
-                              className="invert aspect-video h-50 object-cover"
-                              src={item.img}
+                              className="invert aspect-video h-50"
+                              src={item.attachments[0]}
                               alt="image"
                            />
                         </CardTitle>
@@ -56,8 +67,8 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                <SheetContent side="center">
                   <SheetHeader className="space-y-5">
                      <img
-                        className="invert aspect-video h-70 object-cover"
-                        src={item.img}
+                        className="invert aspect-video"
+                        src={item.attachments[0]}
                         alt="image"
                      />
                      <div className="space-y-5">
@@ -65,7 +76,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                            {item.name}
                            <p className="text-xs font-light text-muted-foreground">
                               Reported By:{" "}
-                              <span className="font-normal">{item.user}</span>
+                              <span className="font-normal">{item.associated_person}</span>
                            </p>
                         </SheetTitle>
                         <div className="space-y-7">
@@ -77,7 +88,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                               <p className="mt-5 text-base font-medium text-[rgb(20,20,20)] flex justify-between">
                                  Reported on:{" "}
                                  <span className="font-normal">
-                                    {item.dateTimeFound}
+                                    {item.date_time}
                                  </span>
                               </p>
                               <p className="text-base font-medium text-[rgb(20,20,20)]  flex justify-between">
@@ -98,7 +109,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                   </SheetHeader>
                   <SheetFooter>
                      <Button className="cursor-pointer" type="submit" asChild>
-                        <Link href={`${item.link}/${item.id}`}>
+                        <Link href={`messages/${item.id}`}>
                            Message User
                         </Link>
                      </Button>

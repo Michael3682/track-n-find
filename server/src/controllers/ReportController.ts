@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import ReportService from "@/services/report";
 import { v4 as uuidV4 } from "uuid";
-import { foundItemSchema } from "@/lib/validations/report";
+import { foundItemSchema, lostItemSchema } from "@/lib/validations/report";
 import { JwtPayload } from "jsonwebtoken";
 import { it } from "node:test";
 
@@ -286,6 +286,312 @@ class ReportController {
             success: true,
             foundItems
         })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  /**
+ * @swagger
+ * /report/found/v1/{id}:
+ *   get:
+ *     summary: Get a specific found item
+ *     description: Returns a single found item by its ID.
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the found item
+ *     responses:
+ *       200:
+ *         description: Found item retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 foundItem:
+ *                   $ref: '#/components/schemas/Item'
+ *       404:
+ *         description: Item not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Item not found"
+ *       500:
+ *         description: Internal server error
+ */
+  async getFoundItem(req: Request, res: Response) {
+    try {
+      const id = req.params.id
+      const foundItem = await ReportService.getFoundItem(id)
+
+      res.json({
+        success: true,
+        foundItem
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  /**
+ * @swagger
+ * /report/lost/v1:
+ *   post:
+ *     summary: Report a lost item
+ *     description: Allows a user to report a lost item in the system.
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - itemName
+ *               - date
+ *               - time
+ *               - location
+ *               - description
+ *             properties:
+ *               itemName:
+ *                 type: string
+ *                 description: Name of the lost item
+ *                 example: "Phone"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 description: Date when the item was lost
+ *                 example: "2025-11-21"
+ *               time:
+ *                 type: string
+ *                 format: time
+ *                 description: Time when the item was lost
+ *                 example: "09:15"
+ *               location:
+ *                 type: string
+ *                 description: Last known location of the item
+ *                 example: "SM Cebu Food Court"
+ *               attachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Optional array of file URLs or images
+ *                 example: ["https://example.com/lost_phone.jpg"]
+ *               description:
+ *                 type: string
+ *                 description: Additional details about the lost item
+ *                 example: "Samsung S21, black case, minor scratches"
+ *     responses:
+ *       200:
+ *         description: Lost item reported successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 item:
+ *                   $ref: '#/components/schemas/Item'
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "itemName is required"
+ *                 user:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ *                 user:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ */
+  async addLostItem(req: Request, res: Response) {
+    try {
+      const {
+        value: { itemName, date, time, location, attachments, description },
+        error,
+      } = lostItemSchema.validate(req.body);
+      const userId = (req.user as JwtPayload).id;
+
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.details[0].message,
+          user: null,
+        });
+      }
+
+      const item = await ReportService.addLostItem({
+        itemName,
+        date,
+        time,
+        location,
+        attachments,
+        description,
+        userId,
+      });
+
+      res.json({
+        success: true,
+        item,
+      });
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  /**
+ * @swagger
+ * /report/lost/v1:
+ *   get:
+ *     summary: Get all lost & unclaimed items
+ *     description: Returns all items of type LOST with status UNCLAIMED.
+ *     tags:
+ *       - Reports
+ *     responses:
+ *       200:
+ *         description: List of lost items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 lostItems:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Item'
+ *       500:
+ *         description: Internal server error
+ */
+  async getLostItems(req: Request, res: Response) {
+    try {
+        const lostItems = await ReportService.getLostItems()
+
+        res.json({
+            success: true,
+            lostItems
+        })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  /**
+ * @swagger
+ * /report/lost/v1/{id}:
+ *   get:
+ *     summary: Get a specific lost item
+ *     description: Returns a single lost item by its ID.
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the lost item
+ *     responses:
+ *       200:
+ *         description: Lost item retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 lostItem:
+ *                   $ref: '#/components/schemas/Item'
+ *       404:
+ *         description: Item not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Item not found"
+ *       500:
+ *         description: Internal server error
+ */
+  async getLostItem(req: Request, res: Response) {
+    try {
+      const id = req.params.id
+      const lostItem = await ReportService.getLostItem(id)
+
+      res.json({
+        success: true,
+        lostItem
+      })
     } catch (err: any) {
       console.log(err);
       res.status(err.status || 500).json({
