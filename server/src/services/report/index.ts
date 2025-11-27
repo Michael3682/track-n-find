@@ -28,14 +28,6 @@ class ReportService {
     });
   }
 
-  async getFoundItems() {
-    return ReportRepository.findFoundItems()
-  }
-
-  async getFoundItem(id: string) {
-    return ReportRepository.findItemById(id)
-  }
-
   async addLostItem(data: {
     itemName: string;
     date: string; // YYYY-MM-DD
@@ -61,11 +53,11 @@ class ReportService {
     });
   }
 
-  async getLostItems() {
-    return ReportRepository.findLostItems()
+  async getItems() {
+    return ReportRepository.findItems()
   }
 
-  async getLostItem(id: string) {
+  async getItem(id: string) {
     return ReportRepository.findItemById(id)
   }
 }
