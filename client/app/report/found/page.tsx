@@ -200,7 +200,6 @@ export default function ReportLost() {
                                     <Input
                                        type="time"
                                        id="time-picker"
-                                       step="1"
                                        {...field}
                                        onChange={(e) => {
                                           field.onChange(e.target.value);

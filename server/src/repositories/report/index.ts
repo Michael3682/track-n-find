@@ -11,6 +11,14 @@ class ReportRepository {
    async findFoundItems() {
       return prisma.item.findMany({ where: { type: 'FOUND' }})
    }
+
+   async findLostItems() {
+      return prisma.item.findMany({ where: { type: 'LOST' }})
+   }
+
+   async findItemById(id: string) {
+      return prisma.item.findUnique({ where: { id }})
+   }
 }
 
 export default new ReportRepository()
