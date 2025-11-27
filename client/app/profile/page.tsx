@@ -15,6 +15,7 @@ export default function Profile() {
       id: i + 1,
    }));
 
+
    return (
       <div className="w-auto h-max bg-[rgb(245,245,245)]">
          <NavigationBar />

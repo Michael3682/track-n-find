@@ -45,7 +45,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
    }, [])
 
    return (
-      <div className="flex flex-wrap justify-center gap-10 p-10">
+      <div className="flex flex-wrap justify-start gap-10 p-10">
          {filteredItems.map((item) => (
             <Sheet key={item.id}>
                <SheetTrigger className="cursor-pointer p-0" asChild>
@@ -53,21 +53,24 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                      <CardHeader className="bg-primary-foreground p-5">
                         <CardTitle>
                            <img
-                              className="invert aspect-video h-50"
+                              className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50"
                               src={item.attachments[0]}
                               alt="image"
                            />
                         </CardTitle>
                      </CardHeader>
-                     <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
+                     <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)] flex flex-col">
                         {item.name}
+                        <small className="text-xs font-light text-muted-foreground">
+                           {item.type}
+                        </small>
                      </CardDescription>
                   </Card>
                </SheetTrigger>
                <SheetContent side="center">
                   <SheetHeader className="space-y-5">
                      <img
-                        className="invert aspect-video"
+                        className="aspect-video object-contain object-top"
                         src={item.attachments[0]}
                         alt="image"
                      />
@@ -76,7 +79,9 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                            {item.name}
                            <p className="text-xs font-light text-muted-foreground">
                               Reported By:{" "}
-                              <span className="font-normal">{item.associated_person}</span>
+                              <span className="font-normal">
+                                 {item.associated_person}
+                              </span>
                            </p>
                         </SheetTitle>
                         <div className="space-y-7">
@@ -109,9 +114,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                   </SheetHeader>
                   <SheetFooter>
                      <Button className="cursor-pointer" type="submit" asChild>
-                        <Link href={`messages/${item.id}`}>
-                           Message User
-                        </Link>
+                        <Link href={`messages/${item.id}`}>Message User</Link>
                      </Button>
                   </SheetFooter>
                </SheetContent>
