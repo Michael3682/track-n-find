@@ -8,12 +8,8 @@ class ReportRepository {
       return prisma.item.create({ data })
    }
 
-   async findFoundItems() {
-      return prisma.item.findMany({ where: { type: 'FOUND' }})
-   }
-
-   async findLostItems() {
-      return prisma.item.findMany({ where: { type: 'LOST' }})
+   async findItems() {
+      return prisma.item.findMany()
    }
 
    async findItemById(id: string) {

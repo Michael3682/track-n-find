@@ -34,9 +34,9 @@ export const reportLost = async ({itemName, date, time, location, description, a
     }
 }
 
-export const getFoundItems = async () => {
+export const getItems = async () => {
    try {
-      const res = await fetch(`${API_URL}/report/found/v1`, {
+      const res = await fetch(`${API_URL}/report/v1/items`, {
          method: "GET",
          credentials: "include"
       })
@@ -49,9 +49,9 @@ export const getFoundItems = async () => {
     }
 }
 
-export const getLostItems = async () => {
+export const getItem = async (id: string) => {
    try {
-      const res = await fetch(`${API_URL}/report/lost/v1`, {
+      const res = await fetch(`${API_URL}/report/v1/items/${id}`, {
          method: "GET",
          credentials: "include"
       })

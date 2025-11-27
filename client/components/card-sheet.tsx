@@ -17,7 +17,7 @@ import {
    SheetTrigger,
    SheetFooter,
 } from "@/components/ui/sheet";
-import { getFoundItems } from "@/lib/reportService";
+import { getItems } from "@/lib/reportService";
 import { useEffect, useState } from "react";
 
 type Item = {
@@ -41,7 +41,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
    );
 
    useEffect(() => {
-      getFoundItems().then(([data]) => setItems(data.foundItems))
+      getItems().then(([data]) => setItems(data.items))
    }, [])
 
    return (

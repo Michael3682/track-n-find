@@ -6,13 +6,13 @@ const router = Router();
 
 // found
 router.post("/found/v1", authenticate, ReportController.addFoundItem)
-router.get("/found/v1", authenticate, ReportController.getFoundItems)
-router.get("/found/v1/:id", authenticate, ReportController.getFoundItem)
 // router.put("/found/v1/:id", authenticate, ReportController.updateFoundItem)
 
 // lost
 router.post("/lost/v1", authenticate, ReportController.addLostItem)
-router.get("/lost/v1", authenticate, ReportController.getLostItems)
-router.get("/found/v1/:id", authenticate, ReportController.getLostItem)
+
+// both
+router.get("/v1/items", authenticate, ReportController.getItems)
+router.get("/v1/items/:id", authenticate, ReportController.getItem)
 
 export default router;
