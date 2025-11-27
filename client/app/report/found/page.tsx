@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDownIcon } from "lucide-react";
@@ -200,7 +199,6 @@ export default function ReportLost() {
                                     <Input
                                        type="time"
                                        id="time-picker"
-                                       step="1"
                                        {...field}
                                        onChange={(e) => {
                                           field.onChange(e.target.value);

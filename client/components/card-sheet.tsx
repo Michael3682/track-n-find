@@ -42,7 +42,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                      <CardHeader className="bg-primary-foreground p-5">
                         <CardTitle>
                            <img
-                              className="invert aspect-video h-50"
+                              className="invert aspect-video h-50 object-cover"
                               src={item.img}
                               alt="image"
                            />
@@ -56,7 +56,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                <SheetContent side="center">
                   <SheetHeader className="space-y-5">
                      <img
-                        className="invert aspect-video"
+                        className="invert aspect-video h-70 object-cover"
                         src={item.img}
                         alt="image"
                      />

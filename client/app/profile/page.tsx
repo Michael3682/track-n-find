@@ -1,6 +1,5 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
 import { NavigationBar } from "@/components/navigationbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,7 +16,7 @@ export default function Profile() {
    }));
 
    return (
-      <div className="w-auto h-full bg-[rgb(245,245,245)]">
+      <div className="w-auto h-max bg-[rgb(245,245,245)]">
          <NavigationBar />
          <div className="w-full h-100 relative flex items-center">
             <img
@@ -50,28 +49,28 @@ export default function Profile() {
                      </TabsTrigger>
                   </TabsList>
                </div>
-               <div className="px-10 pt-10 mt-10">
-                  <TabsContent
-                     className="flex flex-wrap gap-5"
-                     value="foundItems">
-                     {clones.map((item) => (
-                        <Card
-                           key={item.id}
-                           className="w-70 grow pt-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
-                           <CardHeader className="bg-primary-foreground p-5">
-                              <CardTitle>
-                                 <img
-                                    className="invert aspect-video h-50"
-                                    src="vercel.svg"
-                                    alt="image"
-                                 />
-                              </CardTitle>
-                           </CardHeader>
-                           <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
-                              Item Name
-                           </CardDescription>
-                        </Card>
-                     ))}
+               <div className="mx-10 my-10 mt-10 bg-black/10 p-5 rounded-md">
+                  <TabsContent value="foundItems">
+                     <div className="flex flex-wrap gap-5">
+                        {clones.map((item) => (
+                           <Card
+                              key={item.id}
+                              className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
+                              <CardHeader className="bg-primary-foreground p-5">
+                                 <CardTitle className="flex justify-center">
+                                    <img
+                                       className="invert aspect-video h-50"
+                                       src="vercel.svg"
+                                       alt="image"
+                                    />
+                                 </CardTitle>
+                              </CardHeader>
+                              <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
+                                 Item Name
+                              </CardDescription>
+                           </Card>
+                        ))}
+                     </div>
                   </TabsContent>
                   <TabsContent
                      className="flex flex-wrap gap-5"
@@ -79,7 +78,7 @@ export default function Profile() {
                      {clones.map((item) => (
                         <Card
                            key={item.id}
-                           className="w-70 pt-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
+                           className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
                            <CardHeader className="bg-primary-foreground p-5">
                               <CardTitle>
                                  <img

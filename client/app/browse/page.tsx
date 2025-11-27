@@ -17,7 +17,7 @@ export default function Page() {
    return (
       <div className="w-auto h-auto relative overflow-x-hidden">
          <NavigationBar />
-         <SidebarProvider className="mt-15">
+         <SidebarProvider className="mt-13">
             <SidebarGroupContent
                searchItem={searchItem}
                setSearchItem={setSearchItem}
