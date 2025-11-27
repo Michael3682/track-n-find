@@ -22,6 +22,6 @@ export const lostItemSchema = Joi.object({
     date: Joi.string().isoDate().required(),
     time: Joi.string().pattern(/^([01]\d|2[0-3]):([0-5]\d)$/).required(),
 
-    location: Joi.string().trim().required(),
+    location: Joi.string().trim(),
     attachments: Joi.array().items(Joi.string()).optional(),
 });
