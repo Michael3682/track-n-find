@@ -54,7 +54,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                         <CardTitle>
                            <img
                               className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50"
-                              src={item.attachments[0]}
+                              src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
                               alt="image"
                            />
                         </CardTitle>
@@ -71,7 +71,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                   <SheetHeader className="space-y-5">
                      <img
                         className="aspect-video object-contain object-top"
-                        src={item.attachments[0]}
+                        src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
                         alt="image"
                      />
                      <div className="space-y-5">

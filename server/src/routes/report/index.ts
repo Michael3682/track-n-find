@@ -6,10 +6,11 @@ const router = Router();
 
 // found
 router.post("/found/v1", authenticate, ReportController.addFoundItem)
-// router.put("/found/v1/:id", authenticate, ReportController.updateFoundItem)
+router.get("/found/v1/", authenticate, ReportController.getUserFoundItems)
 
 // lost
 router.post("/lost/v1", authenticate, ReportController.addLostItem)
+router.get("/lost/v1/", authenticate, ReportController.getUserLostItems)
 
 // both
 router.get("/v1/items", authenticate, ReportController.getItems)

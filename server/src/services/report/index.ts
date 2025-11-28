@@ -53,6 +53,14 @@ class ReportService {
     });
   }
 
+  async getUserFoundItems(userId: string) {
+    return ReportRepository.findItemsByUserId(userId, "FOUND")
+  }
+
+  async getUserLostItems(userId: string) {
+    return ReportRepository.findItemsByUserId(userId, "LOST")
+  }
+
   async getItems() {
     return ReportRepository.findItems()
   }

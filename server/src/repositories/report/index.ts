@@ -1,11 +1,15 @@
 import { Item } from "@/types/report";
-import { PrismaClient } from "@prisma/client";
+import { ItemType, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 class ReportRepository {
    async create(data: Item) {
       return prisma.item.create({ data })
+   }
+
+   async findItemsByUserId(userId: string, type: ItemType) {
+      return prisma.item.findMany({ where: { associated_person: userId, type }})
    }
 
    async findItems() {

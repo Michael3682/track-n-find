@@ -9,12 +9,33 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { useEffect, useState } from "react";
+import { getUserFoundItems, getUserLostItems } from "@/lib/reportService";
+
+type Item = {
+   id: string,
+   name: string,
+   attachments: string[]
+}
 
 export default function Profile() {
-   const clones = Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
-   }));
+   const [items, setItems] = useState<{lostItems: Item[], foundItems: Item[]}>({
+      lostItems: [],
+      foundItems: []
+   })
+   const { user } = useAuth()
 
+   useEffect(() => {
+      const getUsers = async () => await Promise.all([getUserFoundItems(), getUserLostItems()])
+      const fetchUsers = async () =>{
+         const [[found], [lost]] = await getUsers()
+
+         setItems({ foundItems: found.foundItems, lostItems: lost.lostItems })
+      } 
+
+     fetchUsers()
+   }, [])
 
    return (
       <div className="w-auto h-max bg-[rgb(245,245,245)]">
@@ -34,7 +55,7 @@ export default function Profile() {
                   <AvatarFallback>CN</AvatarFallback>
                </Avatar>
                <h1 className="text-4xl font-extrabold tracking-tight z-10 mb-10">
-                  User Name
+                  {user?.name}
                </h1>
             </div>
          </div>
@@ -53,21 +74,21 @@ export default function Profile() {
                <div className="mx-10 my-10 mt-10 bg-black/10 p-5 rounded-md">
                   <TabsContent value="foundItems">
                      <div className="flex flex-wrap gap-5">
-                        {clones.map((item) => (
+                        {items.foundItems.map((item) => (
                            <Card
-                              key={item.id}
+                              key={item?.id}
                               className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
                               <CardHeader className="bg-primary-foreground p-5">
                                  <CardTitle className="flex justify-center">
                                     <img
                                        className="invert aspect-video h-50"
-                                       src="vercel.svg"
+                                       src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
                                        alt="image"
                                     />
                                  </CardTitle>
                               </CardHeader>
                               <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
-                                 Item Name
+                                 {item.name}
                               </CardDescription>
                            </Card>
                         ))}
@@ -76,21 +97,21 @@ export default function Profile() {
                   <TabsContent
                      className="flex flex-wrap gap-5"
                      value="lostItems">
-                     {clones.map((item) => (
+                     {items.lostItems.map((item) => (
                         <Card
-                           key={item.id}
+                           key={item?.id}
                            className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
                            <CardHeader className="bg-primary-foreground p-5">
                               <CardTitle>
                                  <img
                                     className="invert aspect-video h-50"
-                                    src="file.svg"
+                                    src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
                                     alt="image"
                                  />
                               </CardTitle>
                            </CardHeader>
                            <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
-                              Item Name
+                              {item?.name}
                            </CardDescription>
                         </Card>
                      ))}
