@@ -85,7 +85,7 @@ export default function Profile() {
                               <CardHeader className="bg-primary-foreground p-5">
                                  <CardTitle className="flex justify-center">
                                     <img
-                                       className="invert aspect-video h-50"
+                                       className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50 z-10"
                                        src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
                                        alt="image"
                                     />
@@ -108,7 +108,7 @@ export default function Profile() {
                            <CardHeader className="bg-primary-foreground p-5">
                               <CardTitle className="flex justify-center">
                                  <img
-                                    className="invert aspect-video h-50"
+                                    className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50 z-10"
                                     src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
                                     alt="image"
                                  />
