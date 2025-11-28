@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -46,6 +47,7 @@ const formSchema = z.object({
 
 export default function Register() {
    const [isSigningUp, setIsSigningUp] = useState<boolean>(false);
+   const [showPassword, setShowPassword] = useState<boolean>(false);
    const { refetch } = useAuth();
    const router = useRouter();
 
@@ -72,6 +74,14 @@ export default function Register() {
       setIsSigningUp(false);
    }
 
+   const handleShowPassword = () => {
+      if (showPassword) {
+         setShowPassword(false);
+      } else {
+         setShowPassword(true);
+      }
+   };
+
    return (
       <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
          <div className="border border-black/30 shadow-lg rounded-xl p-10 bg-white">
@@ -96,8 +106,8 @@ export default function Register() {
                            <FormLabel>StudentID</FormLabel>
                            <FormControl>
                               <Input
-                                 maxLength={9}
-                                 placeholder="Ex. 123456789"
+                                 maxLength={8}
+                                 placeholder="Ex. 12345678"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -134,11 +144,32 @@ export default function Register() {
                         <FormItem>
                            <FormLabel>Password</FormLabel>
                            <FormControl>
-                              <Input
-                                 type="password"
-                                 placeholder="Enter your password"
-                                 {...field}
-                              />
+                              <div className="w-full h-max relative">
+                                 <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    {...field}
+                                    onChange={(e) =>
+                                       field.onChange(e.target.value)
+                                    }
+                                 />
+                                 <Eye
+                                    size={15}
+                                    color="rgb(100,100,100)"
+                                    className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                       showPassword ? "visible" : "hidden"
+                                    }`}
+                                    onClick={handleShowPassword}
+                                 />
+                                 <EyeClosed
+                                    size={15}
+                                    color="rgb(100,100,100)"
+                                    className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                       showPassword ? "hidden" : "visible"
+                                    }`}
+                                    onClick={handleShowPassword}
+                                 />
+                              </div>
                            </FormControl>
                            <FormMessage />
                         </FormItem>

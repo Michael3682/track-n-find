@@ -1,15 +1,23 @@
 "use client";
 
-import { z } from "zod"
-import { useState } from "react"
-import { login } from "@/lib/authService"
-import { useForm } from "react-hook-form"
-import { useRouter } from "next/navigation"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useAuth } from "@/contexts/auth/AuthContext"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
+import { z } from "zod";
+import { useState } from "react";
+import { Eye, EyeClosed } from "lucide-react";
+import { login } from "@/lib/authService";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import {
+   Form,
+   FormControl,
+   FormField,
+   FormItem,
+   FormLabel,
+   FormMessage,
+} from "@/components/ui/form";
 
 interface LoginFormState {
    studentId: string;
@@ -20,7 +28,7 @@ const formSchema = z.object({
    studentId: z
       .string()
       .regex(/^\d+$/, { message: "Student ID must contain only numbers." })
-      .min(8, { message: "Student ID should be 9 characters long." }),
+      .min(8, { message: "Student ID should be 8 characters long." }),
    password: z
       .string() //Will be change
       .min(8, { message: "Password must be at least 8 characters long." })
@@ -35,6 +43,7 @@ const formSchema = z.object({
 
 export default function Login() {
    const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
+   const [showPassword, setShowPassword] = useState<boolean>(false);
    const router = useRouter();
    const { refetch } = useAuth();
 
@@ -60,6 +69,14 @@ export default function Login() {
       setIsLoggingIn(false);
    }
 
+   const handleShowPassword = () => {
+      if (showPassword) {
+         setShowPassword(false);
+      } else {
+         setShowPassword(true);
+      }
+   };
+
    return (
       <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
          <div className="border border-black/30 shadow-lg rounded-xl p-10 bg-white">
@@ -84,8 +101,8 @@ export default function Login() {
                            <FormLabel>Student ID</FormLabel>
                            <FormControl>
                               <Input
-                                 maxLength={9}
-                                 placeholder="Ex. 123456789"
+                                 maxLength={8}
+                                 placeholder="Ex. 12345678"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -103,14 +120,32 @@ export default function Login() {
                         <FormItem>
                            <FormLabel>Password</FormLabel>
                            <FormControl>
-                              <Input
-                                 type="password"
-                                 placeholder="Enter your password"
-                                 {...field}
-                                 onChange={(e) =>
-                                    field.onChange(e.target.value)
-                                 }
-                              />
+                              <div className="w-full h-max relative">
+                                 <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    {...field}
+                                    onChange={(e) =>
+                                       field.onChange(e.target.value)
+                                    }
+                                 />
+                                 <Eye
+                                    size={15}
+                                    color="rgb(100,100,100)"
+                                    className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                       showPassword ? "visible" : "hidden"
+                                    }`}
+                                    onClick={handleShowPassword}
+                                 />
+                                 <EyeClosed
+                                    size={15}
+                                    color="rgb(100,100,100)"
+                                    className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                       showPassword ? "hidden" : "visible"
+                                    }`}
+                                    onClick={handleShowPassword}
+                                 />
+                              </div>
                            </FormControl>
                            <FormMessage />
                         </FormItem>

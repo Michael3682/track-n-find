@@ -40,13 +40,13 @@ export default function Profile() {
    return (
       <div className="w-auto h-max bg-[rgb(245,245,245)]">
          <NavigationBar />
-         <div className="w-full h-100 relative flex items-center">
+         <div className="w-full h-100 relative flex items-center mb-5">
             <img
                className="absolute top-0 h-1/2 w-full object-cover object-bottom z-0"
                src="https://imgs.search.brave.com/Beqi5bF2_fwfT7rQMUy6BlKvbb0wS90TCr9OA3Fl1lI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDYyOTc5/ODIuanBn"
                alt="profile background"
             />
-            <div className="w-full flex items-end gap-5 p-10">
+            <div className="w-full flex items-end gap-5 px-50">
                <Avatar className="content-end w-max h-50 border-5 border-white">
                   <AvatarImage
                      src="https://github.com/shadcn.png"
@@ -59,19 +59,23 @@ export default function Profile() {
                </h1>
             </div>
          </div>
-         <div className="w-full">
-            <Tabs defaultValue="foundItems" className="w-full">
+         <div className="w-full flex justify-center">
+            <Tabs defaultValue="foundItems">
                <div className="px-10 w-full flex justify-center">
-                  <TabsList className="w-100 bg-black/10">
-                     <TabsTrigger className="cursor-pointer" value="foundItems">
+                  <TabsList className="w-100 h-auto bg-transparent border shadow-inner p-1">
+                     <TabsTrigger
+                        className="cursor-pointer p-2"
+                        value="foundItems">
                         Found Items
                      </TabsTrigger>
-                     <TabsTrigger className="cursor-pointer" value="lostItems">
+                     <TabsTrigger
+                        className="cursor-pointer p-2"
+                        value="lostItems">
                         Lost Items
                      </TabsTrigger>
                   </TabsList>
                </div>
-               <div className="mx-10 my-10 mt-10 bg-black/10 p-5 rounded-md">
+               <div className="mx-50 my-10 mt-10 bg-transparent p-5 rounded-md">
                   <TabsContent value="foundItems">
                      <div className="flex flex-wrap gap-5">
                         {items.foundItems.map((item) => (
@@ -102,7 +106,7 @@ export default function Profile() {
                            key={item?.id}
                            className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
                            <CardHeader className="bg-primary-foreground p-5">
-                              <CardTitle>
+                              <CardTitle className="flex justify-center">
                                  <img
                                     className="invert aspect-video h-50"
                                     src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
