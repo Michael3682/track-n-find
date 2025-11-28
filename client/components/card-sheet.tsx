@@ -53,7 +53,7 @@ export function CardSheet({searchItem}: {searchItem: string}) {
                      <CardHeader className="bg-primary-foreground p-5">
                         <CardTitle>
                            <img
-                              className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50"
+                              className="aspect-video h-50 object-contain object-top"
                               src={item.attachments[0]}
                               alt="image"
                            />
