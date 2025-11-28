@@ -341,6 +341,46 @@ class ReportController {
       });
     }
   }
+
+  async getUserFoundItems(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const foundItems = await ReportService.getUserFoundItems(userId)
+
+      res.json({
+        success: true,
+        foundItems
+      })
+
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async getUserLostItems(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const lostItems = await ReportService.getUserLostItems(userId)
+
+      res.json({
+        success: true,
+        lostItems
+      })
+
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
 }
 
 export default new ReportController();
