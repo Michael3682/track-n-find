@@ -14,9 +14,10 @@ export function SearchForm({
 }: {
    value: string;
    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-} & React.ComponentProps<"form">) {
+   } & React.ComponentProps<"form">) {
+   
    return (
-      <form {...props}>
+      <form {...props} onSubmit={(e) => e.preventDefault()}>
          <SidebarGroup className="py-0">
             <SidebarGroupContent className="relative">
                <Label htmlFor="search" className="sr-only">
