@@ -54,7 +54,7 @@ export function NavigationBar({ className }: { className?: string }) {
    return (
       <div
          className={cn(
-            `w-full flex justify-between items-center gap-10 px-10 top-0 fixed z-50 border-b bg-[rgb(245,245,245)] border-black/10 transition-colors duration-300 ease-linear`,
+            `w-full flex justify-between items-center gap-10 px-10 top-0 fixed z-50 border-b bg-white border-black/10 transition-colors duration-300 ease-linear`,
             className
          )}>
          <Button variant="ghost" className="h-auto pl-0 cursor-pointer">
