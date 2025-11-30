@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from 'cookie-parser'
 import routes from "@/routes"
 import { setupSwagger } from "./swagger";
+import { initializeSocket } from "./socket";
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ setupSwagger(app)
 
 app.use("/api", routes)
 
-app.listen(port, () => {
+const server = initializeSocket(app)
+
+server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

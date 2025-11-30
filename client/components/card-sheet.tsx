@@ -20,7 +20,7 @@ import {
 import { getItems } from "@/lib/reportService";
 import { useEffect, useState } from "react";
 
-type Item = {
+export type Item = {
       id: string,
       name: string,
       description: string,
