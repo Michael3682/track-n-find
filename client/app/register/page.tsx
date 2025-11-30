@@ -3,10 +3,12 @@
 import { z } from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { signup } from "@/lib/authService";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
    Form,
@@ -16,8 +18,6 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import { signup } from "@/lib/authService";
-import { useAuth } from "@/contexts/auth/AuthContext";
 
 interface SignupFormState {
    studentId: string;
@@ -176,7 +176,7 @@ export default function Register() {
                      )}
                   />
                   <Button
-                     className="mt-10 w-100 bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer disabled:opacity-50"
+                     className="mt-10 w-100 bg-blue-500 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                      type="submit"
                      disabled={isSigningUp}>
                      {isSigningUp ? "Signing up" : "Sign up"}
@@ -197,7 +197,7 @@ export default function Register() {
                   <p className="text-center text-sm text-black/80 leading-none font-medium">
                      Already have an account?
                      <a
-                        className="text-sm text-blue-600 leading-none font-medium cursor-pointer"
+                        className="text-sm text-blue-500 leading-none font-medium cursor-pointer"
                         onClick={() => router.push("/login")}>
                         {" "}
                         Log In

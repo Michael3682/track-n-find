@@ -1,6 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import { NavigationBar } from "@/components/navigationbar";
+import { getUserFoundItems, getUserLostItems } from "@/lib/reportService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -9,36 +12,37 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
-import { useAuth } from "@/contexts/auth/AuthContext";
-import { useEffect, useState } from "react";
-import { getUserFoundItems, getUserLostItems } from "@/lib/reportService";
 
 type Item = {
-   id: string,
-   name: string,
-   attachments: string[]
-}
+   id: string;
+   name: string;
+   attachments: string[];
+};
 
 export default function Profile() {
-   const [items, setItems] = useState<{lostItems: Item[], foundItems: Item[]}>({
+   const [items, setItems] = useState<{
+      lostItems: Item[];
+      foundItems: Item[];
+   }>({
       lostItems: [],
-      foundItems: []
-   })
-   const { user } = useAuth()
+      foundItems: [],
+   });
+   const { user } = useAuth();
 
    useEffect(() => {
-      const getUsers = async () => await Promise.all([getUserFoundItems(), getUserLostItems()])
-      const fetchUsers = async () =>{
-         const [[found], [lost]] = await getUsers()
+      const getUsers = async () =>
+         await Promise.all([getUserFoundItems(), getUserLostItems()]);
+      const fetchUsers = async () => {
+         const [[found], [lost]] = await getUsers();
 
-         setItems({ foundItems: found.foundItems, lostItems: lost.lostItems })
-      } 
+         setItems({ foundItems: found.foundItems, lostItems: lost.lostItems });
+      };
 
-     fetchUsers()
-   }, [])
+      fetchUsers();
+   }, []);
 
    return (
-      <div className="w-auto h-max bg-[rgb(245,245,245)]">
+      <div className="w-auto h-max">
          <NavigationBar />
          <div className="w-full h-100 relative flex items-center mb-5">
             <img
@@ -59,39 +63,43 @@ export default function Profile() {
                </h1>
             </div>
          </div>
-         <div className="w-full flex justify-center">
+         <div className="w-full flex justify-center border-t pt-10">
             <Tabs defaultValue="foundItems">
                <div className="px-10 w-full flex justify-center">
-                  <TabsList className="w-100 h-auto bg-transparent border shadow-inner p-1">
+                  <TabsList className="w-100 h-auto bg-primary-foreground border shadow-inner p-1">
                      <TabsTrigger
-                        className="cursor-pointer p-2"
+                        className="cursor-pointer p-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
                         value="foundItems">
                         Found Items
                      </TabsTrigger>
                      <TabsTrigger
-                        className="cursor-pointer p-2"
+                        className="cursor-pointer p-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
                         value="lostItems">
                         Lost Items
                      </TabsTrigger>
                   </TabsList>
                </div>
-               <div className="mx-50 my-10 mt-10 bg-transparent p-5 rounded-md">
+               <div className="my-10 mt-10 bg-transparent p-5 rounded-md">
                   <TabsContent value="foundItems">
                      <div className="flex flex-wrap gap-5">
                         {items.foundItems.map((item) => (
                            <Card
-                              key={item?.id}
-                              className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
-                              <CardHeader className="bg-primary-foreground p-5">
-                                 <CardTitle className="flex justify-center">
+                              key={item.id}
+                              className="w-70 p-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
+                              <CardHeader className="bg-primary-foreground p-5 shadow-inner border-b relative">
+                                 <CardTitle>
                                     <img
-                                       className="invert aspect-video h-50"
-                                       src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
+                                       className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50 z-10"
+                                       src={
+                                          item?.attachments?.length > 0
+                                             ? item.attachments[0]
+                                             : undefined
+                                       }
                                        alt="image"
                                     />
                                  </CardTitle>
                               </CardHeader>
-                              <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
+                              <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)] flex flex-col">
                                  {item.name}
                               </CardDescription>
                            </Card>
@@ -103,19 +111,23 @@ export default function Profile() {
                      value="lostItems">
                      {items.lostItems.map((item) => (
                         <Card
-                           key={item?.id}
-                           className="w-70 grow pt-0 overflow-hidden border border-black/30 rounded-sm shadow-sm hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
-                           <CardHeader className="bg-primary-foreground p-5">
-                              <CardTitle className="flex justify-center">
+                           key={item.id}
+                           className="w-70 p-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
+                           <CardHeader className="bg-primary-foreground p-5 shadow-inner border-b relative">
+                              <CardTitle>
                                  <img
-                                    className="invert aspect-video h-50"
-                                    src={item?.attachments?.length > 0 ? item.attachments[0] : undefined}
+                                    className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50 z-10"
+                                    src={
+                                       item?.attachments?.length > 0
+                                          ? item.attachments[0]
+                                          : undefined
+                                    }
                                     alt="image"
                                  />
                               </CardTitle>
                            </CardHeader>
-                           <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)]">
-                              {item?.name}
+                           <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)] flex flex-col">
+                              {item.name}
                            </CardDescription>
                         </Card>
                      ))}

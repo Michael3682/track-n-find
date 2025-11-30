@@ -13,7 +13,7 @@ import { getSocket } from "@/lib/socket";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import { getItem } from "@/lib/reportService";
-import { Item } from "@/components/card-sheet";
+import { Item } from "@/components/cards-sheet";
 
 export default function Messages() {
   const [item, setItem] = useState<Item>();
