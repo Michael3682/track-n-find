@@ -1,17 +1,19 @@
 "use client";
 
-import { file, z } from "zod";
+import { z } from "zod";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDownIcon } from "lucide-react";
+import { uploadItemImage } from "@/lib/bucket";
 import { Button } from "@/components/ui/button";
 import { reportLost } from "@/lib/reportService";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import { NavigationBar } from "@/components/navigationbar";
 import {
    Form,
@@ -26,8 +28,6 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import { uploadItemImage } from "@/lib/bucket";
-import { useAuth } from "@/contexts/auth/AuthContext";
 
 interface ReportLostItemState {
    itemName: string;
@@ -319,7 +319,7 @@ export default function ReportLost() {
                   />
                </div>
                <Button
-                  className="w-full mt-10 bg-blue-600 hover:bg-blue-700 cursor-pointer disabled:opacity-50"
+                  className="w-full mt-10 bg-blue-500 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                   type="submit"
                   disabled={isSubmitting}>
                   {isSubmitting ? "Submitting Report" : "Submit Report"}

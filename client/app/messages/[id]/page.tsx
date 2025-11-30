@@ -84,7 +84,7 @@ export default function Messages() {
                   <div className="flex items-center px-3 p-2 gap-3 border-t bg-white">
                      <Tooltip>
                         <TooltipTrigger asChild>
-                           <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
+                           <div className="p-2 rounded-full bg-blue-500 cursor-pointer">
                               <Image color="rgb(245,245,245)" size={18} />
                            </div>
                         </TooltipTrigger>
@@ -98,7 +98,7 @@ export default function Messages() {
                      />
                      <Tooltip>
                         <TooltipTrigger asChild>
-                           <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
+                           <div className="p-2 rounded-full bg-blue-500 cursor-pointer">
                               <SendHorizontal
                                  color="rgb(245,245,245)"
                                  size={18}
@@ -106,7 +106,7 @@ export default function Messages() {
                            </div>
                         </TooltipTrigger>
                         <TooltipContent>
-                           <p>Attach a file</p>
+                           <p>Submit</p>
                         </TooltipContent>
                      </Tooltip>
                   </div>

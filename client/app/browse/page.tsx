@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CardSheet } from "@/components/card-sheet";
+import { Label } from "@/components/ui/label";
+import { CardsSheet } from "@/components/cards-sheet";
 import { AppSidebar } from "@/components/app-sidebar";
 import { NavigationBar } from "@/components/navigationbar";
 import {
@@ -70,11 +71,18 @@ function SidebarGroupContent({
             setActiveStatus={setActiveStatus}
          />
          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b border-t px-4">
-               <SidebarTrigger className="-ml-1" />
-               <p>{open ? "Hide Filters" : "Show Filters"}</p>
+            <header className="flex h-16 items-center border-b border-t px-4">
+               <Label htmlFor="filter" className="flex items-center gap-2 p-2 cursor-pointer">
+                  <SidebarTrigger
+                     id="filter"
+                     className="-ml-1 cursor-pointer"
+                  />
+                  <p>
+                     {open ? "Hide Filters" : "Show Filters"}
+                  </p>
+               </Label>
             </header>
-            <CardSheet
+            <CardsSheet
                searchItem={searchItem}
                activeSortBy={activeSortBy}
                activeCategory={activeCategory}

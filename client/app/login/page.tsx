@@ -2,11 +2,11 @@
 
 import { z } from "zod";
 import { useState } from "react";
-import { Eye, EyeClosed } from "lucide-react";
 import { login } from "@/lib/authService";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/auth/AuthContext";
@@ -152,7 +152,7 @@ export default function Login() {
                      )}
                   />
                   <Button
-                     className="mt-10 w-100 bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer disabled:opacity-50"
+                     className="mt-10 w-100 bg-blue-500 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                      type="submit"
                      disabled={isLoggingIn}>
                      {isLoggingIn ? "Logging in" : "Log in"}
@@ -173,7 +173,7 @@ export default function Login() {
                   <p className="text-center text-sm text-black/80 leading-none font-medium">
                      Don't have an account?
                      <a
-                        className="text-sm text-blue-600 leading-none font-medium cursor-pointer"
+                        className="text-sm text-blue-500 leading-none font-medium cursor-pointer"
                         onClick={() => router.push("/register")}>
                         {" "}
                         Sign Up

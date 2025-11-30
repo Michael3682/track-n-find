@@ -40,7 +40,7 @@ export default function LandingPage() {
                   Lost something? Or found something? Let the community know!
                </h1>
                <Button
-                  className="lg:mt-5 lg:px-9 lg:py-6 lg:text-lg rounded-md bg-blue-600 cursor-pointer hover:bg-blue-700 md:text-md md:px-8 md:py-5"
+                  className="lg:mt-5 lg:px-9 lg:py-6 lg:text-lg rounded-md bg-blue-500 cursor-pointer hover:bg-blue-600 md:text-md md:px-8 md:py-5"
                   onClick={() => router.push("/login")}>
                   Get Started
                </Button>
