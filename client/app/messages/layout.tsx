@@ -5,6 +5,9 @@ import { SearchForm } from "@/components/search-form";
 import { NavigationBar } from "@/components/navigationbar";
 import { Card, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getConversations } from "@/lib/chatService";
+import { Conversation } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 
 export default function Messages({
@@ -13,21 +16,15 @@ export default function Messages({
   children: React.ReactNode;
 }>) {
   const [searchItem, setSearchItem] = useState("");
-  const [conversations, setConversations] = useState([])
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const router = useRouter()
 
-  const items = Array.from({ length: 15 }, (_, i) => ({
-    id: i + 1,
-    name: `User ${i + 1}`,
-    description:
-      "A black leather business bag was turned in to our office earlier today. The bag features a structured rectangular design with silver-toned hardware and a reinforced handle.",
-  }));
-
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchItem.toLowerCase())
+  const filteredConversations = conversations.filter((conversation) =>
+    conversation.item.name.toLowerCase().includes(searchItem.toLowerCase())
   );
 
   useEffect(() => {
-    
+    getConversations().then(([data]) => setConversations(data.conversations))
   }, [])
 
   return (
@@ -46,24 +43,28 @@ export default function Messages({
             />
           </header>
           <div className="w-full h-screen overflow-y-auto">
-            {filteredItems.map((item) => (
+            {filteredConversations.map((conversation) => (
               <Card
-                key={item.id}
+                key={conversation.id}
                 className="w-full h-max bg-transparent overflow-hidden rounded-md flex flex-row gap-2 px-3 py-3 shadow-none border-none hover:bg-black/3 cursor-pointer"
+                onClick={() => router.push(`/messages/${conversation.id}`)}
               >
                 <Avatar className="w-auto h-13">
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
+                    src={conversation.item.attachments[0]}
                     alt="@shadcn"
                   />
                   <AvatarFallback>img</AvatarFallback>
                 </Avatar>
                 <CardDescription className="w-full pr-2">
-                  <p className="text-base font-medium text-[rgb(20,20,20)] overflow-hidden">
-                    {item.name}
+                  <p className="text-base font-medium text-[rgb(20,20,20)] overflow-hidden flex items-center gap-2">
+                    {conversation.item.name}
+                    <span className="text-xs font-semibold text-gray-400">
+                      {conversation.isMine ? "🏷️ My Item": "💬 Claiming Item"}
+                    </span>
                   </p>
                   <div className="w-55 text-sm text-ellipsis whitespace-nowrap overflow-hidden">
-                    {item.description}
+                    {conversation.name}
                   </div>
                 </CardDescription>
               </Card>

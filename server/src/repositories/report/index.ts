@@ -13,7 +13,7 @@ class ReportRepository {
    }
 
    async findItems() {
-      return prisma.item.findMany()
+      return prisma.item.findMany({ include: { author: { omit: { password: true }} }})
    }
 
    async findItemById(id: string) {

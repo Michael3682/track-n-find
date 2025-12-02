@@ -88,7 +88,7 @@ export const getItem = async (id: string) => {
          credentials: "include"
       })
       const data = await res.json()
-
+      console.log(data)
       return [data, null]
    } catch (err) {
        console.log(err);
