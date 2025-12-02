@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Image, SendHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,14 +11,13 @@ import {
 } from "@/components/ui/tooltip";
 import { getSocket } from "@/lib/socket";
 import { useParams } from "next/navigation";
-import { useAuth } from "@/contexts/auth/AuthContext";
-import { getItem } from "@/lib/reportService";
-import { Item } from "@/components/cards-sheet";
+import { Conversation } from "@/types/types";
+import { getConversation } from "@/lib/chatService";
 
 export default function Messages() {
-  const [item, setItem] = useState<Item>();
-  const { id: itemId } = useParams();
-  const { user } = useAuth();
+  const [convo, setConvo] = useState<Conversation>();
+  const { id: conversationId } = useParams();
+
   const socket = getSocket();
 
   const send = () => {
@@ -30,45 +29,28 @@ export default function Messages() {
   };
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected:", socket.id);
-    });
-
-    socket.on("new_message", (msg) => {
-      // setMessages((prev) => [...prev, msg.text]);
-      console.log(msg);
-    });
-
-    return () => {
-      socket.off("new_message");
-    };
+    getConversation(String(conversationId)).then(([data]) =>
+      setConvo(data.conversation)
+    );
   }, []);
 
-  useEffect(() => {
-   if(!user?.id || !item?.associated_person) return
-
-    socket.emit("new_conversation", {
-      itemId,
-      hostId: item?.associated_person,
-      senderId: user?.id,
-    });
-    console.log("emitted")
-  }, [user, item]);
-
-  useEffect(() => {
-    getItem(String(itemId)).then(([data]) => setItem(data.item));
-  }, []);
-
-  
   return (
     <div className="w-full h-full p-3">
       <div className="w-full h-full rounded-md border border-black/20 shadow-md shadow-black/50 overflow-hidden bg-[rgb(245,245,245)] relative flex flex-col">
         <div className="w-full p-2 px-3 flex items-center gap-2 bg-white border-b border-b-black/10 sticky">
           <Avatar className="w-max h-8">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage src={convo?.item?.attachments[0]} alt="@shadcn" />
             <AvatarFallback>img</AvatarFallback>
           </Avatar>
-          <small className="text-sm leading-none font-medium">User Name</small>
+          <small className="text-sm leading-none font-medium flex item-center gap-2">
+            {convo?.item.name}
+            <span className="text-xs font-semibold text-gray-400 flex gap-2">
+              {convo?.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
+              <span>-</span>
+              {convo?.name}
+            </span>
+
+          </small>
         </div>
         <div className="w-full h-full bg-white"></div>
         <div className="flex items-center px-3 p-2 gap-3 border-t bg-white">

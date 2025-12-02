@@ -27,19 +27,11 @@ import {
    EmptyMedia,
    EmptyTitle,
 } from "@/components/ui/empty";
+import { Item } from "@/types/types";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { findOrCreateConversation } from "@/lib/chatService";
+import { useRouter } from "next/navigation";
 
-export type Item = {
-   id: string;
-   name: string;
-   description: string;
-   category: string;
-   date_time: string;
-   location: string;
-   attachments: string[];
-   status: "CLAIMED" | "UNCLAIMED";
-   type: "FOUND" | "LOST";
-   associated_person: string;
-};
 
 export function CardsSheet({
    searchItem,
@@ -53,6 +45,8 @@ export function CardsSheet({
    activeStatus: string;
 }) {
    const [items, setItems] = useState<Item[]>([]);
+   const { user } = useAuth()
+   const router = useRouter()
 
    const filteredItems = items
       .filter((item) =>
@@ -98,10 +92,17 @@ export function CardsSheet({
       });
    };
 
+   const handleMessageUser = async (item: Item) => {
+      const [data] = await findOrCreateConversation({ itemId: item.id, hostId: item.author.id })
+
+      router.push(`/messages/${data.conversation.id}`)
+   }
+
    useEffect(() => {
       getItems().then(([data]) => setItems(data.items));
    }, []);
 
+   console.log(items)
    return (
       <div className="flex flex-wrap justify-start gap-10 p-10">
          {filteredItems.length > 0 ? (
@@ -155,7 +156,7 @@ export function CardsSheet({
                               <p className="text-xs font-light text-muted-foreground">
                                  Reported By:{" "}
                                  <span className="font-normal">
-                                    {item.associated_person}
+                                    {item.author.name}
                                  </span>
                               </p>
                            </SheetTitle>
@@ -192,9 +193,16 @@ export function CardsSheet({
                            className="cursor-pointer"
                            type="submit"
                            asChild>
-                           <Link href={`messages/${item.id}`}>
-                              Message User
-                           </Link>
+                              {
+                                 item.associated_person == user?.id ? 
+                                    <Link href={`update/${item.id}`}>
+                                       Manage Item
+                                    </Link>
+                                    :
+                                    <p onClick={() => handleMessageUser(item)}>
+                                       Message User
+                                    </p>
+                              }
                         </Button>
                      </SheetFooter>
                   </SheetContent>
