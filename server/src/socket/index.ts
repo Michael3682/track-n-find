@@ -2,6 +2,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { Express } from "express";
 import registerSocketEvents from "./events";
+import ActiveSocketRepository from "@/repositories/active-socket";
 
 let io: Server;
 
@@ -17,11 +18,12 @@ export const initializeSocket = (app: Express) => {
     io.on("connection", (socket) => {
         console.log("Client connected:", socket.id);
 
-        // register all events
         registerSocketEvents(io, socket);
 
-        socket.on("disconnect", () => {
+        socket.on("disconnect", async () => {
+            await ActiveSocketRepository.disconnect(socket.id)
             console.log("Client disconnected:", socket.id);
+
         });
     });
 

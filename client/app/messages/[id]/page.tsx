@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Image, SendHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,28 +11,61 @@ import {
 } from "@/components/ui/tooltip";
 import { getSocket } from "@/lib/socket";
 import { useParams } from "next/navigation";
-import { Conversation } from "@/types/types";
+import { Conversation, Message } from "@/types/types";
 import { getConversation } from "@/lib/chatService";
+import { useAuth } from "@/contexts/auth/AuthContext";
 
 export default function Messages() {
-  const [convo, setConvo] = useState<Conversation>();
-  const { id: conversationId } = useParams();
+  const [convo, setConvo] = useState<Conversation>()
+  const [messages, setMessages] = useState<Message[]>([])
+  const [chatDetails, setChatDetails] = useState({
+    text: "",
+    attachment: [],
+    previewURL: []
+  })
+  const { id: conversationId } = useParams()
+  const { socket, user } = useAuth()
 
-  const socket = getSocket();
+  console.log(convo)
+  const send = (e: FormEvent) => {
+    e.preventDefault()
 
-  const send = () => {
-    console.log("sending");
-    socket.emit("send_message", {
-      roomId: "global",
-      text: "Hello World",
-    });
-  };
+    socket?.emit("send_message", {
+      text: chatDetails.text,
+      conversationId,
+      recepientId: convo?.isMine ? convo?.senderId : convo?.hostId,
+      senderId: convo?.isMine ? convo?.hostId : convo?.senderId,
+    })
+
+    setChatDetails(prev => ({...prev, text: "", attachment: [], previewURL: []}))
+  }
 
   useEffect(() => {
     getConversation(String(conversationId)).then(([data]) =>
       setConvo(data.conversation)
     );
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    if(!socket) return
+
+    socket?.on("recieve_message", payload => {
+      console.log(payload)
+      setMessages(prev => ([...prev, payload]))
+    })
+
+    return () => {
+      socket?.off("recieve_message")
+    }
+  }, [socket])
+
+  console.log(messages)
+
+  useEffect(() => {
+    if(!convo) return
+
+    setMessages(convo.messages)
+  }, [convo?.messages])
 
   return (
     <div className="w-full h-full p-3">
@@ -52,8 +85,14 @@ export default function Messages() {
 
           </small>
         </div>
-        <div className="w-full h-full bg-white"></div>
-        <div className="flex items-center px-3 p-2 gap-3 border-t bg-white">
+        <div className="w-full h-full bg-white flex flex-col gap-0.5 p-2">
+          {messages?.map((message) => (
+            <div key={message.id} className={`w-fit px-3 py-1.5 rounded-md ${user?.id === message.authorId ? 'self-end bg-blue-200' : 'bg-gray-200'}`}>
+              {message.content}
+            </div>
+          ))}
+        </div>
+        <form className="flex items-center px-3 p-2 gap-3 border-t bg-white" onSubmit={(e) => send(e)}>
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
@@ -67,18 +106,22 @@ export default function Messages() {
           <Input
             className="border border-black/30 rounded-full focus-visible:ring-0"
             placeholder="Type Here..."
+            value={chatDetails.text}
+            onChange={e => setChatDetails(prev => ({...prev, text: e.target.value}))}
           />
-          <Tooltip>
-            <TooltipTrigger asChild onClick={() => send()}>
-              <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
-                <SendHorizontal color="rgb(245,245,245)" size={18} />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Send Message</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+          <button type="submit">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
+                  <SendHorizontal color="rgb(245,245,245)" size={18} />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Send Message</p>
+              </TooltipContent>
+            </Tooltip>
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -66,8 +66,7 @@ class ChatRepository {
       include: {
         item: true,
         messages: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
+          orderBy: { createdAt: "asc" },
         },
         host: {
           select: {

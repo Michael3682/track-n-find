@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getConversations } from "@/lib/chatService";
 import { Conversation } from "@/types/types";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth/AuthContext";
 
 
 export default function Messages({
@@ -18,6 +19,7 @@ export default function Messages({
   const [searchItem, setSearchItem] = useState("");
   const [conversations, setConversations] = useState<Conversation[]>([])
   const router = useRouter()
+  const { socket } = useAuth()
 
   const filteredConversations = conversations.filter((conversation) =>
     conversation.item.name.toLowerCase().includes(searchItem.toLowerCase())
@@ -26,6 +28,16 @@ export default function Messages({
   useEffect(() => {
     getConversations().then(([data]) => setConversations(data.conversations))
   }, [])
+
+  useEffect(() => {
+    if(!socket) return
+    
+    socket?.on("recieve_message", payload => console.log(payload))
+
+    return () => {
+      socket?.off("recieve_message")
+    }
+  }, [socket])
 
   return (
     <div className="w-auto h-screen relative overflow-hidden">

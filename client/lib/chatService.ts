@@ -24,7 +24,7 @@ export const getConversation = async (conversationid: string) => {
             credentials: 'include'
         })
         const data = await res.json()
-
+        
         return [data, null]
     } catch (err) {
         console.log(err)
@@ -39,7 +39,7 @@ export const getConversations = async () => {
             credentials: 'include'
         })
         const data = await res.json()
-
+        
         return [data, null]
     } catch (err) {
         console.log(err)

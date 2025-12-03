@@ -19,6 +19,13 @@ export type Item = {
   author: User;
 };
 
+export type Message = {
+  id: string;
+  content: string;
+  conversationId: string;
+  authorId: string;
+}
+
 export type Conversation = {
   id: string;
   name: string;
@@ -31,4 +38,5 @@ export type Conversation = {
   item: Item;
   host: User;
   sender: User;
+  messages: Message[]
 };
