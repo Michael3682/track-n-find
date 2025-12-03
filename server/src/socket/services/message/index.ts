@@ -10,13 +10,14 @@ class MessageService {
         const { text, conversationId, recepientId, senderId } = data
 
         const message = await ChatRepository.sendMessage(conversationId, senderId, text)
-
         const recepients = await ActiveSocketRepository.isOnline(recepientId, senderId)
-
-        console.log(recepients)
+        
         if(recepients) {
-            recepients.forEach(recepient => {
+            recepients.forEach(async recepient => {
+                const conversation = await ChatRepository.getUserConversations(recepient.userId)
+
                 io.to(recepient.socketId).emit('recieve_message', message)
+                io.to(recepient.socketId).emit('new_message', conversation)
             })
         }
     }

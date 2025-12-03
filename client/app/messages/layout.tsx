@@ -31,11 +31,13 @@ export default function Messages({
 
   useEffect(() => {
     if(!socket) return
-    
-    socket?.on("recieve_message", payload => console.log(payload))
+
+    socket?.on("new_message", payload => {
+      setConversations(payload)
+    })
 
     return () => {
-      socket?.off("recieve_message")
+      socket?.off("new_message")
     }
   }, [socket])
 

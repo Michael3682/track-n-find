@@ -94,6 +94,11 @@ class ChatRepository {
 
   // 📨 Send a new message
   async sendMessage(conversationId: string, authorId: string, content: string) {
+    await prisma.conversation.update({
+      where: { id: conversationId },
+      data: { lastMessageAt: new Date() }
+    })
+
     return prisma.message.create({
       data: {
         content,
