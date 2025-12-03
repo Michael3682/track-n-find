@@ -1,6 +1,7 @@
 "use client";
 
 import { getAuthUser } from "@/lib/authService";
+import { getSocket } from "@/lib/socket";
 import {
   createContext,
   useContext,
@@ -8,6 +9,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { Socket } from "socket.io-client";
 
 type User = {
   id: string;
@@ -20,6 +22,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+  socket: ReturnType<typeof getSocket> | null;
   refetch: () => Promise<void>
 }
 
@@ -27,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   error: null,
+  socket: null,
   refetch: async () => {}
 });
 
@@ -38,6 +42,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [socket, setSocket] = useState<ReturnType<typeof getSocket> | null>(null);
 
   const refetch = async () => {
     const [data, err] = await getAuthUser();
@@ -50,6 +55,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setError(null);
     }
   };
+
+  useEffect(() => {
+    if(!user) return
+
+    const socket = getSocket()
+
+    socket.emit("register", {
+      userId: user.id
+    })
+
+    setSocket(socket)
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [user])
 
   useEffect(() => {
     let isMounted = true;
@@ -77,7 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, error, refetch }}>
+    <AuthContext.Provider value={{ user, isLoading, error, socket, refetch }}>
       {children}
     </AuthContext.Provider>
   );

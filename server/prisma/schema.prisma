@@ -37,6 +37,7 @@ model User {
   messages          Message[]
   conversationHost  Conversation[] @relation("Conversation_Host")
   conversationSender Conversation[] @relation("Conversation_Sender")
+  activeSockets     ActiveSocket[]
 }
 
 model Item {
@@ -75,9 +76,20 @@ model Conversation {
   host            User @relation("Conversation_Host", fields: [hostId], references: [id])
   sender          User @relation("Conversation_Sender", fields: [senderId], references: [id])
   lastMessage     String?
-  lastMessageAt   DateTime?
+  lastMessageAt   DateTime @default(now())
   messages        Message[]
   createdAt       DateTime @default(now())
 
   @@unique([itemId, hostId, senderId])
+}
+
+model ActiveSocket {
+  id        String   @id @default(uuid())
+  socketId  String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  // For detecting stale or disconnected connections
+  createdAt DateTime @default(now())
+  lastSeen  DateTime @default(now())
 }
