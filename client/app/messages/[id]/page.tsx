@@ -36,6 +36,7 @@ export default function Messages() {
       recepientId: convo?.isMine ? convo?.senderId : convo?.hostId,
       senderId: convo?.isMine ? convo?.hostId : convo?.senderId,
     })
+    console.log('sent')
 
     setChatDetails(prev => ({...prev, text: "", attachment: [], previewURL: []}))
   }
@@ -50,8 +51,9 @@ export default function Messages() {
     if(!socket) return
 
     socket?.on("recieve_message", payload => {
-      console.log(payload)
-      setMessages(prev => ([...prev, payload]))
+      if(payload.conversationId === conversationId) {
+        setMessages(prev => ([...prev, payload]))
+      }
     })
 
     return () => {
