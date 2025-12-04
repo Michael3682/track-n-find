@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { signupSchema, loginSchema } from '@/lib/validations/auth';
 import AuthService from '@/services/auth'
+import message from '@/socket/services/message';
 
 
 class AuthController {
@@ -215,6 +216,100 @@ class AuthController {
                 user: localUser 
             })
 
+        } catch (err: any) {
+            console.log(err)
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+                user: null
+            })
+        }
+    }
+
+    async signupWithEmail(req: Request, res: Response) {
+        try {
+            const { email, id, name } = req.body
+
+            const existingUser = await AuthService.getUserById(id)
+    
+            let user
+            if(existingUser) {
+                user = await AuthService.bindEmailToUser(id, email)
+            } else {
+                user = await AuthService.createPasswordlessUser(id, name, email)
+            }
+
+            const JWT_SECRET = process.env.JWT_SECRET;
+    
+            if (!JWT_SECRET) {
+                throw new Error("JWT_SECRET is not set in environment variables");
+            }
+
+            const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' })
+    
+            const localUser = JSON.parse(JSON.stringify(user))
+            delete localUser.password
+    
+            res.cookie('auth_token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            })
+            
+            res.status(201).json({ 
+                success: true,
+                message: 'User created', 
+                user: localUser 
+            })
+    
+        } catch (err: any) {
+            console.log(err)
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+                user: null
+            })
+        }
+    }
+
+    async loginWithEmail(req: Request, res: Response) {
+        try {
+            const { email } = req.body
+
+            const user = await AuthService.getUserByEmail(email)
+
+            if(!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                    user: null
+                })
+            }
+            
+            const JWT_SECRET = process.env.JWT_SECRET;
+    
+            if (!JWT_SECRET) {
+                throw new Error("JWT_SECRET is not set in environment variables");
+            }
+
+            const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' })
+    
+            const localUser = JSON.parse(JSON.stringify(user))
+            delete localUser.password
+    
+            res.cookie('auth_token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            })
+            
+            res.status(201).json({ 
+                success: true,
+                message: 'User logged in', 
+                user: localUser 
+            })
         } catch (err: any) {
             console.log(err)
             res.status(err.status || 500).json({
