@@ -1,3 +1,6 @@
+import { signOut, signInWithPopup } from 'firebase/auth'
+import { auth, google } from './firebase'
+
 const API_URL = "http://localhost:9000/api"
 
 export const getAuthUser =  async () => {
@@ -49,6 +52,46 @@ export const login = async ({ studentId, password }: { studentId: string, passwo
     }
 }
 
+export const signInWithGoogle = async () => {
+    try {
+        const res = await signInWithPopup(auth, google)
+
+        const email = res.user.email
+
+        const httpRes = await fetch(`${API_URL}/auth/v1/login/email`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        })
+        const data = await httpRes.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
+}
+
+export const saveId = async (id: string, email: string, name: string) => {
+    try {
+        const res = await fetch(`${API_URL}/auth/v1/signup/email`, {
+            method: "POST",
+            credentials: 'include',
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ id, email, name })
+        })
+        const data = await res.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
+    
+
+}
+
 export const logout = async () => {
     try {
         const res = await fetch(`${API_URL}/auth/v1/logout`, {
@@ -56,6 +99,10 @@ export const logout = async () => {
             credentials: 'include'
         })
         const data = await res.json()
+
+        if(data.success) {
+            signOut(auth)
+        }
 
         return [data, null]
     } catch (err) {
