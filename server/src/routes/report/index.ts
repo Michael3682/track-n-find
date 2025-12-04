@@ -15,5 +15,6 @@ router.get("/lost/v1/", authenticate, ReportController.getUserLostItems)
 // both
 router.get("/v1/items", authenticate, ReportController.getItems)
 router.get("/v1/items/:id", authenticate, ReportController.getItem)
+router.patch("/v1/items/:id", authenticate, ReportController.updateItem)
 
 export default router;

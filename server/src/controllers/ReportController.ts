@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import ReportService from "@/services/report";
+import AuthService from "@/services/auth";
 import { v4 as uuidV4 } from "uuid";
-import { foundItemSchema, lostItemSchema } from "@/lib/validations/report";
+import { itemSchema, updateItemSchema } from "@/lib/validations/report";
 import { JwtPayload } from "jsonwebtoken";
 import { it } from "node:test";
 
@@ -223,6 +224,70 @@ import { it } from "node:test";
  *         description: Internal server error
  */
 
+/**
+ * @swagger
+ * /report/v1/items/{id}:
+ *   patch:
+ *     summary: Update an item
+ *     description: Allows the owner of the item or an admin to update a lost or found item
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the item to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               itemName:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               time:
+ *                 type: string
+ *                 format: time
+ *               location:
+ *                 type: string
+ *               attachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 description: Current status of the item (e.g., PENDING, CLAIMED, RESOLVED)
+ *     responses:
+ *       200:
+ *         description: Item successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 item:
+ *                   $ref: '#/components/schemas/Item'
+ *       400:
+ *         description: Validation error
+ *       403:
+ *         description: User does not have permission to update this item
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
+
 class ReportController {
 
   async addFoundItem(req: Request, res: Response) {
@@ -230,7 +295,7 @@ class ReportController {
       const {
         value: { itemName, date, time, location, attachments, description, itemId },
         error,
-      } = foundItemSchema.validate(req.body);
+      } = itemSchema.validate(req.body);
       const userId = (req.user as JwtPayload).id;
 
       if (error) {
@@ -270,7 +335,7 @@ class ReportController {
       const {
         value: { itemName, date, time, location, attachments, description },
         error,
-      } = lostItemSchema.validate(req.body);
+      } = itemSchema.validate(req.body);
       const userId = (req.user as JwtPayload).id;
 
       if (error) {
@@ -372,6 +437,65 @@ class ReportController {
         lostItems
       })
 
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async updateItem(req: Request, res: Response) {
+    try {
+      const {
+        value: { itemName, date, time, location, attachments, description, status },
+        error,
+      } = updateItemSchema.validate(req.body)
+      const userId = (req.user as JwtPayload).id
+      const { id } = req.params
+
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.details[0].message,
+        })
+      }
+
+      const item = await ReportService.getItem(id)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      const isoDate = date?.split("T")[0];
+      const dateTime = new Date(`${isoDate}T${time}:00`);
+
+      const updatedItem = await ReportService.updateItem(id, {
+        name: itemName,
+        date_time: dateTime,
+        location,
+        attachments,
+        description,
+        status
+      });
+
+      return res.json({
+        success: true,
+        item: updatedItem,
+      });
     } catch (err: any) {
       console.log(err);
       res.status(err.status || 500).json({
