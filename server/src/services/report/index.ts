@@ -1,4 +1,5 @@
 import ReportRepository from "@/repositories/report";
+import { Item } from "@/types/report";
 import { ItemStatus, ItemType } from "@prisma/client";
 import { any } from "joi";
 
@@ -67,6 +68,10 @@ class ReportService {
 
   async getItem(id: string) {
     return ReportRepository.findItemById(id)
+  }
+
+  async updateItem(id: string, data: Partial<Item>) {
+    return ReportRepository.update(id, data)
   }
 }
 

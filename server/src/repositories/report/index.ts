@@ -19,6 +19,13 @@ class ReportRepository {
    async findItemById(id: string) {
       return prisma.item.findUnique({ where: { id }})
    }
+
+   async update(id: string, data: Partial<Item>) {
+      return prisma.item.update({
+         where: { id },
+         data
+      })
+   }
 }
 
 export default new ReportRepository()
