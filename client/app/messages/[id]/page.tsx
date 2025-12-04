@@ -1,23 +1,29 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { getSocket } from "@/lib/socket";
+import { useParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { Image, SendHorizontal } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { getConversation } from "@/lib/chatService";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { Conversation, Message } from "@/types/types";
+import { useMessage } from "@/contexts/messages/MessageContext";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { Image, SendHorizontal, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getSocket } from "@/lib/socket";
-import { useParams } from "next/navigation";
-import { Conversation, Message } from "@/types/types";
-import { getConversation } from "@/lib/chatService";
-import { useAuth } from "@/contexts/auth/AuthContext";
 
 export default function Messages() {
+  const isMobile = useIsMobile();
   const [convo, setConvo] = useState<Conversation>()
+  const { showMessage, setShowMessage } = useMessage()
   const [messages, setMessages] = useState<Message[]>([])
+
   const [chatDetails, setChatDetails] = useState({
     text: "",
     attachment: [],
@@ -38,7 +44,7 @@ export default function Messages() {
     })
     console.log('sent')
 
-    setChatDetails(prev => ({...prev, text: "", attachment: [], previewURL: []}))
+    setChatDetails(prev => ({ ...prev, text: "", attachment: [], previewURL: [] }))
   }
 
   useEffect(() => {
@@ -48,10 +54,10 @@ export default function Messages() {
   }, [])
 
   useEffect(() => {
-    if(!socket) return
+    if (!socket) return
 
     socket?.on("recieve_message", payload => {
-      if(payload.conversationId === conversationId) {
+      if (payload.conversationId === conversationId) {
         setMessages(prev => ([...prev, payload]))
       }
     })
@@ -64,17 +70,18 @@ export default function Messages() {
   console.log(messages)
 
   useEffect(() => {
-    if(!convo) return
+    if (!convo) return
 
     setMessages(convo.messages)
   }, [convo?.messages])
 
   return (
-    <div className="w-full h-full p-3">
+    <div className={`w-full h-full p-3 ${isMobile ? (showMessage ? "hidden" : "flex") : "flex"}`}>
       <div className="w-full h-full rounded-md border border-black/20 shadow-md shadow-black/50 overflow-hidden bg-[rgb(245,245,245)] relative flex flex-col">
         <div className="w-full p-2 px-3 flex items-center gap-2 bg-white border-b border-b-black/10 sticky">
+          <ArrowLeft className="block lg:hidden" color="rgb(50,50,50)" onClick={() => setShowMessage(!showMessage)} />
           <Avatar className="w-max h-8">
-            <AvatarImage src={convo?.item?.attachments[0]} alt="@shadcn" />
+            <AvatarImage className="object-cover" src={convo?.item?.attachments[0]} alt="@shadcn" />
             <AvatarFallback>img</AvatarFallback>
           </Avatar>
           <small className="text-sm leading-none font-medium flex item-center gap-2">
@@ -84,10 +91,9 @@ export default function Messages() {
               <span>-</span>
               {convo?.name}
             </span>
-
           </small>
         </div>
-        <div className="w-full h-full bg-white flex flex-col gap-0.5 p-2">
+        <div className="w-full h-full bg-white flex flex-col gap-0.5 px-3 p-2">
           {messages?.map((message) => (
             <div key={message.id} className={`w-fit px-3 py-1.5 rounded-md ${user?.id === message.authorId ? 'self-end bg-blue-200' : 'bg-gray-200'}`}>
               {message.content}
@@ -109,7 +115,7 @@ export default function Messages() {
             className="border border-black/30 rounded-full focus-visible:ring-0"
             placeholder="Type Here..."
             value={chatDetails.text}
-            onChange={e => setChatDetails(prev => ({...prev, text: e.target.value}))}
+            onChange={e => setChatDetails(prev => ({ ...prev, text: e.target.value }))}
           />
           <button type="submit">
             <Tooltip>

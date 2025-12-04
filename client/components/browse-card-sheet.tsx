@@ -102,16 +102,16 @@ export function BrowseCardSheet({
       getItems().then(([data]) => setItems(data.items));
    }, []);
    return (
-      <div className="flex flex-wrap justify-center lg:justify-start gap-3 lg:gap-10 p-8 lg:p-10">
+      <div className="flex flex-wrap justify-center lg:justify-start gap-3 p-8 lg:p-10">
          {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
                <Sheet key={item.id}>
                   <SheetTrigger className="cursor-pointer p-0" asChild>
-                     <Card className="w-28 lg:w-70 flex gap-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
-                        <CardHeader className="bg-primary-foreground p-0 lg:p-5 gap-0 lg:shadow-inner lg:border-b relative">
+                     <Card className="w-26 lg:w-50 flex gap-0 bg-transparent overflow-hidden border rounded-sm hover:border-black/25 transition-all duration-100 ease-linear">
+                        <CardHeader className="bg-primary-foreground p-0 gap-0 relative">
                            <CardTitle>
                               <img
-                                 className="aspect-video h-30 lg:h-50 object-cover lg:object-contain object-center lg:object-top lg:drop-shadow-lg lg:drop-shadow-black/50 z-10"
+                                 className="aspect-video h-35 lg:h-50 object-cover object-center z-10"
                                  src={
                                     item?.attachments?.length > 0
                                        ? item.attachments[0]
@@ -120,18 +120,17 @@ export function BrowseCardSheet({
                                  alt="image"
                               />
                               <Badge
-                                 className={`${
-                                    item.status === "CLAIMED"
+                                 className={`${item.status === "CLAIMED"
                                        ? "bg-green-400"
                                        : "bg-red-400"
-                                 } z-20 absolute top-0 right-0 rounded-tl-none rounded-tr-sm rounded-bl-md rounded-br-none`}>
-                                 <small className="text-[8px] lg:text-xs">{item.status}</small>
+                                    } z-20 absolute top-0 right-0 rounded-tl-none rounded-tr-none rounded-bl-md rounded-br-none`}>
+                                 <small className="text-[4px] lg:text-[10px]">{item.status}</small>
                               </Badge>
                            </CardTitle>
                         </CardHeader>
-                        <CardDescription className="p-2 lg:p-5 text-xs font-medium lg:text-lg text-primary flex flex-col">
-                           {item.name}
-                           <small className="text-[8px] lg:text-sm font-light text-muted-foreground">
+                        <CardDescription className="p-2 lg:p-4 text-[10px] font-medium lg:text-base text-primary flex flex-col">
+                           {item.name} 
+                           <small className="text-[8px] lg:text-xs font-light text-muted-foreground">
                               {item.type}
                            </small>
                         </CardDescription>
@@ -148,7 +147,7 @@ export function BrowseCardSheet({
                            }
                            alt="image"
                         />
-                        <div className="space-y-3 lg:space-y-5">
+                        <div className="space-y-7">
                            <SheetTitle className="text-xl lg:text-3xl">
                               {item.name}
                               <p className="text-xs font-light text-muted-foreground">
@@ -158,12 +157,12 @@ export function BrowseCardSheet({
                                  </span>
                               </p>
                            </SheetTitle>
-                           <div className="space-y-5 lg:space-y-7">
+                           <div className="space-y-7">
                               <p className="text-base lg:text-lg text-muted-foreground">
                                  {item.description}
                               </p>
-                              <Separator />
                               <div className="space-y-2">
+                                 <Separator />
                                  <p className="text-xs lg:text-base font-medium text-primary flex justify-between">
                                     Reported on:{" "}
                                     <span className="font-normal">
@@ -191,16 +190,16 @@ export function BrowseCardSheet({
                            className="text-xs lg:text-base py-0 lg:py-5 cursor-pointer"
                            type="submit"
                            asChild>
-                              {
-                                 item.associated_person == user?.id ? 
-                                    <Link href={`update/${item.id}`}>
-                                       Manage Item
-                                    </Link>
-                                    :
-                                    <p onClick={() => handleMessageUser(item)}>
-                                       Message User
-                                    </p>
-                              }
+                           {
+                              item.associated_person == user?.id ?
+                                 <Link href={`update/${item.id}`}>
+                                    Manage Item
+                                 </Link>
+                                 :
+                                 <p onClick={() => handleMessageUser(item)}>
+                                    Message User
+                                 </p>
+                           }
                         </Button>
                      </SheetFooter>
                   </SheetContent>
