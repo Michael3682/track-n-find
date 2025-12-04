@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { CardsSheet } from "@/components/cards-sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { AppSidebar } from "@/components/app-sidebar";
 import { NavigationBar } from "@/components/navigationbar";
+import { BrowseCardSheet } from "@/components/browse-card-sheet";
 import {
    SidebarInset,
    SidebarProvider,
@@ -57,6 +58,7 @@ function SidebarGroupContent({
    setActiveStatus: (q: string) => void;
 }) {
    const { open } = useSidebar();
+   const isMobile = useIsMobile();
 
    return (
       <>
@@ -78,11 +80,11 @@ function SidebarGroupContent({
                      className="-ml-1 cursor-pointer"
                   />
                   <p>
-                     {open ? "Hide Filters" : "Show Filters"}
+                     {isMobile ? (!open ? "Hide Filters" : "Show Filters") : (open ? "Hide Filters" : "Show Filters")}
                   </p>
                </Label>
             </header>
-            <CardsSheet
+            <BrowseCardSheet
                searchItem={searchItem}
                activeSortBy={activeSortBy}
                activeCategory={activeCategory}

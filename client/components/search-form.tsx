@@ -21,12 +21,12 @@ export function SearchForm({
          <SidebarGroup className="py-0">
             <SidebarGroupContent className="relative">
                <Label htmlFor="search" className="sr-only">
-                  Search
+                  Search   
                </Label>
                <SidebarInput
                   id="search"
                   placeholder="Search for items..."
-                  className="pl-8"
+                  className="pl-8 placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                   value={value}
                   onChange={onChange}
                />

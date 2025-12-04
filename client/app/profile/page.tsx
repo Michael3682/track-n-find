@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import { NavigationBar } from "@/components/navigationbar";
 import { getUserFoundItems, getUserLostItems } from "@/lib/reportService";
@@ -42,7 +43,7 @@ export default function Profile() {
    }, []);
 
    return (
-      <div className="w-auto h-max">
+      <div className="w-screen h-max">
          <NavigationBar />
          <div className="w-full h-100 relative flex items-center mb-5">
             <img
@@ -50,73 +51,45 @@ export default function Profile() {
                src="https://imgs.search.brave.com/Beqi5bF2_fwfT7rQMUy6BlKvbb0wS90TCr9OA3Fl1lI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDYyOTc5/ODIuanBn"
                alt="profile background"
             />
-            <div className="w-full flex items-end gap-5 px-50">
-               <Avatar className="content-end w-max h-50 border-5 border-white">
+            <div className="w-full flex items-end gap-3 lg:gap-5 px-8 lg:px-32">
+               <Avatar className="content-end w-max h-30 lg:h-50 border-3 lg:border-5 border-white">
                   <AvatarImage
                      src="https://github.com/shadcn.png"
                      alt="@shadcn"
                   />
                   <AvatarFallback>CN</AvatarFallback>
                </Avatar>
-               <h1 className="text-4xl font-extrabold tracking-tight z-10 mb-10">
+               <h1 className="text-2xl lg:text-4xl font-extrabold text-primary tracking-tight z-10 mb-5 lg:mb-10">
                   {user?.name}
                </h1>
             </div>
          </div>
-         <div className="w-full flex justify-center border-t pt-10">
+         <div className="w-full flex justify-center border-t pt-10 px-8">
             <Tabs defaultValue="foundItems">
-               <div className="px-10 w-full flex justify-center">
-                  <TabsList className="w-100 h-auto bg-primary-foreground border shadow-inner p-1">
+               <div className="w-full flex justify-center">
+                  <TabsList className="w-75 lg:w-100 h-auto bg-primary-foreground border shadow-inner p-1">
                      <TabsTrigger
-                        className="cursor-pointer p-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                        className="text-xs lg:text-base cursor-pointer p-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
                         value="foundItems">
                         Found Items
                      </TabsTrigger>
                      <TabsTrigger
-                        className="cursor-pointer p-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                        className="text-xs lg:text-base cursor-pointer p-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
                         value="lostItems">
                         Lost Items
                      </TabsTrigger>
                   </TabsList>
                </div>
-               <div className="my-10 mt-10 bg-transparent p-5 rounded-md">
-                  <TabsContent value="foundItems">
-                     <div className="flex flex-wrap gap-5">
-                        {items.foundItems.map((item) => (
-                           <Card
-                              key={item.id}
-                              className="w-70 p-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
-                              <CardHeader className="bg-primary-foreground p-5 shadow-inner border-b relative">
-                                 <CardTitle>
-                                    <img
-                                       className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50 z-10"
-                                       src={
-                                          item?.attachments?.length > 0
-                                             ? item.attachments[0]
-                                             : undefined
-                                       }
-                                       alt="image"
-                                    />
-                                 </CardTitle>
-                              </CardHeader>
-                              <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)] flex flex-col">
-                                 {item.name}
-                              </CardDescription>
-                           </Card>
-                        ))}
-                     </div>
-                  </TabsContent>
-                  <TabsContent
-                     className="flex flex-wrap gap-5"
-                     value="lostItems">
-                     {items.lostItems.map((item) => (
+               <div className="my-10 mt-10 bg-transparent px-0 rounded-md flex">
+                  <TabsContent className="flex flex-wrap justify-center gap-5" value="foundItems">
+                     {items.foundItems.map((item) => (
                         <Card
                            key={item.id}
-                           className="w-70 p-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
-                           <CardHeader className="bg-primary-foreground p-5 shadow-inner border-b relative">
+                           className="w-28 lg:w-70 p-0 flex gap-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
+                           <CardHeader className="bg-primary-foreground p-0 lg:p-5 gap-0 lg:shadow-inner lg:border-b relative">
                               <CardTitle>
                                  <img
-                                    className="aspect-video h-50 object-contain object-top drop-shadow-lg drop-shadow-black/50 z-10"
+                                    className="aspect-video h-30 lg:h-50 object-cover lg:object-contain object-center lg:object-top lg:drop-shadow-lg lg:drop-shadow-black/50 z-10"
                                     src={
                                        item?.attachments?.length > 0
                                           ? item.attachments[0]
@@ -126,7 +99,31 @@ export default function Profile() {
                                  />
                               </CardTitle>
                            </CardHeader>
-                           <CardDescription className="p-5 pt-0 text-xl text-[rgb(20,20,20)] flex flex-col">
+                           <CardDescription className="p-3 lg:p-5 text-xs font-medium lg:text-lg text-primary flex flex-col">
+                              {item.name}
+                           </CardDescription>
+                        </Card>
+                     ))}
+                  </TabsContent>
+                  <TabsContent className="flex flex-wrap justify-center gap-5" value="lostItems">
+                     {items.lostItems.map((item) => (
+                        <Card
+                           key={item.id}
+                           className="w-28 lg:w-70 p-0 flex gap-0 bg-transparent overflow-hidden border rounded-sm shadow-none hover:shadow-lg hover:border-transparent transition-all duration-100 ease-linear">
+                           <CardHeader className="bg-primary-foreground p-0 lg:p-5 gap-0 lg:shadow-inner lg:border-b relative">
+                              <CardTitle>
+                                 <img
+                                    className="aspect-video h-30 lg:h-50 object-cover lg:object-contain object-center lg:object-top lg:drop-shadow-lg lg:drop-shadow-black/50 z-10"
+                                    src={
+                                       item?.attachments?.length > 0
+                                          ? item.attachments[0]
+                                          : undefined
+                                    }
+                                    alt="image"
+                                 />
+                              </CardTitle>
+                           </CardHeader>
+                           <CardDescription className="p-3 lg:p-5 text-xs font-medium lg:text-lg text-primary flex flex-col">
                               {item.name}
                            </CardDescription>
                         </Card>

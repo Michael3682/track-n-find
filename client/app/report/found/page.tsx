@@ -133,16 +133,16 @@ export default function ReportLost() {
       console.log(data);
    };
    return (
-      <div className="w-screen h-screen flex justify-center bg-[rgb(245,245,245)] overflow-x-hidden">
-         <NavigationBar />
+      <div className="w-screen h-full lg:h-screen flex flex-col items-center justify-center bg-secondary overflow-x-hidden">
+         <NavigationBar className="static lg:fixed"/>
          <Form {...form}>
             <form
-               className="w-125 h-max flex flex-col items-center justify-center gap-5 border border-black/30 shadow-lg rounded-xl p-10 mt-30 bg-white"
+               className="w-full lg:w-125 h-full lg:h-max flex flex-col items-center justify-center gap-10 lg:gap-13 lg:border border-black/30 lg:shadow-lg lg:rounded-xl p-8 py-5 lg:p-10 bg-white"
                onSubmit={form.handleSubmit(onSubmit)}>
-               <h1 className="text-4xl font-extrabold tracking-tight mb-10">
+               <h1 className="text-2xl lg:text-4xl font-extrabold tracking-tight">
                   Report Found Item
                </h1>
-               <div className="space-y-5 w-full">
+               <div className="space-y-4 lg:space-y-5 w-full">
                   <FormField
                      control={form.control}
                      name="itemName"
@@ -152,6 +152,7 @@ export default function ReportLost() {
                            <FormControl>
                               <Input
                                  placeholder="Enter item name"
+                                 className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -183,7 +184,7 @@ export default function ReportLost() {
                                              <Button
                                                 variant="outline"
                                                 id="date-picker"
-                                                className="w-full justify-between font-normal">
+                                                className="w-full justify-between font-normal placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm">
                                                 {field.value
                                                    ? field.value.toLocaleDateString(
                                                         "en-US",
@@ -238,7 +239,7 @@ export default function ReportLost() {
                                        onChange={(e) => {
                                           field.onChange(e.target.value);
                                        }}
-                                       className="w-full bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                       className="w-full bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                                     />
                                  </div>
                               </FormControl>
@@ -256,6 +257,7 @@ export default function ReportLost() {
                            <FormControl>
                               <Input
                                  placeholder="Ex. Alegria, Cordova, Cebu"
+                                 className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -277,6 +279,7 @@ export default function ReportLost() {
                                  <Input
                                     type="file"
                                     accept="image/*"
+                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                                     onChange={async (e) => {
                                        const file = e.target.files?.[0];
                                        if (!file) return;
@@ -303,6 +306,7 @@ export default function ReportLost() {
                            <FormControl>
                               <Textarea
                                  placeholder="Ex. Found a black wallet. It’s a worn bi-fold with a small scratch. Contains Westlake University student ID, a few bank cards, some cash, and a small photo of a dog."
+                                 className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -315,7 +319,7 @@ export default function ReportLost() {
                   />
                </div>
                <Button
-                  className="w-full mt-10 bg-blue-500 hover:bg-blue-600 cursor-pointer"
+                  className="w-full text-sm bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                   type="submit"
                   disabled={isSubmitting}>
                   {isSubmitting ? "Submitting Report" : "Submit Report"}
