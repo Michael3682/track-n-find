@@ -84,128 +84,127 @@ export default function Register() {
 
    return (
       <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
-         <div className="border border-black/30 shadow-lg rounded-xl p-10 bg-white">
-            <Form {...form}>
-               <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-5">
-                  <div className="flex flex-col items-center gap-1 mb-10">
-                     <img src="track-n-find--logo.png" alt="logo" />
-                     <h1 className="text-4xl font-extrabold tracking-tight">
-                        TrackNFind
-                     </h1>
-                     <small className="text-sm text-black/80 leading-none font-medium">
-                        Welcome! Create an account.
-                     </small>
-                  </div>
-                  <FormField
-                     control={form.control}
-                     name="studentId"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>StudentID</FormLabel>
-                           <FormControl>
+         <Form {...form}>
+            <form
+               onSubmit={form.handleSubmit(onSubmit)}
+               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center">
+               <div className="flex flex-col items-center gap-3 mb-10">
+                  <img className="h-13 lg:h-15" src="track-n-find--logo.png" alt="logo" />
+                  <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
+                     TrackNFind
+                  </h1>
+                  <small className="text-xs lg:text-sm text-black/80 leading-none font-medium">
+                     Welcome! Create an account.
+                  </small>
+               </div>
+               <FormField
+                  control={form.control}
+                  name="studentId"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel className="ml-0.5" >StudentID</FormLabel>
+                        <FormControl>
+                           <Input
+                              maxLength={8}
+                              placeholder="Ex. 12345678"
+                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                              {...field}
+                              onChange={(e) =>
+                                 field.onChange(e.target.value)
+                              }
+                           />
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
+               />
+               <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel className="ml-0.5" >Name</FormLabel>
+                        <FormControl>
+                           <Input
+                              placeholder="Enter your name"
+                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                              {...field}
+                              onChange={(e) =>
+                                 field.onChange(e.target.value)
+                              }
+                           />
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
+               />
+               <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel className="ml-0.5" >Password</FormLabel>
+                        <FormControl>
+                           <div className="w-full h-max relative">
                               <Input
-                                 maxLength={8}
-                                 placeholder="Ex. 12345678"
+                                 type={showPassword ? "text" : "password"}
+                                 placeholder="Enter your password"
+                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
                                  }
                               />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-                  <FormField
-                     control={form.control}
-                     name="name"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Name</FormLabel>
-                           <FormControl>
-                              <Input
-                                 placeholder="Enter your name"
-                                 {...field}
-                                 onChange={(e) =>
-                                    field.onChange(e.target.value)
-                                 }
+                              <Eye
+                                 size={15}
+                                 color="rgb(100,100,100)"
+                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${showPassword ? "visible" : "hidden"
+                                    }`}
+                                 onClick={handleShowPassword}
                               />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-                  <FormField
-                     control={form.control}
-                     name="password"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Password</FormLabel>
-                           <FormControl>
-                              <div className="w-full h-max relative">
-                                 <Input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Enter your password"
-                                    {...field}
-                                    onChange={(e) =>
-                                       field.onChange(e.target.value)
-                                    }
-                                 />
-                                 <Eye
-                                    size={15}
-                                    color="rgb(100,100,100)"
-                                    className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
-                                       showPassword ? "visible" : "hidden"
+                              <EyeClosed
+                                 size={15}
+                                 color="rgb(100,100,100)"
+                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${showPassword ? "hidden" : "visible"
                                     }`}
-                                    onClick={handleShowPassword}
-                                 />
-                                 <EyeClosed
-                                    size={15}
-                                    color="rgb(100,100,100)"
-                                    className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
-                                       showPassword ? "hidden" : "visible"
-                                    }`}
-                                    onClick={handleShowPassword}
-                                 />
-                              </div>
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-                  <Button
-                     className="mt-10 w-100 bg-blue-500 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
-                     type="submit"
-                     disabled={isSigningUp}>
-                     {isSigningUp ? "Signing up" : "Sign up"}
-                  </Button>
-                  <div className="w-full flex items-center justify-center gap-2">
-                     <hr className="w-full border-gray-400" />
-                     <p className="text-sm text-black/80 leading-none font-medium">
-                        or
-                     </p>
-                     <hr className="w-full border-gray-400" />
-                  </div>
-                  <Button
-                     className="w-100 rounded-md cursor-pointer"
-                     type="submit">
-                     <img src="google--icon.png" alt="google icon" /> Continue
-                     with Google
-                  </Button>
-                  <p className="text-center text-sm text-black/80 leading-none font-medium">
-                     Already have an account?
-                     <a
-                        className="text-sm text-blue-500 leading-none font-medium cursor-pointer"
-                        onClick={() => router.push("/login")}>
-                        {" "}
-                        Log In
-                     </a>
+                                 onClick={handleShowPassword}
+                              />
+                           </div>
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
+               />
+               <Button
+                  className="mt-8 w-full lg:py-5 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
+                  type="submit"
+                  disabled={isSigningUp}>
+                  {isSigningUp ? "Signing up" : "Sign up"}
+               </Button>
+               <div className="w-full flex items-center justify-center gap-2">
+                  <hr className="w-full border-gray-400" />
+                  <p className="text-sm text-black/80 leading-none font-medium">
+                     or
                   </p>
-               </form>
-            </Form>
-         </div>
+                  <hr className="w-full border-gray-400" />
+               </div>
+               <Button
+                  className="w-full lg:py-5 rounded-md cursor-pointer"
+                  type="submit">
+                  <img src="google--icon.png" alt="google icon" /> Continue
+                  with Google
+               </Button>
+               <p className="text-center text-xs text-black/80 leading-none font-medium">
+                  Already have an account?
+                  <a
+                     className="text-xs text-blue-500 leading-none font-medium cursor-pointer"
+                     onClick={() => router.push("/login")}>
+                     {" "}
+                     Log In
+                  </a>
+               </p>
+            </form>
+         </Form>
       </div>
    );
 }

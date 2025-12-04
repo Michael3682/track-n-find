@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react";
 
 import { SearchForm } from "@/components/search-form";
@@ -122,7 +124,7 @@ export function AppSidebar({
                            return (
                               <SidebarMenuItem key={item.title}>
                                  <SidebarMenuButton
-                                    className={`cursor-pointer ${
+                                    className={`cursor-pointer text-xs lg:text-sm ${
                                        isActive ? "border" : ""
                                     }`}
                                     isActive={isActive}
