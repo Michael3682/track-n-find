@@ -88,8 +88,23 @@ export const saveId = async (id: string, email: string, name: string) => {
         console.log(err)
         return [null, err]
     }
-    
+}
 
+export const signupTeacher = async (email: string, name: string) => {
+    try {
+        const res = await fetch(`${API_URL}/auth/v1/signup/email`, {
+            method: "POST",
+            credentials: 'include',
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ email, name })
+        })
+        const data = await res.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
 }
 
 export const logout = async () => {
