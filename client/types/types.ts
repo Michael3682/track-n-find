@@ -10,7 +10,7 @@ export type Item = {
   name: string;
   description: string;
   category: string;
-  date_time: string;
+  date_time: string | number | Date;
   location: string;
   attachments: string[];
   status: "CLAIMED" | "UNCLAIMED";

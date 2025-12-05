@@ -95,3 +95,20 @@ export const getItem = async (id: string) => {
        return [null, err];
     }
 }
+
+export const updateItem = async ({itemId, itemName, date, time, location, description, attachments}: {itemId: string, itemName: string, date: string, time: string, location: string, description: string, attachments?: string[], userId: string}) => {
+   try {
+       const res = await fetch(`${API_URL}/report/v1/items/${itemId}`, {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemName, date, time, location, description, attachments }),
+       });
+       const data = await res.json();
+
+       return [data, null];
+    } catch (err) {
+       console.log(err);
+       return [null, err];
+    }
+}

@@ -8,7 +8,7 @@ import { getConversation } from "@/lib/chatService";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import { Conversation, Message } from "@/types/types";
 import { useMessage } from "@/contexts/messages/MessageContext";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { Image, SendHorizontal, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -23,6 +23,8 @@ export default function Messages() {
   const [convo, setConvo] = useState<Conversation>()
   const { showMessage, setShowMessage } = useMessage()
   const [messages, setMessages] = useState<Message[]>([])
+  const [tempMessage, setTempMessage] = useState<string[]>([])
+  const messagesRef = useRef<HTMLDivElement>(null)
 
   const [chatDetails, setChatDetails] = useState({
     text: "",
@@ -36,14 +38,16 @@ export default function Messages() {
   const send = (e: FormEvent) => {
     e.preventDefault()
 
+    if(chatDetails.text.trim() == "") return
+
     socket?.emit("send_message", {
       text: chatDetails.text,
       conversationId,
       recepientId: convo?.isMine ? convo?.senderId : convo?.hostId,
       senderId: convo?.isMine ? convo?.hostId : convo?.senderId,
     })
-    console.log('sent')
 
+    setTempMessage(prev => ([...prev, chatDetails.text]))
     setChatDetails(prev => ({ ...prev, text: "", attachment: [], previewURL: [] }))
   }
 
@@ -58,6 +62,7 @@ export default function Messages() {
 
     socket?.on("recieve_message", payload => {
       if (payload.conversationId === conversationId) {
+        setTempMessage(prev => prev.filter(m => payload.content != m))
         setMessages(prev => ([...prev, payload]))
       }
     })
@@ -74,6 +79,14 @@ export default function Messages() {
 
     setMessages(convo.messages)
   }, [convo?.messages])
+
+  useEffect(() => {
+    if(!messagesRef.current) return
+    messagesRef.current.scrollTo({
+      top: messagesRef.current?.scrollHeight,
+      behavior: "smooth"
+    })
+  }, [messages, tempMessage])
 
   return (
     <div className={`w-full h-full p-3 ${isMobile ? (showMessage ? "hidden" : "flex") : "flex"}`}>
@@ -93,12 +106,18 @@ export default function Messages() {
             </span>
           </small>
         </div>
-        <div className="w-full h-full bg-white flex flex-col gap-0.5 px-3 p-2">
+        <div className="w-full max-h-full bg-white flex flex-col gap-0.5 px-3 p-2 overflow-y-auto flex-1" ref={messagesRef}>
           {messages?.map((message) => (
             <div key={message.id} className={`w-fit px-3 py-1.5 rounded-md ${user?.id === message.authorId ? 'self-end bg-blue-200' : 'bg-gray-200'}`}>
               {message.content}
             </div>
           ))}
+          {tempMessage?.map((message, i) => (
+            <div key={i} className={`w-fit px-3 py-1.5 rounded-md self-end bg-blue-200`}>
+              {message}
+            </div>
+          ))
+          }
         </div>
         <form className="flex items-center px-3 p-2 gap-3 border-t bg-white" onSubmit={(e) => send(e)}>
           <Tooltip>
