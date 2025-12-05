@@ -505,6 +505,44 @@ class ReportController {
       });
     }
   }
+
+  async toggleStatus(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const { id } = req.params
+
+      const item = await ReportService.getItem(id)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      const toggledItem = await ReportService.updateItem(id, { status: item.status == 'CLAIMED' ? "UNCLAIMED" : "CLAIMED" })
+
+      return res.json({
+        success: true,
+        item: toggledItem
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
 }
 
 export default new ReportController();

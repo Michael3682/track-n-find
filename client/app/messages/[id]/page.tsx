@@ -17,6 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toggleItemStatus } from "@/lib/reportService";
 
 export default function Messages() {
   const isMobile = useIsMobile();
@@ -51,10 +52,21 @@ export default function Messages() {
     setChatDetails(prev => ({ ...prev, text: "", attachment: [], previewURL: [] }))
   }
 
+  const fetchConversation = async () => {
+    const [data] = await getConversation(String(conversationId))
+    setConvo(data.conversation)
+  }
+
+  const handleToggleItemStatus = async () => {
+    const [data] = await toggleItemStatus(convo?.itemId!)
+
+    if(data.success) {
+      fetchConversation()
+    }
+  }
+
   useEffect(() => {
-    getConversation(String(conversationId)).then(([data]) =>
-      setConvo(data.conversation)
-    );
+    fetchConversation()
   }, [])
 
   useEffect(() => {
@@ -103,8 +115,20 @@ export default function Messages() {
               {convo?.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
               <span>-</span>
               {convo?.name}
+              {convo?.item.status == "CLAIMED" && 
+                <span className="text-emerald-400 text-md ml-4">Claimed</span>
+              }
             </span>
           </small>
+          {
+            convo?.isMine && 
+              <button 
+                className="ml-auto text-sm border px-4 py-2 rounded-sm text-gray-400 cursor-pointer hover:text-white hover:shadow-md hover:bg-blue-700"
+                onClick={() => handleToggleItemStatus()}
+              >
+                Mark as {convo.item.status == 'CLAIMED' ? "unclaimed" : 'claimed'}
+              </button>
+          }
         </div>
         <div className="w-full max-h-full bg-white flex flex-col gap-0.5 px-3 p-2 overflow-y-auto flex-1" ref={messagesRef}>
           {messages?.map((message) => (
@@ -116,10 +140,10 @@ export default function Messages() {
             <div key={i} className={`w-fit px-3 py-1.5 rounded-md self-end bg-blue-200`}>
               {message}
             </div>
-          ))
-          }
+          ))}
         </div>
-        <form className="flex items-center px-3 p-2 gap-3 border-t bg-white" onSubmit={(e) => send(e)}>
+        {convo?.item.status == "UNCLAIMED" ?
+           <form className="flex items-center px-3 p-2 gap-3 border-t bg-white" onSubmit={(e) => send(e)}>
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
@@ -148,7 +172,10 @@ export default function Messages() {
               </TooltipContent>
             </Tooltip>
           </button>
-        </form>
+          </form>
+          :
+          <div className="text-center p-4 bg-white text-gray-500">Item is claimed. Nothing to discuss further</div>
+        }
       </div>
     </div>
   );

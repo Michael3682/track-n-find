@@ -112,3 +112,18 @@ export const updateItem = async ({itemId, itemName, date, time, location, descri
        return [null, err];
     }
 }
+
+export const toggleItemStatus = async (itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/items/${itemId}/toggleStatus`, {
+         method: "PATCH",
+         credentials: "include"
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}

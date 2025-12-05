@@ -88,6 +88,9 @@ function Messages({
                     {conversation.item.name}
                     <span className="text-xs font-semibold text-gray-400">
                       {conversation.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
+                      {conversation?.item.status == "CLAIMED" && 
+                        <span className="text-emerald-400 text-md ml-4">Claimed</span>
+                      }
                     </span>
                   </p>
                   <div className="w-55 text-sm text-ellipsis whitespace-nowrap overflow-hidden">
