@@ -1,11 +1,12 @@
 "use client"
 
-import { saveId } from "@/lib/authService"
+import { saveId, signupTeacher } from "@/lib/authService"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FormEvent, useState } from "react"
 import { auth } from "@/lib/firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { User } from "firebase/auth"
+import { useAuth } from "@/contexts/auth/AuthContext"
 
 const page = () => {
     const [isFormShowing, setIsFormShowing] = useState(false)
@@ -13,14 +14,17 @@ const page = () => {
     const [formValue, setFormValue] = useState("")
     const [error, setError] = useState("")
     const [user] = useAuthState(auth)
+    const { refetch } = useAuth()
     const router = useRouter()
 
     const handleLoginAsStudent = () => {
+        setFormValue("")
         setRole("Student")
         setIsFormShowing(true)
     }
 
     const handleLoginAsTeacher = () => {
+        setFormValue(user?.displayName!)
         setRole("Teacher")
         setIsFormShowing(true)
     }
@@ -28,25 +32,49 @@ const page = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
-        setError("")
-
-        if (!/^\d+$/.test(formValue)) {
-            return setError("Student ID must contain only numbers.")
+        if(role == "Student") {
+            setError("")
+    
+            if (!/^\d+$/.test(formValue)) {
+                return setError("Student ID must contain only numbers.")
+            }
+    
+            if(formValue.length !== 8) {
+                return setError("Student ID should be 8 characters long.")
+            }
+    
+            if(!user?.email || !user?.displayName) {
+                return setError("Email or Display Name is not defined. Please sign in with google first.")
+            }
+    
+            const [data] = await saveId(formValue, user?.email, user?.displayName)
+    
+            if(data.success) {
+                await refetch()
+                router.push("/")
+            }
         }
 
-        if(formValue.length !== 8) {
-            return setError("Student ID should be 8 characters long.")
+        if(role == "Teacher") {
+            if(formValue.trim() == "") {
+                return setError("Name must not be empty")
+            }
+
+            if(formValue.trim().length < 3) {
+                return setError("Name must be atleast 3 characters")
+            }
+
+            if(!user?.email || !user?.displayName) {
+                return setError("Email or Display Name is not defined. Please sign in with google first.")
+            }
+
+            const [data] = await signupTeacher(user?.email, user?.displayName)
+    
+            if(data.success) {
+                router.push("/")
+            }
         }
 
-        if(!user?.email || !user?.displayName) {
-            return setError("Email or Display Name is not defined. Please sign in with google first.")
-        }
-
-        const [data] = await saveId(formValue, user?.email, user?.displayName)
-
-        if(data.success) {
-            router.push("/")
-        }
     }
     
     if(!user?.email) return <div>Email Required</div>
@@ -60,10 +88,21 @@ const page = () => {
         {isFormShowing ? 
             <form className="w-100 flex flex-col gap-2" onSubmit={handleSubmit}>
                 <div className="hover:underline cursor-pointer" onClick={() => setIsFormShowing(false)}>Back</div>
-                <label htmlFor="id" className="font-bold text-sm">{role} ID</label>
-                <input type="text" value={formValue} placeholder={`Enter ${role} ID`} onChange={e => setFormValue(e.target.value)} className="border py-2 px-4 rounded" required/>
+                {
+                    role == "Student" ? 
+                        <>
+                            <label htmlFor="id" className="font-bold text-sm">Student ID</label>
+                            <input id="id" type="text" value={formValue} placeholder={`Enter Student ID`} onChange={e => setFormValue(e.target.value)} className="border py-2 px-4 rounded" required/>
+                        </>
+                        :
+                        <>
+                            <label htmlFor="username" className="font-bold text-sm">Confirm Name</label>
+                            <input id="username" type="text" value={formValue} placeholder={`Enter you name`} onChange={e => setFormValue(e.target.value)} className="border py-2 px-4 rounded" required/>
+                        </>
+
+                }
                 <span className="text-sm text-red-500">{!!error && error}</span>
-                <button className="bg-blue-700 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700">Save</button>
+                <button className="bg-blue-700 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700">{role == "Student" ? "Save" : "Yes, this is my name"}</button>
             </form>
         :
             <div className="flex gap-8">

@@ -3,8 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { signupSchema, loginSchema } from '@/lib/validations/auth';
 import AuthService from '@/services/auth'
-import message from '@/socket/services/message';
-
+import { v4 as uuidV4 } from 'uuid'
 
 class AuthController {
     /**
@@ -228,7 +227,7 @@ class AuthController {
 
     async signupWithEmail(req: Request, res: Response) {
         try {
-            const { email, id, name } = req.body
+            const { email, id = uuidV4(), name } = req.body
 
             const existingUser = await AuthService.getUserById(id)
     
