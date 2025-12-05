@@ -5,7 +5,7 @@ import { Item } from "@/types/types"
 import { useForm } from "react-hook-form"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { getItem } from "@/lib/reportService"
+import { getItem, updateItem } from "@/lib/reportService"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { ChevronDownIcon } from "lucide-react"
@@ -26,6 +26,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { useAuth } from "@/contexts/auth/AuthContext"
+import { uploadItemImage } from "@/lib/bucket"
+import { toast } from "sonner"
 
 interface UpdateItemState {
     itemName: string;
@@ -55,6 +58,9 @@ export default function UpdateReport() {
     const { id: itemID } = useParams()
     const [open, setOpen] = useState(false);
     const [item, setItem] = useState<Item | null>(null)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [progress, setProgress] = useState<number[]>([])
+    const { user } = useAuth()
 
     const form = useForm<UpdateItemState>({
         resolver: zodResolver(formSchema),
@@ -77,8 +83,43 @@ export default function UpdateReport() {
         form.setValue("date", updated);
     };
 
-    const onSubmit = () => {
-        console.log("Item Updated")
+    const onSubmit = async () => {
+        setIsSubmitting(true)
+
+        const formValues = form.getValues();
+        
+        const yyyy = formValues.date.getFullYear();
+        const mm = String(formValues.date.getMonth() + 1).padStart(2, "0");
+        const dd = String(formValues.date.getDate()).padStart(2, "0");
+
+        const files = formValues.attachments
+
+        let urls;
+        if(files && files.length > 0 && user) {
+            urls = await uploadItemImage(files, user, setProgress)
+        }
+
+        const updatedData = {
+            ...formValues,
+            itemId: item?.id!,
+            date: `${yyyy}-${mm}-${dd}`,
+            attachments: urls
+        };
+
+        const [data, err] = await updateItem(updatedData)
+
+        if (err || !data.success) {
+            setIsSubmitting(false);
+            toast.error("Something wrong.");
+        }
+
+        if (data.success) {
+            setIsSubmitting(false);
+            toast.success("Found item has been reported.");
+            setItem(data.item)
+        }
+
+        console.log(data)
     }
 
     useEffect(() => {
@@ -97,6 +138,31 @@ export default function UpdateReport() {
 
         fetchItem()
     }, [itemID])
+
+    useEffect(() => {
+        const dt = new Date(item?.date_time!)
+        const date: Date = new Date(
+            dt.getFullYear(),
+            dt.getMonth(),
+            dt.getDate()
+        )
+        const time: string =
+            dt.getHours().toString().padStart(2, "0") +
+            ":" +
+            dt.getMinutes().toString().padStart(2, "0");
+
+        if (item) {
+            form.reset({
+                itemName: item.name,
+                date: date,
+                time: time,
+                location: item.location,
+                description: item.description,
+                attachments: [],
+                userId: item.associated_person,
+            });
+        }
+    }, [item, form]);
 
     return (
         <div className="w-screen h-full lg:h-screen flex flex-col items-center justify-center bg-secondary overflow-x-hidden">
@@ -274,6 +340,12 @@ export default function UpdateReport() {
                             )}
                         />
                     </div>
+                    <Button
+                        className="w-full text-sm bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
+                        type="submit"
+                        disabled={isSubmitting}>
+                        {isSubmitting ? "Updating" : "Update Item"}
+                    </Button>
                 </form>
             </Form>
         </div>
