@@ -1,23 +1,35 @@
 "use client";
 
-import {  useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Conversation } from "@/types/types";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { getConversations } from "@/lib/chatService";
 import { SearchForm } from "@/components/search-form";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import { NavigationBar } from "@/components/navigationbar";
 import { Card, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getConversations } from "@/lib/chatService";
-import { Conversation } from "@/types/types";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/auth/AuthContext";
+import { MessageProvider, useMessage } from "@/contexts/messages/MessageContext";
 
 
-export default function Messages({
+export default function MessagesLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <MessageProvider>
+      <Messages>{children}</Messages>
+    </MessageProvider>
+  )
+}
+
+function Messages({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isMobile = useIsMobile();
   const [searchItem, setSearchItem] = useState("");
-  const [conversations, setConversations] = useState<Conversation[]>([])
+  const { showMessage, setShowMessage } = useMessage();
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const router = useRouter()
   const { socket } = useAuth()
 
@@ -30,7 +42,7 @@ export default function Messages({
   }, [])
 
   useEffect(() => {
-    if(!socket) return
+    if (!socket) return
 
     socket?.on("new_message", payload => {
       setConversations(payload)
@@ -45,7 +57,7 @@ export default function Messages({
     <div className="w-auto h-screen relative overflow-hidden">
       <NavigationBar className="fixed" />
       <div className="w-full h-full flex pt-12.5">
-        <div className="w-100 h-full px-3 pt-5 border-r border-r-black/15 relative space-y-5">
+        <div className={`w-full lg:w-100 h-full px-3 pt-5 border-r border-r-black/15 relative space-y-5 ${isMobile ? (showMessage ? "block" : "hidden") : "block"}`}>
           <header className="space-y-3 w-full sticky">
             <h1 className="font-bold text-3xl px-2">Chats</h1>
             <SearchForm
@@ -56,15 +68,16 @@ export default function Messages({
               }
             />
           </header>
-          <div className="w-full h-screen overflow-y-auto">
+          <div className="w-full h-screen overflow-y-auto space-y-2">
             {filteredConversations.map((conversation) => (
               <Card
                 key={conversation.id}
                 className="w-full h-max bg-transparent overflow-hidden rounded-md flex flex-row gap-2 px-3 py-3 shadow-none border-none hover:bg-black/3 cursor-pointer"
-                onClick={() => router.push(`/messages/${conversation.id}`)}
+                onClick={() => {router.push(`/messages/${conversation.id}`); setShowMessage(false)}}
               >
                 <Avatar className="w-auto h-13">
                   <AvatarImage
+                    className="object-cover"
                     src={conversation.item.attachments[0]}
                     alt="@shadcn"
                   />
@@ -74,7 +87,7 @@ export default function Messages({
                   <p className="text-base font-medium text-[rgb(20,20,20)] overflow-hidden flex items-center gap-2">
                     {conversation.item.name}
                     <span className="text-xs font-semibold text-gray-400">
-                      {conversation.isMine ? "🏷️ My Item": "💬 Claiming Item"}
+                      {conversation.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
                     </span>
                   </p>
                   <div className="w-55 text-sm text-ellipsis whitespace-nowrap overflow-hidden">
@@ -85,7 +98,7 @@ export default function Messages({
             ))}
           </div>
         </div>
-      {children}
+        {children}
       </div>
     </div>
   );
