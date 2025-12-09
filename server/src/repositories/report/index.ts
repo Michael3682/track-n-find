@@ -1,5 +1,5 @@
 import { Item } from "@/types/report";
-import { ItemType, PrismaClient } from "@prisma/client";
+import { Claim, ItemType, PrismaClient, Return } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -25,6 +25,20 @@ class ReportRepository {
          where: { id },
          data
       })
+   }
+
+   async delete(id: string) {
+      return prisma.item.delete({
+         where: { id }
+      })
+   }
+
+   async claim(data: Claim) {
+      return prisma.claim.create({ data })
+   }
+
+   async returnItem(data: Return) {
+      return prisma.return.create({ data })
    }
 }
 

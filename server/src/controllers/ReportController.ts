@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import ReportService from "@/services/report";
 import AuthService from "@/services/auth";
 import { v4 as uuidV4 } from "uuid";
-import { itemSchema, updateItemSchema } from "@/lib/validations/report";
+import { claimSchema, itemSchema, returnSchema, updateItemSchema } from "@/lib/validations/report";
 import { JwtPayload } from "jsonwebtoken";
 import { it } from "node:test";
 
@@ -288,6 +288,196 @@ import { it } from "node:test";
  *         description: Internal server error
  */
 
+/**
+ * @swagger
+ * /report/v1/claim:
+ *   post:
+ *     summary: Report an item as claimed
+ *     description: 
+ *       Allows the reporter or an admin to submit a claim report once an item is handed over 
+ *       to the verified claimer. This updates the item status to CLAIMED.
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - itemId
+ *               - claimerId
+ *               - claimerName
+ *               - credentials
+ *               - claimedAt
+ *               - reporterId
+ *               - conversationId
+ *             properties:
+ *               itemId:
+ *                 type: string
+ *               claimerId:
+ *                 type: string
+ *               claimerName:
+ *                 type: string
+ *               credentials:
+ *                 type: object
+ *                 properties:
+ *                   yearAndSection:
+ *                     type: string
+ *                   studentId:
+ *                     type: string
+ *                   contactNumber:
+ *                     type: string
+ *                   proofOfClaim:
+ *                     type: string
+ *                 required:
+ *                   - yearAndSection
+ *                   - studentId
+ *                   - contactNumber
+ *               claimedAt:
+ *                 type: string
+ *                 format: date-time
+ *               reporterId:
+ *                 type: string
+ *               conversationId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Claim successfully recorded
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 claim:
+ *                   type: object
+ *                 updatedItem:
+ *                   $ref: '#/components/schemas/Item'
+ *       400:
+ *         description: Validation error or item already claimed
+ *       403:
+ *         description: Not allowed to perform this action
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /report/v1/return:
+ *   post:
+ *     summary: Report an item as returned or turned over to admins
+ *     description:
+ *       Allows the reporter or an admin to submit a return/turnover report stating that the item
+ *       has been officially turned over. This updates the item as CLAIMED (from admin side).
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - itemId
+ *               - returnerId
+ *               - returnerName
+ *               - credentials
+ *               - returnedAt
+ *               - reporterId
+ *               - conversationId
+ *             properties:
+ *               itemId:
+ *                 type: string
+ *               returnerId:
+ *                 type: string
+ *               returnerName:
+ *                 type: string
+ *               credentials:
+ *                 type: object
+ *                 properties:
+ *                   yearAndSection:
+ *                     type: string
+ *                   studentId:
+ *                     type: string
+ *                   contactNumber:
+ *                     type: string
+ *                   proofOfClaim:
+ *                     type: string
+ *               returnedAt:
+ *                 type: string
+ *                 format: date-time
+ *               reporterId:
+ *                 type: string
+ *               conversationId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Return/Turnover report successfully recorded
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 returned:
+ *                   type: object
+ *                 updatedItem:
+ *                   $ref: '#/components/schemas/Item'
+ *       400:
+ *         description: Validation error or item already claimed
+ *       403:
+ *         description: Not authorized
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /report/v1/items/{id}:
+ *   delete:
+ *     summary: Delete an item
+ *     description: Allows the owner of the item or an admin to delete a lost or found item.
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the item to delete
+ *     responses:
+ *       200:
+ *         description: Item successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 deletedItem:
+ *                   $ref: '#/components/schemas/Item'
+ *       403:
+ *         description: User does not have permission to delete this item
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
+
 class ReportController {
 
   async addFoundItem(req: Request, res: Response) {
@@ -506,6 +696,46 @@ class ReportController {
     }
   }
 
+  async deleteItem(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const { id } = req.params
+
+      const item = await ReportService.getItem(id)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      const deletedItem = await ReportService.deleteItem(id)
+
+      res.json({
+        success: true,
+        message: "Item Deleted",
+        deletedItem
+      })
+
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
   async toggleStatus(req: Request, res: Response) {
     try {
       const userId = (req.user as JwtPayload).id
@@ -533,6 +763,167 @@ class ReportController {
       return res.json({
         success: true,
         item: toggledItem
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async reportClaim(req: Request, res: Response) {
+    try {
+      const { value: { 
+        itemId, 
+        claimerId,
+        claimerName,
+        credentials: {
+          yearAndSection,
+          studentId,
+          contactNumber,
+          proofOfClaim
+        },
+        claimedAt,
+        reporterId,
+        conversationId
+      }, error } = claimSchema.validate(req.body)
+      const userId = (req.user as JwtPayload).id
+
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.details[0].message,
+        })
+      }
+
+      const item = await ReportService.getItem(itemId)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+      
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      if (item.status === "CLAIMED") {
+        return res.status(400).json({
+          success: false,
+          message: "Item is already claimed"
+        })
+      }
+
+      // save claim to db
+      const claim = await ReportService.reportClaim({ 
+        itemId, 
+        claimerId,
+        claimerName,
+        yearAndSection,
+        studentId,
+        contactNumber,
+        proofOfClaim,
+        claimedAt,
+        reporterId,
+        conversationId
+      })
+
+      // update item as claimed
+      const updatedItem = await ReportService.updateItem(itemId, { status: "CLAIMED" })
+      
+      res.json({
+        success: true,
+        claim,
+        updatedItem
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async reportReturn(req: Request, res: Response) {
+    try {
+      const { value: { 
+        itemId, 
+        returnerId,
+        returnerName,
+        credentials: {
+          yearAndSection,
+          studentId,
+          contactNumber,
+          proofOfClaim
+        },
+        returnedAt,
+        reporterId,
+        conversationId
+      }, error } = returnSchema.validate(req.body)
+      const userId = (req.user as JwtPayload).id
+
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.details[0].message,
+        })
+      }
+
+      const item = await ReportService.getItem(itemId)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+      
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      if (item.status === "CLAIMED") {
+        return res.status(400).json({
+          success: false,
+          message: "Item is already claimed"
+        })
+      }
+
+      const returned = await ReportService.reportReturn({ 
+        itemId, 
+        returnerId,
+        returnerName,
+        yearAndSection,
+        studentId,
+        contactNumber,
+        proofOfClaim,
+        returnedAt,
+        reporterId,
+        conversationId
+      })
+
+      // update item as claimed
+      const updatedItem = await ReportService.updateItem(itemId, { status: "CLAIMED" })
+      
+      res.json({
+        success: true,
+        returned,
+        updatedItem
       })
     } catch (err: any) {
       console.log(err);
