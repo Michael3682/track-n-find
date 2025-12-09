@@ -12,4 +12,6 @@ router.post("/v1/login/email", AuthController.loginWithEmail)
 router.post("/v1/logout", authenticate, AuthController.logout)
 router.get("/v1/me", authenticate, AuthController.getAuthUser)
 
+router.post("/v1/theme/:theme", authenticate, AuthController.setTheme)
+
 export default router;

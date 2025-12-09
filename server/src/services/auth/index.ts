@@ -20,6 +20,10 @@ class AuthService {
     async bindEmailToUser(userId: string, email: string) {
         return AuthRepository.bindEmail(userId, email)
     }
+
+    async setTheme(id: string, theme: "DARK" | "LIGHT") {
+        return AuthRepository.setTheme(id, theme)
+    }
 }
 
 export default new AuthService()
