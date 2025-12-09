@@ -27,3 +27,33 @@ export const updateItemSchema = Joi.object({
 
     status: Joi.string().valid("CLAIMED", "UNCLAIMED").optional()
 });
+
+export const claimSchema = Joi.object({
+    itemId: Joi.string().required(),
+    claimerId: Joi.string(),
+    claimerName: Joi.string(),
+    credentials: Joi.object({
+        yearAndSection: Joi.string().optional(),
+        studentId: Joi.string().optional(),
+        contactNumber: Joi.string().optional(),
+        proofOfClaim: Joi.string()
+    }),
+    claimedAt: Joi.string().trim().isoDate(),
+    reporterId: Joi.string().required(),
+    conversationId: Joi.string().optional()
+})
+
+export const returnSchema = Joi.object({
+    itemId: Joi.string().required(),
+    returnerId: Joi.string(),
+    returnerName: Joi.string(),
+    credentials: Joi.object({
+        yearAndSection: Joi.string().optional(),
+        studentId: Joi.string().optional(),
+        contactNumber: Joi.string().optional(),
+        proofOfClaim: Joi.string()
+    }),
+    returnedAt: Joi.string().trim().isoDate(),
+    reporterId: Joi.string().required(),
+    conversationId: Joi.string().optional()
+})

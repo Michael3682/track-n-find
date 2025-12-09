@@ -12,3 +12,14 @@ export interface Item {
     type: ItemType;
     associated_person: string;   
 }
+
+export type Claim = { 
+    itemId: string, 
+    claimerId: string,
+    claimerName: string,
+    claimedAt: string,
+    claimedFrom: string,
+    reporterId: string,
+    conversationId: string,
+    credentials: {},
+}
