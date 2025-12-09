@@ -24,6 +24,11 @@ enum ItemType {
   LOST
 }
 
+enum Theme {
+  LIGHT
+  DARK
+}
+
 model User {
   id                String @id
   name              String
@@ -32,6 +37,7 @@ model User {
   role              Role @default(USER)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  theme             Theme @default(LIGHT)
 
   items             Item[] @relation("Item_author")
   messages          Message[]

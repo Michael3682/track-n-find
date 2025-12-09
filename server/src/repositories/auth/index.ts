@@ -26,6 +26,15 @@ class AuthRepository {
             data: { email },
         });
     }
+
+    async setTheme(id: string, theme: "DARK" | "LIGHT") {
+        return prisma.user.update({
+            where: { id },
+            data: {
+                theme
+            }
+        })
+    }
 }
 
 export default new AuthRepository()

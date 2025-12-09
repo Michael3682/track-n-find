@@ -4,6 +4,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import { signupSchema, loginSchema } from '@/lib/validations/auth';
 import AuthService from '@/services/auth'
 import { v4 as uuidV4 } from 'uuid'
+import message from '@/socket/services/message';
 
 class AuthController {
     /**
@@ -410,6 +411,29 @@ class AuthController {
         const { password, ...user } = userData
 
         res.json({ message: "Authenticated",  user })
+    }
+
+    async setTheme(req: Request, res: Response) {
+        try {
+            const userId = (req.user as JwtPayload).id
+            const { theme: themeParam } = req.params
+
+            const theme = themeParam as "DARK" | "LIGHT"
+            
+            const user = AuthService.setTheme(userId, theme)
+
+            res.json({
+                success: true,
+                message: "Theme changed",
+                user
+            })
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+                err: err.message
+            })
+        }
     }
 }
 
