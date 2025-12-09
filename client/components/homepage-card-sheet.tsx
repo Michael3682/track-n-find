@@ -54,14 +54,15 @@ export function HomepageCardSheet() {
         .sort((a, b) => new Date(b.date_time).getTime() - new Date(a.date_time).getTime())
         .slice(0, 10);
 
-    const formattedDate = (date: string) => {
-        return new Date(date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-        });
+    const formattedDate = (date: string | number | Date) => {
+       if (!date) return;
+       return new Date(date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+       });
     };
 
     const handleMessageUser = async (item: Item) => {
@@ -89,7 +90,7 @@ export function HomepageCardSheet() {
     }, [foundApi, lostApi]);
 
     return (
-        <div className="w-full h-full px-8 lg:px-32 py-15 lg:py-30 flex flex-col gap-15 lg:gap-20">
+        <div className="w-full h-full px-8 lg:px-32 py-15 lg:py-30 flex flex-col gap-15 lg:gap-20 bg-sidebar">
             <div className="flex flex-col gap-8">
                 <h1 className="text-2xl lg:text-4xl font-semibold text-primary tracking-tight">
                     Recent Found Items

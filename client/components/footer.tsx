@@ -5,17 +5,17 @@ import { Separator } from "@/components/ui/separator";
 export function Footer() {
    const isMobile = useIsMobile();
    return (
-      <footer className="bg-primary px-8 lg:px-32 py-10">
+      <footer className="bg-muted px-8 lg:px-32 py-10">
          <div className="w-full flex flex-col lg:flex-row items-center lg:items-end gap-10 lg:gap-0">
             <div className="lg:w-1/2 flex flex-col gap-8">
-               <h1 className="text-4xl lg:text-5xl font-bold text-center lg:text-start text-secondary">
+               <h1 className="text-4xl lg:text-5xl font-bold text-center lg:text-start text-primary">
                   TrackNFind
                </h1>
-               <small className="text-sm lg:text-lg font-medium text-secondary text-center lg:text-start text-balance">
+               <small className="text-sm lg:text-lg font-medium text-primary text-center lg:text-start text-balance">
                   TrackNFind is a community-driven platform connecting people
                   who have lost belongings with those who have found them.
-                  Together, we make recovery faster, easier, and more
-                  efficient for everyone.
+                  Together, we make recovery faster, easier, and more efficient
+                  for everyone.
                </small>
             </div>
             <div className="w-max lg:w-1/2 flex lg:justify-end">
@@ -37,9 +37,9 @@ export function Footer() {
          </div>
          <Separator className="bg-muted-foreground my-10" />
          <div className="flex justify-between flex-wrap-reverse lg:flex-nowrap gap-10 lg:gap-0">
-            <p className="text-xs lg:text-sm text-center lg:text-start text-secondary">
-               @ 2025 TrackNFind Inc. All rights reserved. Helping
-               communities reconnect with their belongings since 2025.
+            <p className="text-xs lg:text-sm text-center lg:text-start text-muted-foreground">
+               @ 2025 TrackNFind Inc. All rights reserved. Helping communities
+               reconnect with their belongings since 2025.
             </p>
             <div className="w-full lg:w-max flex justify-evenly lg:gap-10">
                <img
@@ -65,5 +65,5 @@ export function Footer() {
             </div>
          </div>
       </footer>
-   )
+   );
 }

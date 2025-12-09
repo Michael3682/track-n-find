@@ -82,7 +82,8 @@ export function BrowseCardSheet({
          }
       });
 
-   const formattedDate = (date: string) => {
+   const formattedDate = (date: string | number | Date) => {
+      if (!date) return
       return new Date(date).toLocaleDateString("en-US", {
          year: "numeric",
          month: "short",
@@ -102,12 +103,12 @@ export function BrowseCardSheet({
       getItems().then(([data]) => setItems(data.items));
    }, []);
    return (
-      <div className="flex flex-wrap justify-center lg:justify-start gap-3 p-8 lg:p-10">
+      <div className="flex flex-wrap justify-center lg:justify-start gap-4 p-8 lg:p-10">
          {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
                <Sheet key={item.id}>
                   <SheetTrigger className="cursor-pointer p-0" asChild>
-                     <Card className="w-26 lg:w-50 flex gap-0 bg-transparent overflow-hidden border rounded-sm hover:border-black/25 transition-all duration-100 ease-linear">
+                     <Card className="w-43 lg:w-50 flex-none gap-0 bg-transparent overflow-hidden border rounded-sm hover:border-black/25 transition-all duration-100 ease-linear">
                         <CardHeader className="bg-primary-foreground p-0 gap-0 relative">
                            <CardTitle>
                               <img
@@ -124,13 +125,13 @@ export function BrowseCardSheet({
                                        ? "bg-green-400"
                                        : "bg-red-400"
                                     } z-20 absolute top-0 right-0 rounded-tl-none rounded-tr-none rounded-bl-md rounded-br-none`}>
-                                 <small className="text-[4px] lg:text-[10px]">{item.status}</small>
+                                 <small className="text-[8px] lg:text-[10px]">{item.status}</small>
                               </Badge>
                            </CardTitle>
                         </CardHeader>
-                        <CardDescription className="p-2 lg:p-4 text-[10px] font-medium lg:text-base text-primary flex flex-col">
+                        <CardDescription className="p-2 lg:p-4 text-sm font-medium lg:text-base text-primary flex flex-col">
                            {item.name} 
-                           <small className="text-[8px] lg:text-xs font-light text-muted-foreground">
+                           <small className="text-[10px] lg:text-xs font-light text-muted-foreground">
                               {item.type}
                            </small>
                         </CardDescription>

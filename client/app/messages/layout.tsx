@@ -57,7 +57,7 @@ function Messages({
     <div className="w-auto h-screen relative overflow-hidden">
       <NavigationBar className="fixed" />
       <div className="w-full h-full flex pt-12.5">
-        <div className={`w-full lg:w-100 h-full px-3 pt-5 border-r border-r-black/15 relative space-y-5 ${isMobile ? (showMessage ? "block" : "hidden") : "block"}`}>
+        <div className={`w-full lg:w-max h-full p-3 lg:px-8 lg:pt-5 border-r bg-sidebar relative space-y-5 ${isMobile ? (showMessage ? "hidden" : "block") : "block"}`}>
           <header className="space-y-3 w-full sticky">
             <h1 className="font-bold text-3xl px-2">Chats</h1>
             <SearchForm
@@ -73,7 +73,7 @@ function Messages({
               <Card
                 key={conversation.id}
                 className="w-full h-max bg-transparent overflow-hidden rounded-md flex flex-row gap-2 px-3 py-3 shadow-none border-none hover:bg-black/3 cursor-pointer"
-                onClick={() => {router.push(`/messages/${conversation.id}`); setShowMessage(false)}}
+                onClick={() => {router.push(`/messages/${conversation.id}`); setShowMessage(!showMessage)}}
               >
                 <Avatar className="w-auto h-13">
                   <AvatarImage
@@ -84,7 +84,7 @@ function Messages({
                   <AvatarFallback>img</AvatarFallback>
                 </Avatar>
                 <CardDescription className="w-full pr-2">
-                  <p className="text-base font-medium text-[rgb(20,20,20)] overflow-hidden flex items-center gap-2">
+                  <p className="text-base font-medium text-primary overflow-hidden flex items-center gap-2">
                     {conversation.item.name}
                     <span className="text-xs font-semibold text-gray-400">
                       {conversation.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
