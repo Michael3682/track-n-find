@@ -38,6 +38,10 @@ model User {
   conversationHost  Conversation[] @relation("Conversation_Host")
   conversationSender Conversation[] @relation("Conversation_Sender")
   activeSockets     ActiveSocket[]
+  claims            Claim[] @relation("Claimer")
+  returns            Return[] @relation("Returner")
+  claimed_reports    Claim[] @relation("Claim_Reporter")
+  returned_reports   Return[] @relation("Return_Reporter")
 }
 
 model Item {
@@ -55,6 +59,9 @@ model Item {
   conversations     Conversation[]
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+
+  claims            Claim[]
+  returns           Return[]
 }
 
 model Message {
@@ -79,6 +86,8 @@ model Conversation {
   lastMessageAt   DateTime @default(now())
   messages        Message[]
   createdAt       DateTime @default(now())
+  claims          Claim[]
+  returns         Return[]
 
   @@unique([itemId, hostId, senderId])
 }
@@ -92,4 +101,46 @@ model ActiveSocket {
   // For detecting stale or disconnected connections
   createdAt DateTime @default(now())
   lastSeen  DateTime @default(now())
+}
+
+model Claim {
+  id              String @id @default(uuid())
+  itemId          String
+  claimerId       String
+  claimerName     String
+  claimedAt       DateTime @default(now())
+  reporterId      String
+  conversationId  String
+
+  // Credentials
+  yearAndSection  String?
+  studentId       String?
+  contactNumber   String?
+  proofOfClaim    String
+
+  item            Item @relation(fields: [itemId], references: [id])
+  claimer         User @relation("Claimer", fields: [claimerId], references: [id])
+  reporter        User @relation("Claim_Reporter", fields: [reporterId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Return {
+  id              String @id @default(uuid())
+  itemId          String
+  returnerId       String
+  returnerName     String
+  returnedAt       DateTime @default(now())
+  reporterId      String
+  conversationId  String
+
+  // Credentials
+  yearAndSection  String?
+  studentId       String?
+  contactNumber   String?
+  proofOfClaim    String
+
+  item            Item @relation(fields: [itemId], references: [id])
+  returner         User @relation("Returner", fields: [returnerId], references: [id])
+  reporter        User @relation("Return_Reporter", fields: [reporterId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
 }
