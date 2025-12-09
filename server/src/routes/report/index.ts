@@ -16,6 +16,7 @@ router.get("/lost/v1/", authenticate, ReportController.getUserLostItems)
 router.get("/v1/items", authenticate, ReportController.getItems)
 router.get("/v1/items/:id", authenticate, ReportController.getItem)
 router.patch("/v1/items/:id", authenticate, ReportController.updateItem)
+router.delete("/v1/items/:id", authenticate, ReportController.deleteItem)
 router.patch("/v1/items/:id/toggleStatus", authenticate, ReportController.toggleStatus)
 
 

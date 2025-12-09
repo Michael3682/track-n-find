@@ -27,6 +27,12 @@ class ReportRepository {
       })
    }
 
+   async delete(id: string) {
+      return prisma.item.delete({
+         where: { id }
+      })
+   }
+
    async claim(data: Claim) {
       return prisma.claim.create({ data })
    }
