@@ -119,6 +119,27 @@ class ChatRepository {
     });
   }
 
+  async getMessage(id: string) {
+    return prisma.message.findUnique({
+      where: { id }
+    })
+  }
+
+  async updateMessage(id: string, content: string) {
+    return prisma.message.update({
+      where: { id },
+      data: {
+        content
+      }
+    })
+  }
+
+  async deleteMessage(id: string) {
+    return prisma.message.delete({
+      where: { id }
+    })
+  }
+
   // 💬 Get all conversations for a user
   async getUserConversations(userId: string) {
     const conversations = await prisma.conversation.findMany({

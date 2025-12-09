@@ -74,6 +74,10 @@ class ReportService {
     return ReportRepository.update(id, data)
   }
 
+  async deleteItem(id: string) {
+    return ReportRepository.delete(id)
+  }
+
   async reportClaim(
     data : any
   ) {

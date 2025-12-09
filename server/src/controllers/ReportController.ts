@@ -440,6 +440,43 @@ import { it } from "node:test";
  *         description: Internal server error
  */
 
+/**
+ * @swagger
+ * /report/v1/items/{id}:
+ *   delete:
+ *     summary: Delete an item
+ *     description: Allows the owner of the item or an admin to delete a lost or found item.
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the item to delete
+ *     responses:
+ *       200:
+ *         description: Item successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 deletedItem:
+ *                   $ref: '#/components/schemas/Item'
+ *       403:
+ *         description: User does not have permission to delete this item
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
 
 class ReportController {
 
@@ -649,6 +686,46 @@ class ReportController {
         success: true,
         item: updatedItem,
       });
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async deleteItem(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const { id } = req.params
+
+      const item = await ReportService.getItem(id)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      const deletedItem = await ReportService.deleteItem(id)
+
+      res.json({
+        success: true,
+        message: "Item Deleted",
+        deletedItem
+      })
+
     } catch (err: any) {
       console.log(err);
       res.status(err.status || 500).json({
