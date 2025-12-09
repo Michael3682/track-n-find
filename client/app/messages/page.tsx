@@ -1,11 +1,18 @@
-"use client"
+"use client";
 
-import React from 'react'
+import React from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const page = () => {
-  return (
-    <div className='h-full w-full flex justify-center items-center text-gray-400 text-md'>No Messages here</div>
-  )
-}
+   const isMobile = useIsMobile();
+   return (
+      <div
+         className={`h-full w-full justify-center items-center text-gray-400 text-md ${
+            isMobile ? "hidden" : "flex"
+         }`}>
+         No Messages here
+      </div>
+   );
+};
 
-export default page
+export default page;

@@ -68,7 +68,7 @@ function SheetContent({
               side === "bottom" &&
                  "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
               side === "center" &&
-                 "data-[state=closed]:fade-out-0 data-[state=open]:zoom-in top-0 lg:top-1/2 left-0 lg:left-1/2 -translate-x-0 lg:-translate-x-1/2 -translate-y-0 lg:-translate-y-1/2 p-10 lg:rounded-lg h-full lg:h-auto w-full lg:w-150 border-none",
+                 "data-[state=closed]:fade-out-0 data-[state=open]:zoom-in top-0 lg:top-1/2 left-0 lg:left-1/2 -translate-x-0 lg:-translate-x-1/2 -translate-y-0 lg:-translate-y-1/2 p-10 lg:rounded-lg h-full lg:h-auto w-full lg:w-150 border",
               className
            )}
            {...props}>
