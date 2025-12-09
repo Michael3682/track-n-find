@@ -17,7 +17,7 @@ class ReportRepository {
    }
 
    async findItemById(id: string) {
-      return prisma.item.findUnique({ where: { id }})
+      return prisma.item.findUnique({ where: { id }, include: {conversations: true}})
    }
 
    async update(id: string, data: Partial<Item>) {
