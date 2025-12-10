@@ -16,6 +16,7 @@ type User = {
   name: string;
   email: string;
   role: string;
+  theme: "DARK" | "LIGHT"
 };
 
 interface AuthContextType {

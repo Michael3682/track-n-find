@@ -125,3 +125,18 @@ export const logout = async () => {
         return [null, err]
     }
 }
+
+export const changeTheme = async (theme: "LIGHT" | "DARK") => {
+    try {
+        const res = await fetch(`${API_URL}/auth/v1/theme/${theme}`, {
+            method: "POST",
+            credentials: 'include'
+        })
+        const data = await res.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
+}
