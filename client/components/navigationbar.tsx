@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { logout } from "@/lib/authService";
+import { changeTheme, logout } from "@/lib/authService";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -38,9 +38,9 @@ import {
 
 export function NavigationBar({ className }: { className?: string }) {
    const [isClicked, setIsClicked] = useState(false);
-   const [changedTheme, setChangedTheme] = useState(false);
+   const [theme, setTheme] = useState<"LIGHT" | "DARK">("LIGHT")
    const router = useRouter();
-   const { refetch } = useAuth();
+   const { refetch, user } = useAuth();
    const isMobile = useIsMobile();
 
    const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -69,13 +69,11 @@ export function NavigationBar({ className }: { className?: string }) {
       router.refresh();
    };
 
-   const handleThemeMode = () => {
-      setChangedTheme(!changedTheme);
-      if (changedTheme) {
-         return document.body.classList.remove("dark");
-      } else {
-         return document.body.classList.add("dark");
-      }
+   const handleThemeMode = async () => {
+      setTheme(prev => prev == "DARK" ? "LIGHT" : "DARK")
+
+      await changeTheme(theme == "DARK" ? "LIGHT" : "DARK")
+
    };
 
    useEffect(() => {
@@ -84,6 +82,24 @@ export function NavigationBar({ className }: { className?: string }) {
          document.removeEventListener("mousedown", handleClickOutside);
       };
    }, []);
+
+   useEffect(() => {
+      if(!user) return
+
+      setTheme(user.theme)
+   }, [user])
+
+   useEffect(() => {
+      if(!theme) return
+
+      if(theme == "DARK") {
+         document.body.classList.add("dark")
+      }
+
+      if(theme == "LIGHT") {
+         document.body.classList.remove("dark")
+      }
+   }, [theme])
 
    return (
       <Sheet>
@@ -206,7 +222,7 @@ export function NavigationBar({ className }: { className?: string }) {
                         <Button
                            className="cursor-pointer bg-primary"
                            onClick={handleThemeMode}>
-                           {changedTheme ? <Moon /> : <Sun />}
+                           {theme === "DARK" ? <Moon /> : <Sun />}
                         </Button>
                         <Button
                            className="border bg-transparent rounded-md text-primary hover:bg-transparent hover:text-red-500 hover:shadow-md cursor-pointer"
@@ -292,7 +308,7 @@ export function NavigationBar({ className }: { className?: string }) {
                      <Button
                         className="cursor-pointer bg-primary"
                         onClick={handleThemeMode}>
-                        {changedTheme ? <Moon /> : <Sun />}
+                        {theme == "DARK" ? <Moon /> : <Sun />}
                      </Button>
                      <Button
                         className="border bg-transparent rounded-md text-primary hover:bg-transparent hover:text-red-500 hover:shadow-md cursor-pointer"
