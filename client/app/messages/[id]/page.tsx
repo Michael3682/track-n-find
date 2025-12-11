@@ -157,7 +157,7 @@ export default function Messages() {
                                  className="ml-auto text-sm px-4 py-2 rounded-sm text-primary cursor-pointer"
                                  onClick={() =>
                                     router.push(
-                                       `/report/claim?itemId=${convo.itemId}`
+                                       `/report/claim?conversationId=${convo.id}`
                                     )
                                  }>
                                  Mark as{" "}
