@@ -189,13 +189,16 @@ const CardSheet = ({ item }: { item: Item }) => {
               <p onClick={() => handleMessageUser(item)}>Message User</p>
             )}
           </Button>
-          <Button
-            className="text-xs lg:text-base py-0 lg:py-5 cursor-pointer bg-transparent border text-inherit hover:bg-gray-200"
-            type="submit"
-            asChild
-          >
-            <p onClick={() => handleMessageUser(item)}>See Messages</p>
-          </Button>
+          {
+            item.associated_person == user?.id &&
+            <Button
+                className="text-xs lg:text-base py-0 lg:py-5 cursor-pointer bg-transparent border text-inherit hover:bg-gray-200"
+                type="submit"
+                asChild
+            >
+                <p onClick={() => handleMessageUser(item)}>See Messages</p>
+            </Button>
+          }
         </SheetFooter>
       </SheetContent>
     </Sheet>

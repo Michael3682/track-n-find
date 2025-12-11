@@ -9,7 +9,7 @@ class ReportRepository {
    }
 
    async findItemsByUserId(userId: string, type: ItemType) {
-      return prisma.item.findMany({ where: { associated_person: userId, type }})
+      return prisma.item.findMany({ where: { associated_person: userId, type }, include: { author: { omit: { password: true }}, claims: true }})
    }
 
    async findItems() {

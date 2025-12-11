@@ -181,6 +181,21 @@ export const updateItem = async ({
    }
 };
 
+export const deleteItem = async (itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/items/${itemId}`, {
+         method: "DELETE",
+         credentials: "include"
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}
+
 export const toggleItemStatus = async (itemId: string) => {
    try {
       const res = await fetch(
