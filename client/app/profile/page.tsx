@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/auth/AuthContext";
 import { NavigationBar } from "@/components/navigationbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FoundItemsCardSheet, LostItemsCardSheet } from "@/components/profile-card-sheet";
+import { ArchiveItemsCardSheet, FoundItemsCardSheet, LostItemsCardSheet } from "@/components/profile-card-sheet";
 
 export default function Profile() {
    const { user } = useAuth();
@@ -29,7 +29,7 @@ export default function Profile() {
          <div className="w-full flex justify-center border-t pt-10 px-8">
             <Tabs defaultValue="foundItems">
                <div className="w-full flex justify-center">
-                  <TabsList className="w-75 h-auto bg-muted border shadow-inner p-1">
+                  <TabsList className="w-110 h-auto bg-muted border shadow-inner p-1">
                      <TabsTrigger
                         className="text-xs lg:text-sm text-primary cursor-pointer py-2 data-[state=active]:bg-background data-[state=active]:text-primary"
                         value="foundItems">
@@ -39,6 +39,11 @@ export default function Profile() {
                         className="text-xs lg:text-sm text-primary cursor-pointer py-2 data-[state=active]:bg-background data-[state=active]:text-primary"
                         value="lostItems">
                         Lost Items
+                     </TabsTrigger>
+                     <TabsTrigger
+                        className="text-xs lg:text-sm text-primary cursor-pointer py-2 data-[state=active]:bg-background data-[state=active]:text-primary"
+                        value="archive">
+                        Archived Items
                      </TabsTrigger>
                   </TabsList>
                </div>
@@ -52,6 +57,12 @@ export default function Profile() {
                      className="flex flex-wrap justify-start gap-4"
                      value="lostItems">
                      <LostItemsCardSheet />
+                  </TabsContent>
+                  <TabsContent
+                     className="flex flex-wrap justify-start gap-4"
+                     value="archive"
+                  >
+                     <ArchiveItemsCardSheet />
                   </TabsContent>
                </div>
             </Tabs>

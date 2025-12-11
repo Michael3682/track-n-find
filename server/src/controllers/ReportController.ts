@@ -5,6 +5,7 @@ import { v4 as uuidV4 } from "uuid";
 import { claimSchema, itemSchema, returnSchema, updateItemSchema } from "@/lib/validations/report";
 import { JwtPayload } from "jsonwebtoken";
 import { it } from "node:test";
+import message from "@/socket/services/message";
 
 /**
  * @swagger
@@ -578,6 +579,24 @@ class ReportController {
     }
   }
 
+  async getArchivedItems(req: Request, res: Response) {
+    try {
+      const items = await ReportService.getArchivedItems()
+
+      res.json({
+          success: true,
+          items
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
   async getItem(req: Request, res: Response) {
     try {
       const id = req.params.id
@@ -627,6 +646,25 @@ class ReportController {
         lostItems
       })
 
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async getUserArchivedItems(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const items = await ReportService.getUserArchivedItems(userId)
+
+      res.json({
+          success: true,
+          items
+      })
     } catch (err: any) {
       console.log(err);
       res.status(err.status || 500).json({
@@ -726,6 +764,84 @@ class ReportController {
         deletedItem
       })
 
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async archiveItem(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const { id } = req.params
+
+      const item = await ReportService.getItem(id)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      const deletedItem = await ReportService.archiveItem(id)
+
+      res.json({
+        success: true,
+        message: "Item Moved to Trash",
+        deletedItem
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async restoreItem(req: Request, res: Response) {
+    try {
+      const userId = (req.user as JwtPayload).id
+      const { id } = req.params
+
+      const item = await ReportService.getItem(id)
+      const user = await AuthService.getUserById(userId)
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
+      }
+
+      if (item.associated_person !== userId && user?.role !== "ADMIN") {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not allowed to perform this action",
+        });
+      }
+
+      const restoredItem = await ReportService.restoreItem(id)
+
+      res.json({
+        success: true,
+        message: "Item Moved to Trash",
+        restoredItem
+      })
     } catch (err: any) {
       console.log(err);
       res.status(err.status || 500).json({

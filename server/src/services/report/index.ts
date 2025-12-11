@@ -63,7 +63,15 @@ class ReportService {
   }
 
   async getItems() {
-    return ReportRepository.findItems()
+    return ReportRepository.findItems({ isArchived: false })
+  }
+
+  async getArchivedItems() {
+    return ReportRepository.findItems({ isArchived: true })
+  }
+  
+  async getUserArchivedItems(userId: string) {
+    return ReportRepository.findArchivedItemsByUserId(userId)
   }
 
   async getItem(id: string) {
@@ -76,6 +84,18 @@ class ReportService {
 
   async deleteItem(id: string) {
     return ReportRepository.delete(id)
+  }
+
+  async archiveItem(id: string) {
+    return ReportRepository.update(id, {
+      isActive: false
+    })
+  }
+
+  async restoreItem(id: string) {
+    return ReportRepository.update(id, {
+      isActive: true
+    })
   }
 
   async reportClaim(
