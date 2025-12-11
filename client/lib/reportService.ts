@@ -252,3 +252,57 @@ export const reportClaim = async ({
       return [null, err];
    }
 };
+
+export const reportReturn = async ({
+   itemId,
+   returnerId,
+   returnerName,
+   claimerCredentials: {
+      yearAndSection,
+      studentId,
+      contactNumber,
+      proofOfClaim,
+   },
+   reporterId,
+   conversationId,
+}: {
+   itemId: string;
+   returnerId: string;
+   returnerName: string;
+   claimerCredentials: {
+      yearAndSection: string;
+      studentId: string;
+      contactNumber: string;
+      proofOfClaim: string;
+   };
+   reporterId: string;
+   conversationId: string;
+}) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/return`, {
+         method: "POST",
+         credentials: "include",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            itemId,
+            returnerId,
+            returnerName,
+               yearAndSection,
+               studentId,
+               contactNumber,
+               proofOfClaim,
+            reporterId,
+            conversationId,
+         }),
+      });
+
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+};

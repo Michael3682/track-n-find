@@ -780,13 +780,10 @@ class ReportController {
         itemId, 
         claimerId,
         claimerName,
-        credentials: {
           yearAndSection,
           studentId,
           contactNumber,
-          proofOfClaim
-        },
-        claimedAt,
+          proofOfClaim,
         reporterId,
         conversationId
       }, error } = claimSchema.validate(req.body)
@@ -832,7 +829,6 @@ class ReportController {
         studentId,
         contactNumber,
         proofOfClaim,
-        claimedAt,
         reporterId,
         conversationId
       })
@@ -861,13 +857,10 @@ class ReportController {
         itemId, 
         returnerId,
         returnerName,
-        credentials: {
           yearAndSection,
           studentId,
           contactNumber,
-          proofOfClaim
-        },
-        returnedAt,
+          proofOfClaim,
         reporterId,
         conversationId
       }, error } = returnSchema.validate(req.body)
@@ -912,7 +905,6 @@ class ReportController {
         studentId,
         contactNumber,
         proofOfClaim,
-        returnedAt,
         reporterId,
         conversationId
       })
