@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { IconFolderCode } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
-import { getUserFoundItems, getUserLostItems } from "@/lib/reportService";
+import { getArchivedItems, getUserArchivedItems, getUserFoundItems, getUserLostItems } from "@/lib/reportService";
 import {
    Card,
    CardDescription,
@@ -130,4 +130,31 @@ export function LostItemsCardSheet() {
          )}
       </>
    );
+}
+
+export function ArchiveItemsCardSheet() {
+   const [archived, setArchived] = useState<Item[]>([])
+
+   useEffect(() => {
+      getUserArchivedItems().then(([data]) => setArchived(data.items))
+   }, [])
+
+   return (
+      <>
+         {archived.length > 0 ? (
+            archived.map((item) => (
+               <CardSheet key={item.id} item={item}/>
+            ))
+         ) : (
+            <Empty>
+               <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                     <IconFolderCode />
+                  </EmptyMedia>
+                  <EmptyTitle>Reports Not Found</EmptyTitle>
+               </EmptyHeader>
+            </Empty>
+         )}
+      </>
+   )
 }

@@ -33,6 +33,7 @@ export type Item = {
   associated_person: string;
   author: User;
   claims: Claim[];
+  isActive: boolean;
 };
 
 export type Message = {
