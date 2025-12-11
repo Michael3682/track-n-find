@@ -37,11 +37,13 @@ import { uploadItemImage } from "@/lib/bucket";
 import { getItem, reportClaim } from "@/lib/reportService";
 import { useSearchParams } from "next/navigation";
 import { Conversation, Item } from "@/types/types";
+import { getConversation } from "@/lib/chatService";
 
 interface ClaimItemState {
    claimerName: string;
    claimerCredentials: {
       yearAndSection?: string;
+      course?: string;
       studentId?: string;
       contactNumber?: string;
       proofofClaim: File[];
@@ -65,8 +67,8 @@ export default function ClaimItem() {
     const [progress, setProgress] = useState<number[]>([]);
    const [isSubmitting, setIsSubmitting] = useState(false);
    const { user } = useAuth();
-   const itemId = useSearchParams().get("itemId")
-   const [item, setItem] = useState<Item | null>(null)
+   const convoId = useSearchParams().get("conversationId")
+   const [convo, setConvo] = useState<Conversation | null>(null)
 
    const form = useForm<ClaimItemState>({
       resolver: zodResolver(formSchema),
@@ -91,50 +93,52 @@ export default function ClaimItem() {
    };
 
    const onSubmit = async () => {
+      if(!convo) return
+
       setIsSubmitting(true);
       const formValues = form.getValues();
 
-      const yyyy = formValues.claimedAt.getFullYear();
-      const mm = String(formValues.claimedAt.getMonth() + 1).padStart(2, "0");
-      const dd = String(formValues.claimedAt.getDate()).padStart(2, "0");
-
       const files = formValues.claimerCredentials.proofofClaim;
 
-      let urls;
+      let urls: string[] = []
       if (files && files.length > 0 && user) {
          urls = await uploadItemImage(files, user, setProgress);
       }
 
-      const updatedData = {
-         ...formValues,
-         date: `${yyyy}-${mm}-${dd}`,
-         attachments: urls,
-      };
+      const [data, err] = await reportClaim({
+         itemId: convo.item.id,
+         claimerId: convo.senderId,
+         claimerName: formValues.claimerName,
+         claimerCredentials: {
+            yearAndSection: ` ${formValues.claimerCredentials.course} ${formValues.claimerCredentials.yearAndSection}`,
+            studentId: formValues.claimerCredentials.studentId!,
+            contactNumber: formValues.claimerCredentials.contactNumber!,
+            proofOfClaim: urls.length > 0 ? urls[0] : ""
+         },
+         reporterId: convo.hostId,
+         conversationId: convo.id
+      });
 
-      // const [data, err] = await reportClaim({
-      //    itemId, claimerId
-      // });
+      if (err || !data.success) {
+         setIsSubmitting(false);
+         toast.error("Something wrong.");
+      }
 
-      // if (err || !data.success) {
-      //    setIsSubmitting(false);
-      //    toast.error("Something wrong.");
-      // }
+      if (data.success) {
+         setIsSubmitting(false);
+         toast.success("Found item has been reported.");
 
-      // if (data.success) {
-      //    setIsSubmitting(false);
-      //    toast.success("Found item has been reported.");
-
-      //    form.reset({
-      //       claimerName: "",
-      //       claimerCredentials: {
-      //          yearAndSection: "",
-      //          studentId: "",
-      //          contactNumber: "",
-      //          proofofClaim: []
-      //       },
-      //       claimedAt: new Date()
-      //    });
-      // }
+         form.reset({
+            claimerName: "",
+            claimerCredentials: {
+               yearAndSection: "",
+               studentId: "",
+               contactNumber: "",
+               proofofClaim: []
+            },
+            claimedAt: new Date()
+         });
+      }
    };
 
    const yearSections = Array.from({ length: 4 }, (_, i) => {
@@ -143,12 +147,13 @@ export default function ClaimItem() {
    }).flat();
 
    useEffect(() => {
-      getItem(itemId!).then(([data]) => {
-         setItem({...data.item, conversations: data.item.conversations?.filter((convo: Conversation) => convo.itemId == itemId)})
+      getConversation(convoId!).then(([data]) => {
+         setConvo(data.conversation)
       })
    }, [])
 
-   console.log(item)
+   console.log(convo)
+
    return (
       <div className="w-screen h-screen flex flex-col items-center justify-center bg-background overflow-x-hidden">
          <NavigationBar className="static lg:fixed" />
@@ -214,7 +219,7 @@ export default function ClaimItem() {
                      />
                      <FormField
                         control={form.control}
-                        name="claimerCredentials.yearAndSection"
+                        name="claimerCredentials.course"
                         render={({ field }) => (
                            <FormItem className="w-full">
                               <FormLabel>Course</FormLabel>

@@ -209,7 +209,6 @@ export const reportClaim = async ({
       contactNumber,
       proofOfClaim,
    },
-   claimedAt,
    reporterId,
    conversationId,
 }: {
@@ -222,7 +221,6 @@ export const reportClaim = async ({
       contactNumber: string;
       proofOfClaim: string;
    };
-   claimedAt: string;
    reporterId: string;
    conversationId: string;
 }) => {
@@ -237,13 +235,10 @@ export const reportClaim = async ({
             itemId,
             claimerId,
             claimerName,
-            claimerCredentials: {
                yearAndSection,
                studentId,
                contactNumber,
                proofOfClaim,
-            },
-            claimedAt,
             reporterId,
             conversationId,
          }),
