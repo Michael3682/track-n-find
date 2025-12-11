@@ -125,6 +125,36 @@ export const getItems = async () => {
    }
 };
 
+export const getArchivedItems = async () => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/items/archived`, {
+         method: "GET",
+         credentials: "include",
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+};
+
+export const getUserArchivedItems = async () => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/archived`, {
+         method: "GET",
+         credentials: "include",
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+};
+
 export const getItem = async (id: string) => {
    try {
       const res = await fetch(`${API_URL}/report/v1/items/${id}`, {
@@ -181,6 +211,51 @@ export const updateItem = async ({
    }
 };
 
+export const deleteItem = async (itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/items/${itemId}`, {
+         method: "DELETE",
+         credentials: "include"
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}
+
+export const archiveItem = async (itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/items/${itemId}`, {
+         method: "PUT",
+         credentials: "include"
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}
+
+export const restoreItem = async (itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/items/${itemId}/restore`, {
+         method: "PUT",
+         credentials: "include"
+      });
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}
+
 export const toggleItemStatus = async (itemId: string) => {
    try {
       const res = await fetch(
@@ -235,6 +310,60 @@ export const reportClaim = async ({
             itemId,
             claimerId,
             claimerName,
+               yearAndSection,
+               studentId,
+               contactNumber,
+               proofOfClaim,
+            reporterId,
+            conversationId,
+         }),
+      });
+
+      const data = await res.json();
+
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+};
+
+export const reportReturn = async ({
+   itemId,
+   returnerId,
+   returnerName,
+   claimerCredentials: {
+      yearAndSection,
+      studentId,
+      contactNumber,
+      proofOfClaim,
+   },
+   reporterId,
+   conversationId,
+}: {
+   itemId: string;
+   returnerId: string;
+   returnerName: string;
+   claimerCredentials: {
+      yearAndSection: string;
+      studentId: string;
+      contactNumber: string;
+      proofOfClaim: string;
+   };
+   reporterId: string;
+   conversationId: string;
+}) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/return`, {
+         method: "POST",
+         credentials: "include",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            itemId,
+            returnerId,
+            returnerName,
                yearAndSection,
                studentId,
                contactNumber,

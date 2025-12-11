@@ -57,7 +57,7 @@ function Messages({
     <div className="w-auto h-screen relative overflow-hidden">
       <NavigationBar className="fixed" />
       <div className="w-full h-full flex pt-12.5">
-        <div className={`w-full lg:w-max h-full p-3 lg:px-8 lg:pt-5 border-r bg-sidebar relative space-y-5 ${isMobile ? (showMessage ? "hidden" : "block") : "block"}`}>
+        <div className={`w-full lg:w-max h-full p-3 lg:px-2 lg:pt-5 border-r bg-sidebar relative space-y-5 ${isMobile ? (showMessage ? "hidden" : "block") : "block"}`}>
           <header className="space-y-3 w-full sticky">
             <h1 className="font-bold text-3xl px-2">Chats</h1>
             <SearchForm
@@ -87,13 +87,13 @@ function Messages({
                   <p className="text-base font-medium text-primary overflow-hidden flex items-center gap-2">
                     {conversation.item.name}
                     <span className="text-xs font-semibold text-gray-400">
-                      {conversation.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
+                      {conversation.isMine ? `🏷️ My ${conversation.item.type.toLowerCase()} Item` : "💬 Claiming Item"}
                       {conversation?.item.status == "CLAIMED" && 
                         <span className="text-emerald-400 text-md ml-4">Claimed</span>
                       }
                     </span>
                   </p>
-                  <div className="w-55 text-sm text-ellipsis whitespace-nowrap overflow-hidden">
+                  <div className="w-70 text-sm text-ellipsis whitespace-nowrap overflow-hidden">
                     {conversation.name}
                   </div>
                 </CardDescription>

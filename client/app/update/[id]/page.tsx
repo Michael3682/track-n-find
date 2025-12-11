@@ -3,9 +3,9 @@
 import { z } from "zod"
 import { Item } from "@/types/types"
 import { useForm } from "react-hook-form"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { getItem, updateItem } from "@/lib/reportService"
+import { archiveItem, deleteItem, getItem, restoreItem, updateItem } from "@/lib/reportService"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { ChevronDownIcon } from "lucide-react"
@@ -29,6 +29,7 @@ import {
 import { useAuth } from "@/contexts/auth/AuthContext"
 import { uploadItemImage } from "@/lib/bucket"
 import { toast } from "sonner"
+import { Separator } from "@radix-ui/react-dropdown-menu"
 
 interface UpdateItemState {
     itemName: string;
@@ -59,8 +60,11 @@ export default function UpdateReport() {
     const [open, setOpen] = useState(false);
     const [item, setItem] = useState<Item | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isTrashing, setIsTrashing] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
     const [progress, setProgress] = useState<number[]>([])
     const { user } = useAuth()
+    const router = useRouter()
 
     const form = useForm<UpdateItemState>({
         resolver: zodResolver(formSchema),
@@ -122,6 +126,69 @@ export default function UpdateReport() {
         console.log(data)
     }
 
+    const handleTrash = async () => {
+        setIsTrashing(true)
+
+        if(!item) return
+
+        const [data, err] = await archiveItem(item?.id)
+
+        if (err || !data.success) {
+            setIsTrashing(false);
+            toast.error("Something wrong.");
+        }
+
+        if (data.success) {
+            setIsTrashing(false);
+            toast.success("Item has been moved to trash");
+            setItem(data.item)
+
+            router.back()
+        }
+    }
+
+    const handleRestore = async () => {
+        setIsTrashing(true)
+
+        if(!item) return
+
+        const [data, err] = await restoreItem(item?.id)
+
+        if (err || !data.success) {
+            setIsTrashing(false);
+            toast.error("Something wrong.");
+        }
+
+        if (data.success) {
+            setIsTrashing(false);
+            toast.success("Item has been restored");
+            setItem(data.item)
+
+            router.back()
+        }
+    }
+
+    const handleDelete = async () => {
+        setIsDeleting(true)
+
+        if(!itemID) return
+
+        const [data, err] = await deleteItem(String(itemID))
+
+        if (err || !data.success) {
+            setIsDeleting(false);
+            toast.error("Something wrong.");
+        }
+
+        if (data.success) {
+            setIsDeleting(false);
+            toast.success("Item has been moved to trash");
+            setItem(data.item)
+
+            router.back()
+        }
+    }
+
     useEffect(() => {
         const fetchItem = async () => {
             try {
@@ -168,8 +235,8 @@ export default function UpdateReport() {
         <div className="w-screen h-full lg:h-screen flex flex-col items-center justify-center bg-secondary overflow-x-hidden">
             <Form {...form}>
                 <form className="lg:mt-10 w-full lg:w-125 h-full lg:h-max flex flex-col items-center justify-center gap-10 lg:gap-13 lg:border border-black/30 lg:shadow-lg lg:rounded-xl p-8 py-5 lg:p-10 bg-white" onSubmit={form.handleSubmit(onSubmit)}>
-                    <h1 className="text-2xl lg:text-4xl font-extrabold tracking-tight">Update Item</h1>
-                    <div className="space-y-4 lg:space-y-5 w-full">
+                    <h1 className="text-2xl lg:text-4xl font-extrabold tracking-tight">Manage Item</h1>
+                    {!!item && <div className="space-y-4 lg:space-y-5 w-full">
                         <FormField
                             control={form.control}
                             name="itemName"
@@ -339,13 +406,31 @@ export default function UpdateReport() {
                                 </FormItem>
                             )}
                         />
-                    </div>
                     <Button
                         className="w-full text-sm bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                         type="submit"
                         disabled={isSubmitting}>
                         {isSubmitting ? "Updating" : "Update Item"}
                     </Button>
+                    </div>}
+                    <div className="w-full flex gap-2">
+                        <Button
+                            className="flex-1 text-sm bg-tranparent text-inherit border hover:bg-gray-200 cursor-pointer disabled:opacity-50"
+                            type="button"
+                            disabled={isTrashing}
+                            onClick={() => item?.isActive ? handleTrash() : handleRestore()}
+                        >
+                            {isTrashing ? item?.isActive ? "Moving to trash" : "Restoring item" : item?.isActive ? "Move to trash" : "Restore"}
+                        </Button>
+                        <Button
+                            className="flex-1 text-sm bg-transparent border border-red-400 text-red-400 hover:bg-red-600 hover:text-white cursor-pointer disabled:opacity-50"
+                            type="button"
+                            disabled={isDeleting}
+                            onClick={() => handleDelete()}
+                        >
+                            {isDeleting ? "Deleting" : "Delete Permanently"}
+                        </Button>
+                    </div>
                 </form>
             </Form>
         </div>

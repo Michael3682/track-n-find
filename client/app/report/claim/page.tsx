@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/popover";
 import { uploadItemImage } from "@/lib/bucket";
 import { getItem, reportClaim } from "@/lib/reportService";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Conversation, Item } from "@/types/types";
 import { getConversation } from "@/lib/chatService";
 
@@ -48,7 +48,6 @@ interface ClaimItemState {
       contactNumber?: string;
       proofofClaim: File[];
    };
-   claimedAt: Date;
 }
 
 const formSchema = z.object({
@@ -59,7 +58,6 @@ const formSchema = z.object({
       contactNumber: z.string().optional(),
       proofofClaim: z.array(z.file()),
    }),
-   claimedAt: z.date(),
 });
 
 export default function ClaimItem() {
@@ -69,6 +67,7 @@ export default function ClaimItem() {
    const { user } = useAuth();
    const convoId = useSearchParams().get("conversationId")
    const [convo, setConvo] = useState<Conversation | null>(null)
+   const router = useRouter()
 
    const form = useForm<ClaimItemState>({
       resolver: zodResolver(formSchema),
@@ -79,18 +78,9 @@ export default function ClaimItem() {
             studentId: "",
             contactNumber: "",
             proofofClaim: [],
-         },
-         claimedAt: new Date(),
+         }
       },
    });
-
-   const updateDateTime = (date?: Date) => {
-      if (!date) return;
-
-      const updated = new Date(date);
-
-      form.setValue("claimedAt", updated);
-   };
 
    const onSubmit = async () => {
       if(!convo) return
@@ -135,9 +125,10 @@ export default function ClaimItem() {
                studentId: "",
                contactNumber: "",
                proofofClaim: []
-            },
-            claimedAt: new Date()
+            }
          });
+
+         router.push('/messages')
       }
    };
 
@@ -151,6 +142,20 @@ export default function ClaimItem() {
          setConvo(data.conversation)
       })
    }, [])
+
+   useEffect(() => {
+      if(!convo) return
+
+      form.reset({
+         claimerName: convo.sender.name,
+         claimerCredentials: {
+            yearAndSection: "",
+            studentId: convo.senderId,
+            contactNumber: "",
+            proofofClaim: []
+         }
+      })
+   }, [convo, form])
 
    console.log(convo)
 
@@ -173,7 +178,7 @@ export default function ClaimItem() {
                            <FormLabel>Name</FormLabel>
                            <FormControl>
                               <Input
-                                 placeholder="Enter your name"
+                                 placeholder="Enter claimer's name"
                                  className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm bg-background"
                                  {...field}
                                  onChange={(e) =>
@@ -317,54 +322,7 @@ export default function ClaimItem() {
                         </FormItem>
                      )}
                   />
-                  <FormField
-                     control={form.control}
-                     name="claimedAt"
-                     render={({ field }) => (
-                        <FormItem className="w-full">
-                           <FormLabel>Claimed At</FormLabel>
-                           <FormControl>
-                              <div className="w-full flex flex-col gap-3">
-                                 <Popover open={open} onOpenChange={setOpen}>
-                                    <PopoverTrigger asChild>
-                                       <Button
-                                          variant="outline"
-                                          id="date-picker"
-                                          className="w-full justify-between font-normal placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm">
-                                          {field.value
-                                             ? field.value.toLocaleDateString(
-                                                  "en-US",
-                                                  {
-                                                     year: "numeric",
-                                                     month: "short",
-                                                     day: "numeric",
-                                                  }
-                                               )
-                                             : "Select date"}
-                                          <ChevronDownIcon />
-                                       </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                       className="w-auto overflow-hidden p-0"
-                                       align="start">
-                                       <Calendar
-                                          mode="single"
-                                          selected={field.value}
-                                          captionLayout="dropdown"
-                                          onSelect={(date) => {
-                                             if (!date) return;
-                                             updateDateTime(date);
-                                             setOpen(false);
-                                          }}
-                                       />
-                                    </PopoverContent>
-                                 </Popover>
-                              </div>
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
+                  
                </div>
                <Button
                   className="w-full text-sm text-[rgb(229,229,229)] bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"

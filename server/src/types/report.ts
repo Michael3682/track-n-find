@@ -11,6 +11,7 @@ export interface Item {
     status: ItemStatus;
     type: ItemType;
     associated_person: string;   
+    isActive?: boolean;
 }
 
 export type Claim = { 

@@ -9,11 +9,15 @@ class ReportRepository {
    }
 
    async findItemsByUserId(userId: string, type: ItemType) {
-      return prisma.item.findMany({ where: { associated_person: userId, type }})
+      return prisma.item.findMany({ where: { associated_person: userId, type, isActive: true }, include: { author: { omit: { password: true }}, claims: true }})
    }
 
-   async findItems() {
-      return prisma.item.findMany({ include: { author: { omit: { password: true }} }})
+   async findItems({ isArchived = false } ) {
+      return prisma.item.findMany({ include: { author: { omit: { password: true }}, claims: true }, where: { isActive: !isArchived }})
+   }
+
+   async findArchivedItemsByUserId(userId:string) {
+      return prisma.item.findMany({ where: { associated_person: userId, isActive: false }, include: { author: { omit: { password: true }}, claims: true }})
    }
 
    async findItemById(id: string) {
