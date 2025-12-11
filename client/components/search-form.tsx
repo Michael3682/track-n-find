@@ -25,7 +25,7 @@ export function SearchForm({
                </Label>
                <SidebarInput
                   id="search"
-                  placeholder="Search for items..."
+                  placeholder="Search"
                   className="pl-8 placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
                   value={value}
                   onChange={onChange}

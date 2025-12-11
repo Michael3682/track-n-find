@@ -22,7 +22,7 @@ export default function Page() {
    return (
       <div className="w-auto h-auto relative overflow-x-hidden">
          <NavigationBar />
-         <SidebarProvider className="mt-13">
+         <SidebarProvider className="pt-13">
             <SidebarGroupContent
                searchItem={searchItem}
                setSearchItem={setSearchItem}
@@ -72,15 +72,23 @@ function SidebarGroupContent({
             activeStatus={activeStatus}
             setActiveStatus={setActiveStatus}
          />
-         <SidebarInset className="bg-background">
-            <header className="flex h-16 items-center border-b px-4 bg-sidebar">
-               <Label htmlFor="filter" className="flex items-center gap-2 p-2 cursor-pointer text-primary">
+         <SidebarInset>
+            <header className="flex items-center border-b px-5 py-1 bg-sidebar">
+               <Label
+                  htmlFor="filter"
+                  className="flex items-center gap-2 p-2 cursor-pointer text-primary">
                   <SidebarTrigger
                      id="filter"
                      className="-ml-1 cursor-pointer"
                   />
                   <p>
-                     {isMobile ? (!open ? "Hide Filters" : "Show Filters") : (open ? "Hide Filters" : "Show Filters")}
+                     {isMobile
+                        ? !open
+                           ? "Hide Filters"
+                           : "Show Filters"
+                        : open
+                        ? "Hide Filters"
+                        : "Show Filters"}
                   </p>
                </Label>
             </header>

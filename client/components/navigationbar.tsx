@@ -37,26 +37,11 @@ import {
 } from "@/components/ui/sheet";
 
 export function NavigationBar({ className }: { className?: string }) {
-   const [isClicked, setIsClicked] = useState(false);
-   const [theme, setTheme] = useState<"LIGHT" | "DARK">("LIGHT")
    const router = useRouter();
-   const { refetch, user } = useAuth();
    const isMobile = useIsMobile();
-
-   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-   const handleDropdownToggle = () => {
-      setIsClicked(!isClicked);
-   };
-
-   const handleClickOutside = (e: MouseEvent) => {
-      if (
-         dropdownRef.current &&
-         !dropdownRef.current.contains(e.target as Node)
-      ) {
-         setIsClicked(false);
-      }
-   };
+   const { refetch, user } = useAuth();
+   const [isClicked, setIsClicked] = useState(false);
+   const [theme, setTheme] = useState<"LIGHT" | "DARK">("LIGHT");
 
    const handleLogout = async () => {
       const [data, err] = await logout();
@@ -70,42 +55,143 @@ export function NavigationBar({ className }: { className?: string }) {
    };
 
    const handleThemeMode = async () => {
-      setTheme(prev => prev == "DARK" ? "LIGHT" : "DARK")
+      setTheme((prev) => (prev == "DARK" ? "LIGHT" : "DARK"));
 
-      await changeTheme(theme == "DARK" ? "LIGHT" : "DARK")
-
+      await changeTheme(theme == "DARK" ? "LIGHT" : "DARK");
    };
 
    useEffect(() => {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-         document.removeEventListener("mousedown", handleClickOutside);
-      };
-   }, []);
+      if (!user) return;
+
+      setTheme(user.theme);
+   }, [user]);
 
    useEffect(() => {
-      if(!user) return
+      if (!theme) return;
 
-      setTheme(user.theme)
-   }, [user])
-
-   useEffect(() => {
-      if(!theme) return
-
-      if(theme == "DARK") {
-         document.body.classList.add("dark")
+      if (theme == "DARK") {
+         document.body.classList.add("dark");
       }
 
-      if(theme == "LIGHT") {
-         document.body.classList.remove("dark")
+      if (theme == "LIGHT") {
+         document.body.classList.remove("dark");
       }
-   }, [theme])
+   }, [theme]);
+
+   const NavButtons = ({ mobile = false }: { mobile?: boolean }) => {
+      const navItems = [
+         {
+            icon: House,
+            href: "/",
+            label: "Home",
+         },
+         {
+            icon: Search,
+            href: "/browse",
+            label: "Browse",
+         },
+         {
+            icon: MessageCircle,
+            href: "/messages",
+            label: "Messages",
+         },
+         {
+            icon: UserRound,
+            href: "/profile",
+            label: "Profile",
+         },
+      ];
+
+      return (
+         <>
+            {navItems.map(({ icon: Icon, href, label }: any) => (
+               <div key={href} className="flex items-center">
+                  {mobile && <Icon className="text-primary" size={18} />}
+                  <Button
+                     variant="ghost"
+                     className="px-3 rounded-none cursor-pointer lg:border-b border-transparent hover:border-ring">
+                     <Link
+                        className={`text-primary ${
+                           mobile ? "text-xs" : "text-sm"
+                        }`}
+                        href={href}>
+                        {label}
+                     </Link>
+                  </Button>
+               </div>
+            ))}
+         </>
+      );
+   };
+
+   const DropDownButtons = ({ mobile = false }: { mobile?: boolean }) => {
+      return (
+         <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
+            <DropdownMenuTrigger asChild>
+               <div className="flex items-center">
+                  {mobile && (
+                     <ClipboardList className="text-primary" size={18} />
+                  )}
+                  <Button
+                     variant="ghost"
+                     className="rounded-none cursor-pointer text-primary lg:border-b border-transparent hover:border-ring">
+                     Report
+                     <ChevronUp
+                        className={`transition-transform
+                                    ${
+                                       mobile
+                                          ? isClicked
+                                             ? "-rotate-90"
+                                             : "rotate-90"
+                                          : isClicked
+                                          ? "rotate-0"
+                                          : "rotate-180"
+                                    }
+                                 `}
+                     />
+                  </Button>
+               </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+               side={`${mobile ? "right" : "bottom"}`}
+               className="p-2 space-y-2">
+               <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
+                  <Link href="/report/lost">Lost Item</Link>
+               </DropdownMenuItem>
+               <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
+                  <Link href="/report/found">Found Item</Link>
+               </DropdownMenuItem>
+            </DropdownMenuContent>
+         </DropdownMenu>
+      );
+   };
+
+   const ActionButtons = ({ mobile = false }: { mobile?: boolean }) => {
+      return (
+         <SheetFooter className={`flex flex-row justify-between ${!mobile ? "gap-5" : ""} p-0 m-0`}>
+            <Button
+               className="cursor-pointer bg-primary"
+               onClick={handleThemeMode}>
+               {theme === "DARK" ? <Moon /> : <Sun />}
+            </Button>
+            <Button
+               className="grow border bg-transparent rounded-md text-primary hover:bg-transparent hover:text-red-500 hover:shadow-md cursor-pointer"
+               onClick={() => handleLogout()}>
+               <Link
+                  className="flex p-2 items-center gap-2 text-inherit"
+                  href="/">
+                  <LogOut />
+               </Link>
+            </Button>
+         </SheetFooter>
+      );
+   };
 
    return (
       <Sheet>
          <div
             className={cn(
-               "w-full flex justify-end lg:justify-between items-center gap-10 px-3 py-2 lg:py-0 top-0 fixed z-50 border-b bg-secondary transition-colors duration-300 ease-linear",
+               "w-full flex justify-end lg:justify-between items-center gap-10 px-3 lg:px-8 py-2 lg:py-0 top-0 fixed z-50 border-b bg-secondary transition-colors duration-300 ease-linear",
                className
             )}>
             <SheetTrigger asChild>
@@ -138,103 +224,10 @@ export function NavigationBar({ className }: { className?: string }) {
                   </SheetHeader>
                   <Separator />
                   <div className="flex flex-col gap-5 items-start py-8 overflow-hidden background-blur-2xl">
-                     <div className="flex items-center">
-                        <House className="text-primary" size={18} />
-                        <Button
-                           variant="ghost"
-                           className="px-3 rounded-md cursor-pointer hover:bg-black/3">
-                           <Link className="text-xs text-primary" href="/">
-                              Home
-                           </Link>
-                        </Button>
-                     </div>
-                     <div className="flex items-center">
-                        <Search className="text-primary" size={18} />
-                        <Button
-                           variant="ghost"
-                           className="px-3 rounded-md cursor-pointer hover:bg-black/3">
-                           <Link
-                              className="text-xs text-primary"
-                              href="/browse">
-                              Browse
-                           </Link>
-                        </Button>
-                     </div>
-                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                           <div className="flex items-center">
-                              <ClipboardList
-                                 className="text-primary"
-                                 size={18}
-                              />
-                              <Button
-                                 variant="ghost"
-                                 className="text-xs rounded-md cursor-pointer hover:bg-black/3"
-                                 onPointerDown={handleDropdownToggle}>
-                                 Report
-                                 <ChevronUp
-                                    className={
-                                       isClicked ? "-rotate-90" : "rotate-90"
-                                    }
-                                 />
-                              </Button>
-                           </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                           side="right"
-                           ref={dropdownRef}
-                           className="p-2 space-y-2">
-                           <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
-                              <Link className="text-xs" href="/report/lost">
-                                 Lost Item
-                              </Link>
-                           </DropdownMenuItem>
-                           <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
-                              <Link className="text-xs" href="/report/found">
-                                 Found Item
-                              </Link>
-                           </DropdownMenuItem>
-                        </DropdownMenuContent>
-                     </DropdownMenu>
-                     <div className="flex items-center">
-                        <MessageCircle className="text-primary" size={18} />
-                        <Button
-                           variant="ghost"
-                           className="rounded-md cursor-pointer hover:bg-black/3">
-                           <Link className="text-xs" href="/messages">
-                              Messages
-                           </Link>
-                        </Button>
-                     </div>
-                     <div className="flex items-center">
-                        <UserRound className="text-primary" size={18} />
-                        <Button
-                           variant="ghost"
-                           className="rounded-md cursor-pointer hover:bg-black/3">
-                           <Link className="text-xs" href="/profile">
-                              Profile
-                           </Link>
-                        </Button>
-                     </div>
+                     <NavButtons mobile />
+                     <DropDownButtons mobile />
                   </div>
-                  <SheetFooter className="p-0 pb-6">
-                     <div className="space-x-5">
-                        <Button
-                           className="cursor-pointer bg-primary"
-                           onClick={handleThemeMode}>
-                           {theme === "DARK" ? <Moon /> : <Sun />}
-                        </Button>
-                        <Button
-                           className="border bg-transparent rounded-md text-primary hover:bg-transparent hover:text-red-500 hover:shadow-md cursor-pointer"
-                           onClick={() => handleLogout()}>
-                           <Link
-                              className="flex p-2 items-center gap-2 text-inherit"
-                              href="/">
-                              <LogOut />
-                           </Link>
-                        </Button>
-                     </div>
-                  </SheetFooter>
+                  <ActionButtons />
                </SheetContent>
             ) : (
                <>
@@ -250,76 +243,10 @@ export function NavigationBar({ className }: { className?: string }) {
                      </Link>
                   </Button>
                   <div className="flex gap-5 items-center p-2 overflow-hidden background-blur-2xl">
-                     <Button
-                        variant="ghost"
-                        className="rounded-md cursor-pointer hover:bg-black/3">
-                        <Link className="py-0 text-primary" href="/">
-                           Home
-                        </Link>
-                     </Button>
-                     <Button
-                        variant="ghost"
-                        className="rounded-md cursor-pointer hover:bg-black/3">
-                        <Link className="text-primary" href="/browse">
-                           Browse
-                        </Link>
-                     </Button>
-                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                           <Button
-                              variant="ghost"
-                              className="rounded-md cursor-pointer text-primary hover:bg-black/3"
-                              onPointerDown={handleDropdownToggle}>
-                              Report
-                              <ChevronUp
-                                 className={
-                                    isClicked ? "rotate-0" : "rotate-180"
-                                 }
-                              />
-                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                           ref={dropdownRef}
-                           className="p-2 space-y-2">
-                           <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
-                              <Link href="/report/lost">Lost Item</Link>
-                           </DropdownMenuItem>
-                           <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
-                              <Link href="/report/found">Found Item</Link>
-                           </DropdownMenuItem>
-                        </DropdownMenuContent>
-                     </DropdownMenu>
-                     <Button
-                        variant="ghost"
-                        className="rounded-md cursor-pointer hover:bg-black/3">
-                        <Link className="text-primary" href="/messages">
-                           Messages
-                        </Link>
-                     </Button>
-                     <Button
-                        variant="ghost"
-                        className="rounded-md cursor-pointer hover:bg-black/3">
-                        <Link className="text-primary" href="/profile">
-                           Profile
-                        </Link>
-                     </Button>
+                     <NavButtons />
+                     <DropDownButtons />
                   </div>
-                  <div className="space-x-5">
-                     <Button
-                        className="cursor-pointer bg-primary"
-                        onClick={handleThemeMode}>
-                        {theme == "DARK" ? <Moon /> : <Sun />}
-                     </Button>
-                     <Button
-                        className="border bg-transparent rounded-md text-primary hover:bg-transparent hover:text-red-500 hover:shadow-md cursor-pointer"
-                        onClick={() => handleLogout()}>
-                        <Link
-                           className="flex p-2 items-center gap-2 text-inherit"
-                           href="/">
-                           <LogOut />
-                        </Link>
-                     </Button>
-                  </div>
+                  <ActionButtons />
                </>
             )}
          </div>

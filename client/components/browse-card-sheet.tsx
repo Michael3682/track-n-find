@@ -108,7 +108,7 @@ export function BrowseCardSheet({
             filteredItems.map((item) => (
                <Sheet key={item.id}>
                   <SheetTrigger className="cursor-pointer p-0" asChild>
-                     <Card className="w-43 lg:w-50 flex-none gap-0 bg-transparent overflow-hidden border rounded-sm hover:border-black/25 transition-all duration-100 ease-linear">
+                     <Card className="w-43 lg:w-50 flex-none gap-0 bg-transparent overflow-hidden border border-muted rounded-sm transition-all duration-100 ease-linear">
                         <CardHeader className="bg-primary-foreground p-0 gap-0 relative">
                            <CardTitle>
                               <img

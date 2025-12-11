@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/search-form";
+import { Button } from "@/components/ui/button";
 import {
    Sidebar,
    SidebarContent,
@@ -41,14 +41,22 @@ const data = {
          ],
       },
       {
-         title: "Category",
+         title: "Date",
          items: [
             {
-               title: "Lost Item",
+               title: "Today",
                isActive: false,
             },
             {
-               title: "Found Item",
+               title: "This Week",
+               isActive: false,
+            },
+            {
+               title: "This Month",
+               isActive: false,
+            },
+            {
+               title: "This Year",
                isActive: false,
             },
          ],
@@ -69,13 +77,13 @@ const data = {
    ],
 };
 
-export function AppSidebar({
+export function AdminSidebar({
    searchItem,
    setSearchItem,
    activeSortBy,
    setActiveSortBy,
-   activeCategory,
-   setActiveCategory,
+   activeDate,
+   setActiveDate,
    activeStatus,
    setActiveStatus,
    ...props
@@ -84,8 +92,8 @@ export function AppSidebar({
    setSearchItem: (q: string) => void;
    activeSortBy: string;
    setActiveSortBy: (q: string) => void;
-   activeCategory: string;
-   setActiveCategory: (q: string) => void;
+   activeDate: string;
+   setActiveDate: (q: string) => void;
    activeStatus: string;
    setActiveStatus: (q: string) => void;
 } & React.ComponentProps<typeof Sidebar>) {
@@ -110,15 +118,15 @@ export function AppSidebar({
                            const isActive =
                               group.title === "Sort By"
                                  ? activeSortBy === item.title
-                                 : group.title === "Category"
-                                 ? activeCategory === item.title
+                                 : group.title === "Date"
+                                 ? activeDate === item.title
                                  : activeStatus === item.title;
 
                            const handleClick = () => {
                               if (group.title === "Sort By") {
                                  setActiveSortBy(isActive ? "" : item.title);
-                              } else if (group.title === "Category") {
-                                 setActiveCategory(isActive ? "" : item.title);
+                              } else if (group.title === "Date") {
+                                 setActiveDate(isActive ? "" : item.title);
                               } else
                                  setActiveStatus(isActive ? "" : item.title);
                            };
@@ -144,7 +152,7 @@ export function AppSidebar({
                className="border mt-5 cursor-pointer text-primary hover:bg-muted"
                onClick={() => {
                   setSearchItem("");
-                  setActiveCategory("");
+                  setActiveDate("");
                   setActiveSortBy("");
                   setActiveStatus("");
                }}>
