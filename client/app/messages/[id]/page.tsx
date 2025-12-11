@@ -157,13 +157,14 @@ export default function Messages() {
                                  className="ml-auto text-sm px-4 py-2 rounded-sm text-primary cursor-pointer"
                                  onClick={() =>
                                     router.push(
-                                       `/report/claim?conversationId=${convo.id}`
+                                       `/report/${convo.item.type == "FOUND" ? "claim" : "return"}?conversationId=${convo.id}`
                                     )
                                  }>
                                  Mark as{" "}
                                  {convo.item.status == "CLAIMED"
                                     ? "unclaimed"
-                                    : "claimed"}
+                                    : convo.item.type == "FOUND" ?
+                                        "claimed" : "returned"}
                               </button>
                            </DropdownMenuItem>
                         </DropdownMenuContent>
