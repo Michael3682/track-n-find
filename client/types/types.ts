@@ -5,6 +5,21 @@ export type User = {
   role: "USER" | "ADMIN" | "MODERATOR";
 };
 
+export type Claim = {
+  id: string;
+  itemId: string;
+  claimerId: string;
+  claimerName: string;
+  claimedAt: string;
+  reporterId: string;
+  conversationId: string;
+
+  yearAndSection?: string;
+  studentId?: string;
+  contactNumber?: string;
+  proofOfClaim: string;
+}
+
 export type Item = {
   id: string;
   name: string;
@@ -17,6 +32,7 @@ export type Item = {
   type: "FOUND" | "LOST";
   associated_person: string;
   author: User;
+  claims: Claim[];
 };
 
 export type Message = {

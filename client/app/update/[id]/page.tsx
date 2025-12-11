@@ -29,6 +29,7 @@ import {
 import { useAuth } from "@/contexts/auth/AuthContext"
 import { uploadItemImage } from "@/lib/bucket"
 import { toast } from "sonner"
+import { Separator } from "@radix-ui/react-dropdown-menu"
 
 interface UpdateItemState {
     itemName: string;
@@ -168,7 +169,7 @@ export default function UpdateReport() {
         <div className="w-screen h-full lg:h-screen flex flex-col items-center justify-center bg-secondary overflow-x-hidden">
             <Form {...form}>
                 <form className="lg:mt-10 w-full lg:w-125 h-full lg:h-max flex flex-col items-center justify-center gap-10 lg:gap-13 lg:border border-black/30 lg:shadow-lg lg:rounded-xl p-8 py-5 lg:p-10 bg-white" onSubmit={form.handleSubmit(onSubmit)}>
-                    <h1 className="text-2xl lg:text-4xl font-extrabold tracking-tight">Update Item</h1>
+                    <h1 className="text-2xl lg:text-4xl font-extrabold tracking-tight">Manage Item</h1>
                     <div className="space-y-4 lg:space-y-5 w-full">
                         <FormField
                             control={form.control}
@@ -339,13 +340,27 @@ export default function UpdateReport() {
                                 </FormItem>
                             )}
                         />
-                    </div>
                     <Button
                         className="w-full text-sm bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                         type="submit"
                         disabled={isSubmitting}>
                         {isSubmitting ? "Updating" : "Update Item"}
                     </Button>
+                    </div>
+                    <div className="w-full flex gap-2">
+                        <Button
+                            className="flex-1 text-sm bg-tranparent text-inherit border hover:bg-gray-200 cursor-pointer disabled:opacity-50"
+                            type="button"
+                            disabled={isSubmitting}>
+                            {isSubmitting ? "Moving to trash" : "Move to trash"}
+                        </Button>
+                        <Button
+                            className="flex-1 text-sm bg-transparent border border-red-400 text-red-400 hover:bg-red-600 hover:text-white cursor-pointer disabled:opacity-50"
+                            type="button"
+                            disabled={isSubmitting}>
+                            {isSubmitting ? "Deleting" : "Delete Permanently"}
+                        </Button>
+                    </div>
                 </form>
             </Form>
         </div>
