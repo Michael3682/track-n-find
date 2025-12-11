@@ -237,15 +237,14 @@ import ChatRepository from "@/repositories/chat"
 class ChatContoller {
     async findOrCreateConversation(req: Request, res: Response) {
         try {
-            const { itemId, hostId } = req.body
-            const senderId = (req.user as JwtPayload).id;
+            const { itemId, hostId, senderId = (req.user as JwtPayload).id } = req.body
 
-                const conversation = await ChatRepository.findOrCreateConversation({ itemId, hostId, senderId})
+            const conversation = await ChatRepository.findOrCreateConversation({ itemId, hostId, senderId})
 
-                res.json({
-                    success: true,
-                    conversation
-                })
+            res.json({
+                success: true,
+                conversation
+            })
         } catch (err: any) {
             console.log(err);
             res.status(err.status || 500).json({
