@@ -455,7 +455,7 @@ class AuthController {
             const limit = parseInt(req.query.limit as string) || 20;
 
             const offset = (page - 1) * limit;
-            const users = AuthService.getAllUsers({ offset, limit })
+            const users = await AuthService.getAllUsers({ offset, limit })
 
             res.json({
                 success: true,
