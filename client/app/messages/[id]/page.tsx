@@ -24,6 +24,8 @@ import {
    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toggleItemStatus } from "@/lib/reportService";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function Messages() {
    const isMobile = useIsMobile();
@@ -34,7 +36,11 @@ export default function Messages() {
    const [tempMessage, setTempMessage] = useState<string[]>([]);
    const messagesRef = useRef<HTMLDivElement>(null);
 
-   const [chatDetails, setChatDetails] = useState({
+   const [chatDetails, setChatDetails] = useState<{
+      text: string;
+      attachment: File[];
+      previewURL: string[];
+   }>({
       text: "",
       attachment: [],
       previewURL: [],
@@ -42,7 +48,6 @@ export default function Messages() {
    const { id: conversationId } = useParams();
    const { socket, user } = useAuth();
 
-   console.log(convo);
    const send = (e: FormEvent) => {
       e.preventDefault();
 
@@ -52,7 +57,11 @@ export default function Messages() {
          text: chatDetails.text,
          conversationId,
          recepientId: convo?.isMine ? convo?.senderId : convo?.hostId,
-         senderId: ["MODERATOR", "ADMIN"].includes(user?.role as string) ? user?.id : (convo?.isMine ? convo?.hostId : convo?.senderId),
+         senderId: ["MODERATOR", "ADMIN"].includes(user?.role as string)
+            ? user?.id
+            : convo?.isMine
+            ? convo?.hostId
+            : convo?.senderId,
       });
 
       setTempMessage((prev) => [...prev, chatDetails.text]);
@@ -95,8 +104,6 @@ export default function Messages() {
          socket?.off("recieve_message");
       };
    }, [socket]);
-
-   console.log(messages);
 
    useEffect(() => {
       if (!convo) return;
@@ -157,14 +164,19 @@ export default function Messages() {
                                  className="ml-auto text-sm px-4 py-2 rounded-sm text-primary cursor-pointer"
                                  onClick={() =>
                                     router.push(
-                                       `/report/${convo.item.type == "FOUND" ? "claim" : "return"}?conversationId=${convo.id}`
+                                       `/report/${
+                                          convo.item.type == "FOUND"
+                                             ? "claim"
+                                             : "return"
+                                       }?conversationId=${convo.id}`
                                     )
                                  }>
                                  Mark as{" "}
                                  {convo.item.status == "CLAIMED"
                                     ? "unclaimed"
-                                    : convo.item.type == "FOUND" ?
-                                        "claimed" : "returned"}
+                                    : convo.item.type == "FOUND"
+                                    ? "claimed"
+                                    : "returned"}
                               </button>
                            </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -196,44 +208,104 @@ export default function Messages() {
             </div>
             {convo?.item.status != "CLAIMED" ? (
                <form
-                  className="flex items-center px-3 p-2 gap-3 border-t bg-sidebar"
+                  className={`flex ${
+                     chatDetails.previewURL.length > 0
+                        ? "items-end"
+                        : "items-center"
+                  } px-3 p-2 gap-3 border-t bg-sidebar`}
                   onSubmit={(e) => send(e)}>
                   <Tooltip>
                      <TooltipTrigger asChild>
-                        <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
-                           <Image color="rgb(245,245,245)" size={18} />
-                        </div>
+                        <Button
+                           className="rounded-full bg-blue-600 overflow-hidden hover:bg-blue-600"
+                           size="icon">
+                           <Label
+                              className="h-full w-full flex justify-center cursor-pointer"
+                              htmlFor="attach">
+                              <Image
+                                 className="cursor-pointer"
+                                 color="rgb(245,245,245)"
+                                 size={18}
+                              />
+                              <Input
+                                 type="file"
+                                 id="attach"
+                                 className="hidden"
+                                 multiple
+                                 onChange={(e) => {
+                                    setChatDetails((prev) => ({
+                                       ...prev,
+                                       attachment: e.target.files
+                                          ? Array.from(e.target.files)
+                                          : [],
+                                       previewURL: [
+                                          ...prev.previewURL,
+                                          ...Array.from(
+                                             e.target.files ?? []
+                                          ).map((file) =>
+                                             URL.createObjectURL(file)
+                                          ),
+                                       ],
+                                    }));
+                                    e.target.value = "";
+                                 }}
+                              />
+                           </Label>
+                        </Button>
                      </TooltipTrigger>
-                     <TooltipContent>
-                        <p>Attach a file</p>
-                     </TooltipContent>
+                     <TooltipContent>Attach a file</TooltipContent>
                   </Tooltip>
-                  <Input
-                     className="border border-black/30 rounded-full focus-visible:ring-0"
-                     placeholder="Type Here..."
-                     value={chatDetails.text}
-                     onChange={(e) =>
-                        setChatDetails((prev) => ({
-                           ...prev,
-                           text: e.target.value,
-                        }))
-                     }
-                  />
-                  <button type="submit">
+                  <div className="px-1 h-max w-full border border-black/30 rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-3xl bg-input space-y-5">
+                     <div className="m-0 flex">
+                        {chatDetails.previewURL.map((src, i) => (
+                           <div key={i} className="p-2 mb-5 relative">
+                              <img
+                                 className="h-15 w-15 rounded-xl"
+                                 src={src}></img>
+                              <Button
+                                 size="icon"
+                                 className="pb-1 absolute top-0 right-0 border border-ring bg-secondary text-primary cursor-pointer hover:bg-muted-foreground rounded-full h-6 w-6"
+                                 onClick={() => {
+                                    setChatDetails((prev) => ({
+                                       ...prev,
+                                       previewURL: prev.previewURL.filter(
+                                          (_, index) => index !== i
+                                       ),
+                                    }));
+                                 }}>
+                                 x
+                              </Button>
+                           </div>
+                        ))}
+                     </div>
+                     <Input
+                        className="border-none py-0 dark:bg-transparent rounded-full focus-visible:ring-0"
+                        placeholder="Type Here..."
+                        value={chatDetails.text}
+                        onChange={(e) =>
+                           setChatDetails((prev) => ({
+                              ...prev,
+                              text: e.target.value,
+                           }))
+                        }
+                     />
+                  </div>
+                  <Button
+                     className="rounded-full bg-transparent"
+                     size="icon"
+                     type="submit">
                      <Tooltip>
                         <TooltipTrigger asChild>
-                           <div className="p-2 rounded-full bg-blue-600 cursor-pointer">
+                           <div className="p-2 h-full w-full flex items-center justify-center rounded-full bg-blue-600 cursor-pointer">
                               <SendHorizontal
                                  color="rgb(245,245,245)"
                                  size={18}
                               />
                            </div>
                         </TooltipTrigger>
-                        <TooltipContent>
-                           <p>Send Message</p>
-                        </TooltipContent>
+                        <TooltipContent>Send Message</TooltipContent>
                      </Tooltip>
-                  </button>
+                  </Button>
                </form>
             ) : (
                <div className="text-center p-4 bg-sidebar text-gray-500 border-t">
