@@ -91,16 +91,16 @@ export default function ChangePassword() {
    }, [id]);
 
    return (
-      <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
+      <div className="w-screen h-screen flex items-center justify-center bg-background">
          <Form {...form}>
             <form
-               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center"
+               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-ring shadow-lg lg:rounded-xl px-8 lg:p-10 bg-secondary flex flex-col justify-center"
                onSubmit={form.handleSubmit(onSubmit)}>
                <div className="flex flex-col items-center gap-3 mb-10">
                   <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
                      Change Password
                   </h1>
-                  <p className="text-center text-gray-400 text-sm font-semibold">
+                  <p className="text-center text-muted-foreground text-sm font-semibold">
                      You are changing password for {user?.name}
                   </p>
                </div>
@@ -114,7 +114,7 @@ export default function ChangePassword() {
                            <div className="w-full h-max relative">
                               <Input
                                  type={showPassword ? "text" : "password"}
-                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base bg-background"
                                  placeholder="Enter new password"
                                  {...field}
                                  onChange={(e) =>
@@ -144,7 +144,7 @@ export default function ChangePassword() {
                   )}
                />
                <Button
-                  className="mt-8 w-full lg:py-5 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
+                  className="mt-8 w-full lg:py-5 text-white bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                   type="submit"
                   disabled={isSaving}>
                   {isSaving ? "Saving Changes" : "Save Changes"}

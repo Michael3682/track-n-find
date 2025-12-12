@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Search, ClipboardList, MapPinned } from "lucide-react";
 import {
    Card,
    CardDescription,
@@ -22,11 +23,7 @@ export default function LandingPage() {
                alt=""
             />
             <div className="h-fit flex items-center justify-center gap-2 py-3 lg:py-5 absolute top-0 z-50">
-               <img
-                  className="h-7 lg:h-8"
-                  src="/logo.svg"
-                  alt="log"
-               />
+               <img className="h-7 lg:h-8" src="/logo.svg" alt="log" />
                <h1 className="text-white text-lg lg:text-2xl font-medium tracking-tight">
                   TrackNFind
                </h1>
@@ -50,14 +47,17 @@ export default function LandingPage() {
                </Button>
             </div>
          </div>
-         <div className="w-full h-1/2 px-8 lg:px-32 py-15 lg:py-30 bg-[rgb(230,230,230)]">
+         <div className="w-full h-1/2 px-8 lg:px-32 py-15 lg:py-30 bg-background">
             <h1 className="text-center text-3xl lg:text-4xl font-extrabold text-primary tracking-tight mb-15">
                Why Use TrackNFind?
             </h1>
             <div className="flex flex-row flex-wrap lg:flex-nowrap justify-center gap-8 lg:gap-10">
                <Card className="p-8">
                   <CardHeader className="p-0">
-                     <CardTitle>Report a Lost Item</CardTitle>
+                     <CardTitle className="flex flex-row items-center gap-3">
+                        <ClipboardList size={18}/>
+                        Report a Lost Item
+                     </CardTitle>
                   </CardHeader>
                   <CardDescription>
                      Easily report items you've lost, and track them through our
@@ -66,7 +66,10 @@ export default function LandingPage() {
                </Card>
                <Card className="p-8">
                   <CardHeader className="p-0">
-                     <CardTitle>Browse Found Item</CardTitle>
+                     <CardTitle className="flex flex-row items-center gap-3">
+                        <Search size={18}/>
+                        Browse Found Item
+                     </CardTitle>
                   </CardHeader>
                   <CardDescription>
                      Browse through recently found items that others have
@@ -75,7 +78,10 @@ export default function LandingPage() {
                </Card>
                <Card className="p-8">
                   <CardHeader className="p-0">
-                     <CardTitle>Centralized Tracking</CardTitle>
+                     <CardTitle className="flex flex-row items-center gap-3">
+                        <MapPinned size={18}/>
+                        Centralized Tracking
+                     </CardTitle>
                   </CardHeader>
                   <CardDescription>
                      Track all your lost and found items in one place with
@@ -84,19 +90,19 @@ export default function LandingPage() {
                </Card>
             </div>
          </div>
-         <footer className="bg-primary p-8 lg:px-32 lg:py-10">
+         <footer className="bg-muted p-8 lg:px-32 lg:py-10">
             <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-8">
-               <h1 className="text-5xl lg:text-6xl text-[rgb(245,245,245)] font-bold">
+               <h1 className="text-5xl lg:text-6xl text-primary font-bold">
                   TrackNFind
                </h1>
-               <div className="flex gap-4 lg:gap-5 text-muted-foreground">
+               <div className="flex gap-4 lg:gap-5 text-muted-foreground text-xs lg:text-sm leading-none font-medium">
                   <Link href="/about">About</Link>
                   <Link href="/contact">Contact</Link>
                   <Link href="/terms">Terms</Link>
                   <Link href="/privacy">Privacy</Link>
                </div>
             </div>
-            <hr className="my-7 lg:my-10 border-white/10" />
+            <hr className="my-7 lg:my-10 border-ring" />
             <div className="mt-10 text-center text-muted-foreground text-sm">
                <p>© 2025 TrackNFind. All rights reserved.</p>
             </div>

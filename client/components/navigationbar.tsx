@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { changeTheme, logout } from "@/lib/authService";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
@@ -42,9 +42,12 @@ import {
 export function NavigationBar({ className }: { className?: string }) {
    const router = useRouter();
    const isMobile = useIsMobile();
+   const pathname = usePathname();
    const { refetch, user } = useAuth();
    const [isClicked, setIsClicked] = useState(false);
    const [theme, setTheme] = useState<"LIGHT" | "DARK">("LIGHT");
+
+   const isActive = (path: string) => pathname == path;
 
    const handleLogout = async () => {
       const [data, err] = await logout();
@@ -61,6 +64,8 @@ export function NavigationBar({ className }: { className?: string }) {
       setTheme((prev) => (prev == "DARK" ? "LIGHT" : "DARK"));
 
       await changeTheme(theme == "DARK" ? "LIGHT" : "DARK");
+
+      await refetch();
    };
 
    useEffect(() => {
@@ -117,11 +122,11 @@ export function NavigationBar({ className }: { className?: string }) {
                href: "/logs/users",
                label: "Manage Users",
             },
-            {
-               icon: FileCog,
-               href: "/logs/items",
-               label: "Manage Items",
-            }
+            // {
+            //    icon: FileCog,
+            //    href: "/logs/items",
+            //    label: "Manage Items",
+            // }
          );
       } else if (["MODERATOR"].includes(user?.role!)) {
          navItems.push(
@@ -130,11 +135,11 @@ export function NavigationBar({ className }: { className?: string }) {
                href: "/logs/activity",
                label: "Logs",
             },
-            {
-               icon: FileCog,
-               href: "/logs/items",
-               label: "Manage Items",
-            }
+            // {
+            //    icon: FileCog,
+            //    href: "/logs/items",
+            //    label: "Manage Items",
+            // }
          );
       }
       return (
@@ -144,9 +149,11 @@ export function NavigationBar({ className }: { className?: string }) {
                   {mobile && <Icon className="text-primary" size={18} />}
                   <Button
                      variant="ghost"
-                     className="px-3 rounded-none cursor-pointer lg:border-b border-transparent hover:border-ring">
+                     className={`p-0 rounded-none cursor-pointer lg:border-b ${
+                        isActive(href) ? "border-ring" : "border-transparent"
+                     } hover:border-ring`}>
                      <Link
-                        className={`text-primary ${
+                        className={`px-3 py-2 text-primary ${
                            mobile ? "text-xs" : "text-sm"
                         }`}
                         href={href}>
@@ -201,13 +208,11 @@ export function NavigationBar({ className }: { className?: string }) {
       );
    };
 
-   const ActionButtons = ({ mobile = false }: { mobile?: boolean }) => {
+   const ActionButtons = () => {
       return (
-         <SheetFooter
-            className={`flex flex-row justify-between ${
-               !mobile ? "gap-3" : ""
-            } p-0 m-0`}>
+         <SheetFooter className="flex flex-row justify-between gap-5 p-0 m-0">
             <Button
+               size="icon-sm"
                className="cursor-pointer bg-primary"
                onClick={handleThemeMode}>
                {theme === "DARK" ? <Moon /> : <Sun />}
@@ -241,29 +246,35 @@ export function NavigationBar({ className }: { className?: string }) {
                </Button>
             </SheetTrigger>
             {isMobile ? (
-               <SheetContent className="w-1/2 px-8 bg-sidebar" side="left">
-                  <SheetHeader className="px-0 pb-0">
-                     <SheetTitle>
-                        <Button
-                           variant="ghost"
-                           className="px-0 h-auto cursor-pointer">
-                           <Link
-                              className="flex items-center gap-3 text-base font-semibold"
-                              href="/">
-                              <img
-                                 className="h-8 contrast-150"
-                                 src="/logo.svg"
-                                 alt="logo"
-                              />
-                              TrackNFind
-                           </Link>
-                        </Button>
-                     </SheetTitle>
-                  </SheetHeader>
-                  <Separator />
-                  <div className="flex flex-col gap-5 items-start py-8 overflow-hidden background-blur-2xl">
-                     <NavButtons mobile />
-                     <DropDownButtons mobile />
+               <SheetContent
+                  className="w-1/2 h-screen p-8 bg-sidebar flex justify-between"
+                  side="left">
+                  <div>
+                     <div className="space-y-3">
+                        <SheetHeader className="p-0">
+                           <SheetTitle>
+                              <Button
+                                 variant="ghost"
+                                 className="px-0 h-auto cursor-pointer">
+                                 <Link
+                                    className="flex items-center gap-3 text-base font-semibold"
+                                    href="/">
+                                    <img
+                                       className="h-8 contrast-150"
+                                       src="/logo.svg"
+                                       alt="logo"
+                                    />
+                                    TrackNFind
+                                 </Link>
+                              </Button>
+                           </SheetTitle>
+                        </SheetHeader>
+                        <Separator />
+                     </div>
+                     <div className="flex flex-col gap-5 items-start py-8 overflow-hidden background-blur-2xl">
+                        <NavButtons mobile />
+                        <DropDownButtons mobile />
+                     </div>
                   </div>
                   <ActionButtons />
                </SheetContent>
@@ -272,7 +283,9 @@ export function NavigationBar({ className }: { className?: string }) {
                   <Button
                      variant="ghost"
                      className="h-auto pl-0 cursor-pointer">
-                     <Link className="flex items-center gap-3 font-normal text-xs" href="/">
+                     <Link
+                        className="flex items-center gap-3 font-normal text-xs"
+                        href="/">
                         <img
                            className="h-8 contrast-150"
                            src="/logo.svg"

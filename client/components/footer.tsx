@@ -35,7 +35,7 @@ export function Footer() {
                </div>
             </div>
          </div>
-         <Separator className="bg-muted-foreground my-10" />
+         <Separator className="bg-ring my-10" />
          <div className="flex justify-between flex-wrap-reverse lg:flex-nowrap gap-10 lg:gap-0">
             <p className="text-xs lg:text-sm text-center lg:text-start text-muted-foreground">
                @ 2025 TrackNFind Inc. All rights reserved. Helping communities
