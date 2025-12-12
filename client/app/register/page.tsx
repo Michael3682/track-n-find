@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { signup } from "@/lib/authService";
@@ -69,8 +70,10 @@ export default function Register() {
          router.refresh();
          setIsSigningUp(false);
          console.log("You successfully created an account!");
+         toast.success(data.message);
       }
 
+      if (!data.success) toast.error(data.message);
       setIsSigningUp(false);
    }
 

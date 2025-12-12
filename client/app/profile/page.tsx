@@ -29,7 +29,7 @@ export default function Profile() {
          <div className="w-full flex justify-center border-t pt-10 px-8">
             <Tabs defaultValue="foundItems">
                <div className="w-full flex justify-center">
-                  <TabsList className="w-110 h-auto bg-muted border shadow-inner p-1">
+                  <TabsList className="w-90 lg:w-110 h-auto bg-muted border shadow-inner p-1">
                      <TabsTrigger
                         className="text-xs lg:text-sm text-primary cursor-pointer py-2 data-[state=active]:bg-background data-[state=active]:text-primary"
                         value="foundItems">

@@ -137,7 +137,7 @@ export default function ReportLost() {
                <h1 className="text-4xl font-extrabold tracking-tight">
                   Report Lost Item
                </h1>
-               <div className="space-y-6 w-full">
+               <div className="space-y-4 lg:space-y-5 w-full">
                   <FormField
                      control={form.control}
                      name="itemName"

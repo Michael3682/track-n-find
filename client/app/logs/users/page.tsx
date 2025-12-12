@@ -1,9 +1,10 @@
 "use client";
 
+import { User } from "@/types/types";
 import { Ellipsis } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { getAllUser, toggleRole, deleteAccount } from "@/lib/authService";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { NavigationBar } from "@/components/navigationbar";
 import { ManageUserSidebar } from "@/components/admin-sidebar";
@@ -24,13 +25,23 @@ import {
 import {
    DropdownMenu,
    DropdownMenuContent,
+   DropdownMenuTrigger,
    DropdownMenuItem,
    DropdownMenuLabel,
    DropdownMenuSeparator,
-   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getAllUser } from "@/lib/authService";
-import { User } from "@/types/types";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export default function Log() {
    return (
@@ -52,12 +63,15 @@ function ActivityLogs() {
    const [activeSortBy, setActiveSortBy] = useState("");
    const [activeDate, setActiveDate] = useState("");
    const [activeRole, setActiveRole] = useState("");
+   const [counter, setCounter] = useState(0);
 
    const filteredUsers = users
       .filter((user) =>
          user.name.toLowerCase().includes(searchItem.toLowerCase())
-   )
-      .filter((user) => activeRole ? user.role == activeRole.toUpperCase() : true)
+      )
+      .filter((user) =>
+         activeRole ? user.role == activeRole.toUpperCase() : true
+      )
       .filter((user) => {
          if (!activeDate) return true;
 
@@ -129,10 +143,11 @@ function ActivityLogs() {
    };
 
    useEffect(() => {
+      console.log("dw");
       getAllUser({ page: query.page, limit: query.limit }).then(([data]) =>
          setUsers(data.users)
       );
-   }, [query.page, query.limit]);
+   }, [query.page, query.limit, counter]);
 
    return (
       <>
@@ -190,6 +205,73 @@ function ActivityLogs() {
                            <TableCell>{user.role}</TableCell>
                            <TableCell>
                               {formattedDate(user.createdAt)}
+                           </TableCell>
+                           <TableCell>
+                              <DropdownMenu>
+                                 <DropdownMenuTrigger className="p-1 cursor-pointer">
+                                    <Ellipsis size={18} />
+                                 </DropdownMenuTrigger>
+                                 <DropdownMenuContent>
+                                    <DropdownMenuLabel>
+                                       Actions
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuItem
+                                       className="cursor-pointer"
+                                       onClick={() => {
+                                          user.role != "ADMIN"
+                                             ? (toggleRole(user.id),
+                                               toast.success(
+                                                  "User's role changed successfully"
+                                               ))
+                                             : toast.error(
+                                                  "Can't change the role of admin"
+                                               );
+                                          setCounter(counter + 1);
+                                       }}>
+                                       Toggle Role
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer">
+                                       Change Password
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                       className="cursor-pointer"
+                                       asChild>
+                                       <AlertDialog>
+                                          <AlertDialogTrigger className="w-full text-start rounded-md text-sm px-2 py-1.5 hover:bg-accent cursor-pointer text-red-500">
+                                             Delete User
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                             <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                   Are you absolutely sure?
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                   This action cannot be undone.
+                                                   This will permanently delete
+                                                   the account and remove the
+                                                   data from the servers.
+                                                </AlertDialogDescription>
+                                             </AlertDialogHeader>
+                                             <AlertDialogFooter>
+                                                <AlertDialogCancel className="cursor-pointer">
+                                                   Cancel
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                   className="bg-red-500 hover:bg-red-600 text-white cursor-pointer"
+                                                   onClick={() => {
+                                                      deleteAccount(user.id)
+                                                      setCounter(counter + 1)
+                                                   }
+                                                   }>
+                                                   Yes, delete
+                                                </AlertDialogAction>
+                                             </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                       </AlertDialog>
+                                    </DropdownMenuItem>
+                                 </DropdownMenuContent>
+                              </DropdownMenu>
                            </TableCell>
                         </TableRow>
                      ))}

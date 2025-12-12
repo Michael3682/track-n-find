@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { toast } from "sonner";
 import { useState } from "react";
 import { login } from "@/lib/authService";
 import { useForm } from "react-hook-form";
@@ -65,8 +66,10 @@ export default function Login() {
          router.refresh();
          setIsLoggingIn(false);
          console.log("You successfully logged in!");
+         toast.success(data.message);
       }
 
+      if (!data.success) toast.error(data.message);
       setIsLoggingIn(false);
    }
 
@@ -85,7 +88,11 @@ export default function Login() {
                onSubmit={form.handleSubmit(onSubmit)}
                className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center">
                <div className="flex flex-col items-center gap-3 mb-10">
-                  <img className="h-13 lg:h-15" src="track-n-find--logo.png" alt="logo" />
+                  <img
+                     className="h-13 lg:h-15"
+                     src="track-n-find--logo.png"
+                     alt="logo"
+                  />
                   <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
                      TrackNFind
                   </h1>
@@ -105,9 +112,7 @@ export default function Login() {
                               className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
                               placeholder="Ex. 12345678"
                               {...field}
-                              onChange={(e) =>
-                                 field.onChange(e.target.value)
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                            />
                         </FormControl>
                         <FormMessage />
@@ -134,15 +139,17 @@ export default function Login() {
                               <Eye
                                  size={15}
                                  color="rgb(100,100,100)"
-                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${showPassword ? "visible" : "hidden"
-                                    }`}
+                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                    showPassword ? "visible" : "hidden"
+                                 }`}
                                  onClick={handleShowPassword}
                               />
                               <EyeClosed
                                  size={15}
                                  color="rgb(100,100,100)"
-                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${showPassword ? "hidden" : "visible"
-                                    }`}
+                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                    showPassword ? "hidden" : "visible"
+                                 }`}
                                  onClick={handleShowPassword}
                               />
                            </div>

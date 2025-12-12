@@ -13,7 +13,6 @@ import { Item } from "@/types/types";
 import { useRouter } from "next/navigation";
 import CardSheet from "./card-sheet";
 
-
 export function BrowseCardSheet({
    searchItem,
    activeSortBy,
@@ -26,7 +25,7 @@ export function BrowseCardSheet({
    activeStatus: string;
 }) {
    const [items, setItems] = useState<Item[]>([]);
-   const router = useRouter()
+   const router = useRouter();
 
    const filteredItems = items
       .filter((item) =>
@@ -66,13 +65,11 @@ export function BrowseCardSheet({
       getItems().then(([data]) => setItems(data.items));
    }, []);
 
-   console.log(filteredItems)
+   console.log(items);
    return (
       <div className="flex flex-wrap justify-center lg:justify-start gap-4 p-8 lg:p-10">
          {filteredItems.length > 0 ? (
-            filteredItems.map((item) => (
-               <CardSheet item={item} key={item.id}/>
-            ))
+            filteredItems.map((item) => <CardSheet item={item} key={item.id} />)
          ) : (
             <Empty>
                <EmptyHeader>

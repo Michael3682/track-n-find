@@ -22,6 +22,7 @@ import {
    Moon,
    Sun,
    Logs,
+   FileCog,
 } from "lucide-react";
 import {
    DropdownMenu,
@@ -115,6 +116,11 @@ export function NavigationBar({ className }: { className?: string }) {
                icon: UserRoundCog,
                href: "/logs/users",
                label: "Manage Users",
+            },
+            {
+               icon: FileCog,
+               href: "/logs/items",
+               label: "Manage Items",
             }
          );
       }
@@ -151,7 +157,7 @@ export function NavigationBar({ className }: { className?: string }) {
                   )}
                   <Button
                      variant="ghost"
-                     className="rounded-none cursor-pointer text-primary lg:border-b border-transparent hover:border-ring">
+                     className="rounded-none cursor-pointer text-xs lg:text-sm text-primary lg:border-b border-transparent hover:border-ring">
                      Report
                      <ChevronUp
                         className={`transition-transform
@@ -187,7 +193,7 @@ export function NavigationBar({ className }: { className?: string }) {
       return (
          <SheetFooter
             className={`flex flex-row justify-between ${
-               !mobile ? "gap-5" : ""
+               !mobile ? "gap-3" : ""
             } p-0 m-0`}>
             <Button
                className="cursor-pointer bg-primary"
@@ -234,11 +240,7 @@ export function NavigationBar({ className }: { className?: string }) {
                               href="/">
                               <img
                                  className="h-8 contrast-150"
-                                 src={
-                                    theme == "LIGHT"
-                                       ? "/track-n-find--logo.png"
-                                       : "/logo.svg"
-                                 }
+                                 src="/logo.svg"
                                  alt="logo"
                               />
                               TrackNFind
@@ -261,11 +263,7 @@ export function NavigationBar({ className }: { className?: string }) {
                      <Link href="/">
                         <img
                            className="h-8 contrast-150"
-                           src={
-                              theme == "LIGHT"
-                                 ? "/track-n-find--logo.png"
-                                 : "/logo.svg"
-                           }
+                           src="/logo.svg"
                            alt="logo"
                         />
                      </Link>
