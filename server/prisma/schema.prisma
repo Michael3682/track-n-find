@@ -69,7 +69,7 @@ model Item {
   type              ItemType
   associated_person String
   isActive          Boolean @default(true)
-  author            User @relation("Item_author", fields: [associated_person], references: [id])
+  author            User @relation("Item_author", fields: [associated_person], references: [id], onDelete: Cascade)
   conversations     Conversation[]
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -84,7 +84,7 @@ model Message {
   conversationId  String
   conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   authorId        String
-  author          User @relation(fields: [authorId], references: [id])
+  author          User @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
 }
 
@@ -94,8 +94,8 @@ model Conversation {
   hostId          String
   senderId        String
   item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  host            User @relation("Conversation_Host", fields: [hostId], references: [id])
-  sender          User @relation("Conversation_Sender", fields: [senderId], references: [id])
+  host            User @relation("Conversation_Host", fields: [hostId], references: [id], onDelete: Cascade)
+  sender          User @relation("Conversation_Sender", fields: [senderId], references: [id], onDelete: Cascade)
   lastMessage     String?
   lastMessageAt   DateTime @default(now())
   messages        Message[]
@@ -110,7 +110,7 @@ model ActiveSocket {
   id        String   @id @default(uuid())
   socketId  String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   // For detecting stale or disconnected connections
   createdAt DateTime @default(now())
@@ -133,9 +133,9 @@ model Claim {
   proofOfClaim    String
 
   item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  claimer         User @relation("Claimer", fields: [claimerId], references: [id])
-  reporter        User @relation("Claim_Reporter", fields: [reporterId], references: [id])
-  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  claimer         User @relation("Claimer", fields: [claimerId], references: [id], onDelete: Cascade)
+  reporter        User @relation("Claim_Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
 
 model Return {
@@ -154,9 +154,9 @@ model Return {
   proofOfClaim    String
 
   item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  returner        User @relation("Returner", fields: [returnerId], references: [id])
-  reporter        User @relation("Return_Reporter", fields: [reporterId], references: [id])
-  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  returner        User @relation("Returner", fields: [returnerId], references: [id], onDelete: Cascade)
+  reporter        User @relation("Return_Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
 
 model Logs {
