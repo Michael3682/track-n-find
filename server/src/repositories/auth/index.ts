@@ -54,6 +54,15 @@ class AuthRepository {
             }
         })
     }
+
+    async updatePassword(id: string, password: string) {
+        return prisma.user.update({
+            where: { id },
+            data: {
+                password
+            }
+        })
+    }
 }
 
 export default new AuthRepository()

@@ -16,5 +16,6 @@ router.post("/v1/theme/:theme", authenticate, AuthController.setTheme)
 
 router.get("/v1/users", authenticate, authorizeModerators, AuthController.getAllUsers)
 router.patch("/v1/user/:id", authenticate, authorizeAdmin, AuthController.toggleRole)
+router.patch("/v1/user/:id/change-password", authenticate, authorizeAdmin, AuthController.changePassword)
 
 export default router;

@@ -400,6 +400,45 @@ class AuthController {
         }
     }
 
+    async changePassword(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const { password } = req.body
+            const userId = (req.user as JwtPayload).id
+
+            const user = await AuthService.getUserById(id)
+
+            if(!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                    user: null
+                })
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10)
+            await AuthService.updatePassword(id, hashedPassword)
+
+            await LogService.record({
+                actorId: userId,
+                action: `Changed password of ${user.name}`,
+                target: "USER",
+                targetId: user.id
+            })
+
+            res.json({
+                success: true,
+                message: "Password updated"
+            })
+
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+            })
+        }
+    }
+
     /**
      * @swagger
      * /auth/v1/me:
