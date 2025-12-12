@@ -105,7 +105,7 @@ export function NavigationBar({ className }: { className?: string }) {
          },
       ];
 
-      if (["ADMIN", "MODERATOR"].includes(user?.role!)) {
+      if (["ADMIN"].includes(user?.role!)) {
          navItems.push(
             {
                icon: Logs,
@@ -123,8 +123,20 @@ export function NavigationBar({ className }: { className?: string }) {
                label: "Manage Items",
             }
          );
+      } else if (["MODERATOR"].includes(user?.role!)) {
+         navItems.push(
+            {
+               icon: Logs,
+               href: "/logs/activity",
+               label: "Logs",
+            },
+            {
+               icon: FileCog,
+               href: "/logs/items",
+               label: "Manage Items",
+            }
+         );
       }
-
       return (
          <>
             {navItems.map(({ icon: Icon, href, label }: any) => (
@@ -260,7 +272,7 @@ export function NavigationBar({ className }: { className?: string }) {
                   <Button
                      variant="ghost"
                      className="h-auto pl-0 cursor-pointer">
-                     <Link href="/">
+                     <Link className="flex items-center gap-3 font-normal text-xs" href="/">
                         <img
                            className="h-8 contrast-150"
                            src="/logo.svg"

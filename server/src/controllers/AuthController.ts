@@ -243,7 +243,7 @@ class AuthController {
 
     async signupWithEmail(req: Request, res: Response) {
         try {
-            const { email, id = uuidV4(), name, password } = req.body
+            const { email, id = uuidV4(), name, password = "" } = req.body
 
             const existingUser = await AuthService.getUserById(id)
     

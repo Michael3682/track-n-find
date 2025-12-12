@@ -113,10 +113,6 @@ const data = {
                isActive: false,
             },
             {
-               title: "Admin",
-               isActive: false,
-            },
-            {
                title: "Moderator",
                isActive: false,
             },

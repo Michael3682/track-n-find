@@ -77,6 +77,10 @@ const page = () => {
     
             const [data] = await saveId(studentForm.studentId, user?.email, user?.displayName, studentForm.password)
     
+            if(!data.success) {
+                return setError(data.message)
+            }
+
             if(data.success) {
                 await refetch()
                 router.push("/")

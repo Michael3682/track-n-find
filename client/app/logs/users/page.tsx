@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { User } from "@/types/types";
 import { Ellipsis } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -42,8 +43,25 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Log() {
+   const { user, isLoading } = useAuth();
+   const router = useRouter();
+
+   useEffect(() => {
+      if (!isLoading && (!user || user.role != "ADMIN")) {
+         router.push("/");
+      }
+   }, [user, isLoading, router]);
+
+   if (isLoading || !user || user.role !== "ADMIN")
+      return (
+         <div className="h-screen flex items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
+         </div>
+      );
    return (
       <>
          <NavigationBar />
@@ -231,7 +249,10 @@ function ActivityLogs() {
                                        Toggle Role
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="cursor-pointer">
-                                       Change Password
+                                       <Link
+                                          href={`/changepassword/${user.id}`}>
+                                          Change Password
+                                       </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
@@ -260,10 +281,9 @@ function ActivityLogs() {
                                                 <AlertDialogAction
                                                    className="bg-red-500 hover:bg-red-600 text-white cursor-pointer"
                                                    onClick={() => {
-                                                      deleteAccount(user.id)
-                                                      setCounter(counter + 1)
-                                                   }
-                                                   }>
+                                                      deleteAccount(user.id);
+                                                      setCounter(counter + 1);
+                                                   }}>
                                                    Yes, delete
                                                 </AlertDialogAction>
                                              </AlertDialogFooter>
