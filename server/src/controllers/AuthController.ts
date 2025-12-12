@@ -243,15 +243,27 @@ class AuthController {
 
     async signupWithEmail(req: Request, res: Response) {
         try {
-            const { email, id = uuidV4(), name } = req.body
+            const { email, id = uuidV4(), name, password } = req.body
 
             const existingUser = await AuthService.getUserById(id)
     
             let user
             if(existingUser) {
+                const isMatch = await bcrypt.compare(password, existingUser.password)
+
+                if(!isMatch) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "User Already Exists, but incorrect password",
+                        user: null
+                    })
+                }
+
                 user = await AuthService.bindEmailToUser(id, email)
             } else {
-                user = await AuthService.createPasswordlessUser(id, name, email)
+                const hashedPassword = await bcrypt.hash(password, 10)
+
+                user = await AuthService.createPasswordlessUser(id, name, email, hashedPassword)
             }
 
             const JWT_SECRET = process.env.JWT_SECRET;

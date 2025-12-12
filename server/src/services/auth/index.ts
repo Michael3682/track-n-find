@@ -17,8 +17,8 @@ class AuthService {
         return AuthRepository.create({ id: studentId, name: name, password: password})
     }
 
-    async createPasswordlessUser(id: string, name: string, email: string) {
-        return AuthRepository.create({ id, email, name, password: "" })
+    async createPasswordlessUser(id: string, name: string, email: string, password: string) {
+        return AuthRepository.create({ id, email, name, password })
     }
 
     async bindEmailToUser(userId: string, email: string) {
