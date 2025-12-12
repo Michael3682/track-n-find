@@ -400,6 +400,45 @@ class AuthController {
         }
     }
 
+    async changePassword(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const { password } = req.body
+            const userId = (req.user as JwtPayload).id
+
+            const user = await AuthService.getUserById(id)
+
+            if(!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                    user: null
+                })
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10)
+            await AuthService.updatePassword(id, hashedPassword)
+
+            await LogService.record({
+                actorId: userId,
+                action: `Changed password of ${user.name}`,
+                target: "USER",
+                targetId: user.id
+            })
+
+            res.json({
+                success: true,
+                message: "Password updated"
+            })
+
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+            })
+        }
+    }
+
     /**
      * @swagger
      * /auth/v1/me:
@@ -491,6 +530,46 @@ class AuthController {
                 message: "Theme changed",
                 user
             })
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+                err: err.message
+            })
+        }
+    }
+
+    async toggleRole(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const userId = (req.user as JwtPayload).id
+
+            const user = await AuthService.getUserById(id)
+
+            if(!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                    user: null
+                })
+            }
+
+            if(user.role === "ADMIN") {
+                return res.status(403).json({
+                    success: false,
+                    message: "You can't change your own role"
+                })
+            }
+
+            const updatedUser = await AuthService.toggleRole(id, user.role === "USER" ? "MODERATOR" : "USER" )
+
+            await LogService.record({
+                actorId: userId,
+                action: `Updated a user's role into ${updatedUser.role.toLowerCase()}`,
+                target: "USER",
+                targetId: user.id
+            })
+
         } catch(err: any) {
             res.status(err.status || 500).json({
                 success: false,

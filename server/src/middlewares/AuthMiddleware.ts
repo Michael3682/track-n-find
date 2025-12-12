@@ -48,6 +48,29 @@ export const authorizeModerators =  async (req: Request, res: Response, next: Ne
     if(!adminRoles.includes(role)) {
         return res.status(403).json({
             success: false,
+            message: 'Only admin and moderators are required'
+        })
+    }
+
+    next()
+}
+
+export const authorizeAdmin =  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.user as JwtPayload).id
+    const user = await AuthService.getUserById(userId)
+    const adminRoles = ["ADMIN"]
+    const role = user?.role
+
+    if (!role) {
+        return res.status(401).json({
+            success: false,
+            message: 'Unauthenticated'
+        });
+    }
+
+    if(!adminRoles.includes(role)) {
+        return res.status(403).json({
+            success: false,
             message: 'Only admin is required'
         })
     }
