@@ -141,16 +141,22 @@ class ChatRepository {
   }
 
   // 💬 Get all conversations for a user
-  async getUserConversations(userId: string) {
+  async getUserConversations(userId: string, isMod: boolean = false) {
     const conversations = await prisma.conversation.findMany({
       where: {
-        OR: [{ hostId: userId }, { senderId: userId }],
+        OR: [{ hostId: userId }, { senderId: userId },
+          isMod ? {
+            item: {
+              status: "TURNEDOVER",
+            },
+          } : {}
+        ],
       },
       include: {
         item: true,
         messages: {
+          include: { author: true },
           orderBy: { createdAt: "desc" },
-          take: 1,
         },
         host: {
           select: {

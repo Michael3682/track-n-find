@@ -16,6 +16,7 @@ enum Role {
 
 enum ItemStatus {
   UNCLAIMED
+  TURNEDOVER
   CLAIMED
 }
 
@@ -157,6 +158,12 @@ model Return {
   returner        User @relation("Returner", fields: [returnerId], references: [id], onDelete: Cascade)
   reporter        User @relation("Return_Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
   conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model Turnover {
+  id            String @id @default(uuid())
+  itemId        String
+
 }
 
 model Logs {

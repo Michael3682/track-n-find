@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Conversation } from "@/types/types";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -36,6 +36,7 @@ function Messages({
    const [searchItem, setSearchItem] = useState("");
    const { showMessage, setShowMessage } = useMessage();
    const [conversations, setConversations] = useState<Conversation[]>([]);
+   const itemName = useSearchParams().get("item")
    const router = useRouter();
    const { socket } = useAuth();
 
@@ -58,6 +59,12 @@ function Messages({
          socket?.off("new_message");
       };
    }, [socket]);
+
+   useEffect(() => {
+      if(!itemName) return
+      
+      setSearchItem(itemName)
+   }, [itemName])
 
    return (
       <div className="w-auto h-screen relative overflow-hidden">

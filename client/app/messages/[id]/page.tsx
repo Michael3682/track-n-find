@@ -52,7 +52,7 @@ export default function Messages() {
          text: chatDetails.text,
          conversationId,
          recepientId: convo?.isMine ? convo?.senderId : convo?.hostId,
-         senderId: convo?.isMine ? convo?.hostId : convo?.senderId,
+         senderId: ["MODERATOR", "ADMIN"].includes(user?.role as string) ? user?.id : (convo?.isMine ? convo?.hostId : convo?.senderId),
       });
 
       setTempMessage((prev) => [...prev, chatDetails.text]);
@@ -194,7 +194,7 @@ export default function Messages() {
                   </div>
                ))}
             </div>
-            {convo?.item.status == "UNCLAIMED" ? (
+            {convo?.item.status != "CLAIMED" ? (
                <form
                   className="flex items-center px-3 p-2 gap-3 border-t bg-sidebar"
                   onSubmit={(e) => send(e)}>

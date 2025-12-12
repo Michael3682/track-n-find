@@ -15,6 +15,7 @@ router.get("/v1/me", authenticate, AuthController.getAuthUser)
 router.post("/v1/theme/:theme", authenticate, AuthController.setTheme)
 
 router.get("/v1/users", authenticate, authorizeModerators, AuthController.getAllUsers)
+router.get("/v1/user/:id", authenticate, AuthController.getUserById)
 router.patch("/v1/user/:id", authenticate, authorizeAdmin, AuthController.toggleRole)
 router.patch("/v1/user/:id/change-password", authenticate, authorizeAdmin, AuthController.changePassword)
 router.delete("/v1/user/:id/delete", authenticate, authorizeAdmin, AuthController.deleteUser)
