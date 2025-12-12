@@ -6,7 +6,7 @@ import { changeTheme, logout } from "@/lib/authService";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -18,6 +18,7 @@ import {
    ClipboardList,
    MessageCircle,
    UserRound,
+   UserRoundCog,
    Moon,
    Sun,
    Logs,
@@ -103,12 +104,19 @@ export function NavigationBar({ className }: { className?: string }) {
          },
       ];
 
-      if(["ADMIN", "MODERATOR"].includes(user?.role!)) {
-         navItems.push({
-            icon: Logs,
-            href: "/logs",
-            label: "Logs"
-         })
+      if (["ADMIN", "MODERATOR"].includes(user?.role!)) {
+         navItems.push(
+            {
+               icon: Logs,
+               href: "/logs/activity",
+               label: "Logs",
+            },
+            {
+               icon: UserRoundCog,
+               href: "/logs/users",
+               label: "Manage Users",
+            }
+         );
       }
 
       return (
@@ -163,11 +171,11 @@ export function NavigationBar({ className }: { className?: string }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent
                side={`${mobile ? "right" : "bottom"}`}
-               className="p-2 space-y-2">
-               <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
+               className="p-2">
+               <DropdownMenuItem className="p-2 cursor-pointer text-primary">
                   <Link href="/report/lost">Lost Item</Link>
                </DropdownMenuItem>
-               <DropdownMenuItem className="font-semibold p-2 cursor-pointer text-primary">
+               <DropdownMenuItem className="p-2 cursor-pointer text-primary">
                   <Link href="/report/found">Found Item</Link>
                </DropdownMenuItem>
             </DropdownMenuContent>
@@ -177,7 +185,10 @@ export function NavigationBar({ className }: { className?: string }) {
 
    const ActionButtons = ({ mobile = false }: { mobile?: boolean }) => {
       return (
-         <SheetFooter className={`flex flex-row justify-between ${!mobile ? "gap-5" : ""} p-0 m-0`}>
+         <SheetFooter
+            className={`flex flex-row justify-between ${
+               !mobile ? "gap-5" : ""
+            } p-0 m-0`}>
             <Button
                className="cursor-pointer bg-primary"
                onClick={handleThemeMode}>
@@ -223,7 +234,11 @@ export function NavigationBar({ className }: { className?: string }) {
                               href="/">
                               <img
                                  className="h-8 contrast-150"
-                                 src="/track-n-find--logo.png"
+                                 src={
+                                    theme == "LIGHT"
+                                       ? "/track-n-find--logo.png"
+                                       : "/logo.svg"
+                                 }
                                  alt="logo"
                               />
                               TrackNFind
@@ -246,7 +261,11 @@ export function NavigationBar({ className }: { className?: string }) {
                      <Link href="/">
                         <img
                            className="h-8 contrast-150"
-                           src="/track-n-find--logo.png"
+                           src={
+                              theme == "LIGHT"
+                                 ? "/track-n-find--logo.png"
+                                 : "/logo.svg"
+                           }
                            alt="logo"
                         />
                      </Link>

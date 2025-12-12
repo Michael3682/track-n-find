@@ -3,6 +3,7 @@ export type User = {
   name: string;
   email?: string;
   role: "USER" | "ADMIN" | "MODERATOR";
+  createdAt: Date;
 };
 
 export type Claim = {
@@ -56,4 +57,15 @@ export type Conversation = {
   host: User;
   sender: User;
   messages: Message[]
+};
+
+export type Logs = {
+   id?: string;
+   createdAt?: Date;
+   actorId: string;
+   actorName: string;
+   action: string;
+   target?: "ITEM" | "USER" | "MESSAGE" | "CONVERSATION";
+   targetId?: string;
+   metaData?: string;
 };
