@@ -381,3 +381,51 @@ export const reportReturn = async ({
       return [null, err];
    }
 };
+
+export const requestTurnover = async(itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/turnover/request/${itemId}`, {
+         method: "POST",
+         credentials: "include"
+      });
+   
+      const data = await res.json();
+   
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}
+
+export const confirmTurnover = async (itemId: string, proofOfTurnover: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/turnover/confirm/${itemId}`, {
+         method: "PATCH",
+         credentials: "include",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ proofOfTurnover })
+      });
+      const data = await res.json();
+   
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}
+
+export const rejectTurnover = async (itemId: string) => {
+   try {
+      const res = await fetch(`${API_URL}/report/v1/turnover/reject/${itemId}`, {
+         method: "DELETE",
+         credentials: "include"
+      });
+      const data = await res.json();
+   
+      return [data, null];
+   } catch (err) {
+      console.log(err);
+      return [null, err];
+   }
+}

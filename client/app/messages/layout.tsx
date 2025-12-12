@@ -62,7 +62,7 @@ function Messages({
 
    useEffect(() => {
       if(!itemName) return
-      
+
       setSearchItem(itemName)
    }, [itemName])
 
@@ -113,6 +113,11 @@ function Messages({
                                        Claimed
                                     </span>
                                  )}
+                                 {conversation?.item.turnovers?.status === "PENDING" && 
+                                    <span className="text-pink-400 text-md ml-4">
+                                       {conversation?.item.turnovers?.status}
+                                    </span>
+                                 }
                               </span>
                            </p>
                            <div className="w-70 text-sm text-ellipsis whitespace-nowrap overflow-hidden">

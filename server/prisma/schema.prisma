@@ -82,7 +82,7 @@ model Item {
 
   claims            Claim[]
   returns           Return[]
-  turnovers         Turnover[]
+  turnovers         Turnover?
 }
 
 model Message {

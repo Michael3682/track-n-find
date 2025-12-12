@@ -1154,6 +1154,13 @@ class ReportController {
       const { itemId } = req.params
       const { proofOfTurnover } = req.body
 
+      if(!proofOfTurnover) {
+        return res.status(400).json({
+          success: false,
+          message: "ProofOfTurnover cannot be empty"
+        })
+      }
+
       const item = await ReportService.getItem(itemId)
 
       if(!item) {

@@ -21,6 +21,14 @@ export type Claim = {
   proofOfClaim: string;
 }
 
+export type Turnover = {
+  id: string;
+  itemId: string;
+  proofOfTurnover: string | null;
+  status: "PENDING" | "APPROVED";
+  turnedOverAt: Date
+}
+
 export type Item = {
   id: string;
   name: string;
@@ -35,6 +43,7 @@ export type Item = {
   author: User;
   claims: Claim[];
   isActive: boolean;
+  turnovers?: Turnover;
 };
 
 export type Message = {
