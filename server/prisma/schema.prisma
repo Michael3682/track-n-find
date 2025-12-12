@@ -29,6 +29,13 @@ enum Theme {
   DARK
 }
 
+enum LOG_TARGETS {
+  ITEM
+  USER
+  MESSAGE
+  CONVERSATION
+}
+
 model User {
   id                String @id
   name              String
@@ -42,7 +49,7 @@ model User {
   items             Item[] @relation("Item_author")
   messages          Message[]
   conversationHost  Conversation[] @relation("Conversation_Host")
-  conversationSender Conversation[] @relation("Conversation_Sender")
+  conversationSender Conversation[] @relation("Conversation_Sender")  
   activeSockets     ActiveSocket[]
   claims            Claim[] @relation("Claimer")
   returns            Return[] @relation("Returner")
@@ -75,7 +82,7 @@ model Message {
   id              String @id @default(uuid())
   content         String
   conversationId  String
-  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   authorId        String
   author          User @relation(fields: [authorId], references: [id])
   createdAt       DateTime @default(now())
@@ -86,7 +93,7 @@ model Conversation {
   itemId          String
   hostId          String
   senderId        String
-  item            Item @relation(fields: [itemId], references: [id])
+  item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
   host            User @relation("Conversation_Host", fields: [hostId], references: [id])
   sender          User @relation("Conversation_Sender", fields: [senderId], references: [id])
   lastMessage     String?
@@ -125,7 +132,7 @@ model Claim {
   contactNumber   String?
   proofOfClaim    String
 
-  item            Item @relation(fields: [itemId], references: [id])
+  item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
   claimer         User @relation("Claimer", fields: [claimerId], references: [id])
   reporter        User @relation("Claim_Reporter", fields: [reporterId], references: [id])
   conversation    Conversation @relation(fields: [conversationId], references: [id])
@@ -146,8 +153,19 @@ model Return {
   contactNumber   String?
   proofOfClaim    String
 
-  item            Item @relation(fields: [itemId], references: [id])
-  returner         User @relation("Returner", fields: [returnerId], references: [id])
+  item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  returner        User @relation("Returner", fields: [returnerId], references: [id])
   reporter        User @relation("Return_Reporter", fields: [reporterId], references: [id])
   conversation    Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Logs {
+  id            String @id @default(uuid())
+  actorId       String
+  actorName     String
+  action        String
+  target        LOG_TARGETS
+  targetId      String
+  metaData      String
+  createdAt     DateTime @default(now())
 }

@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import routes from "@/routes"
 import { setupSwagger } from "./swagger";
 import { initializeSocket } from "./socket";
+import { createSuperAdmin } from "./scripts";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(cookieParser())
 
 setupSwagger(app)
+createSuperAdmin()
 
 app.use("/api", routes)
 
