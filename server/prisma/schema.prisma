@@ -29,6 +29,13 @@ enum Theme {
   DARK
 }
 
+enum LOG_TARGETS {
+  ITEM
+  USER
+  MESSAGE
+  CONVERSATION
+}
+
 model User {
   id                String @id
   name              String
@@ -147,7 +154,18 @@ model Return {
   proofOfClaim    String
 
   item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  returner         User @relation("Returner", fields: [returnerId], references: [id])
+  returner        User @relation("Returner", fields: [returnerId], references: [id])
   reporter        User @relation("Return_Reporter", fields: [reporterId], references: [id])
   conversation    Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Logs {
+  id            String @id @default(uuid())
+  actorId       String
+  actorName     String
+  action        String
+  target        LOG_TARGETS
+  targetId      String
+  metaData      String
+  createdAt     DateTime @default(now())
 }
