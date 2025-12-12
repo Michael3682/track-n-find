@@ -20,6 +20,7 @@ import {
    UserRound,
    Moon,
    Sun,
+   Logs,
 } from "lucide-react";
 import {
    DropdownMenu,
@@ -101,6 +102,14 @@ export function NavigationBar({ className }: { className?: string }) {
             label: "Profile",
          },
       ];
+
+      if(["ADMIN", "MODERATOR"].includes(user?.role!)) {
+         navItems.push({
+            icon: Logs,
+            href: "/logs",
+            label: "Logs"
+         })
+      }
 
       return (
          <>
