@@ -20,6 +20,11 @@ enum ItemStatus {
   CLAIMED
 }
 
+enum TurnoverStatus {
+  PENDING
+  APPROVED
+}
+
 enum ItemType {
   FOUND
   LOST
@@ -77,6 +82,7 @@ model Item {
 
   claims            Claim[]
   returns           Return[]
+  turnovers         Turnover[]
 }
 
 model Message {
@@ -162,8 +168,12 @@ model Return {
 
 model Turnover {
   id            String @id @default(uuid())
-  itemId        String
-
+  itemId        String @unique
+  turnedOverAt  DateTime @default(now())
+  status        TurnoverStatus @default(PENDING)
+  proofOfTurnover String?
+  
+  item          Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 model Logs {

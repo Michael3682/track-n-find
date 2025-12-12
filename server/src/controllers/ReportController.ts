@@ -1118,6 +1118,97 @@ class ReportController {
       });
     }
   }
+
+  async requestTurnover(req: Request, res: Response) {
+    try {
+      const { itemId } = req.params
+
+      const item = await ReportService.getItem(itemId)
+
+      if(!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found"
+        })
+      }
+
+      const turnover = await ReportService.requestTurnover(itemId)
+
+      res.json({
+        success: true,
+        message: "Requested a turnover to admin",
+        turnover
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async confirmTurnover(req: Request, res: Response) {
+    try {
+      const { itemId } = req.params
+      const { proofOfTurnover } = req.body
+
+      const item = await ReportService.getItem(itemId)
+
+      if(!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found"
+        })
+      }
+
+      const turnover = await ReportService.confirmTurnover(itemId, proofOfTurnover)
+
+      res.json({
+        success: true,
+        message: "Approved a turnover",
+        turnover
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
+
+  async rejectTurnover(req: Request, res: Response) {
+    try {
+      const { itemId } = req.params
+
+      const item = await ReportService.getItem(itemId)
+
+      if(!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found"
+        })
+      }
+
+      const turnover = await ReportService.rejectTurnover(itemId)
+
+      res.json({
+        success: true,
+        message: "Rejected a turnover",
+        turnover
+      })
+    } catch (err: any) {
+      console.log(err);
+      res.status(err.status || 500).json({
+        success: false,
+        message: "Internal Server Error",
+        user: null,
+      });
+    }
+  }
 }
 
 export default new ReportController();
