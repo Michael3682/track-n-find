@@ -58,8 +58,8 @@ const CardSheet = ({ item }: { item: Item }) => {
 
   return (
     <Sheet>
-      <SheetTrigger className="cursor-pointer p-0" asChild>
-        <Card className="w-43 lg:w-50 flex-none gap-0 bg-transparent overflow-hidden border rounded-sm hover:border-black/25 transition-all duration-100 ease-linear">
+      <SheetTrigger className="cursor-pointer p-0 shadow-muted" asChild>
+        <Card className="w-43 lg:w-50 flex-none gap-0 bg-transparent overflow-hidden border rounded-sm hover:border-ring transition-all duration-100 ease-linear">
           <CardHeader className="bg-primary-foreground p-0 gap-0 relative">
             <CardTitle>
               <img
@@ -90,7 +90,7 @@ const CardSheet = ({ item }: { item: Item }) => {
           </CardDescription>
         </Card>
       </SheetTrigger>
-      <SheetContent className="p-8 lg:p-12" side="center">
+      <SheetContent className="p-8 lg:p-10" side="center">
         <SheetHeader className="p-0 space-y-3 lg:space-y-5">
           <img
             className="aspect-video object-contain object-top shadow-inner shadow-black/10 rounded-md p-5 drop-shadow-lg drop-shadow-black/50"
@@ -180,7 +180,7 @@ const CardSheet = ({ item }: { item: Item }) => {
             </div>
           </div>
         </SheetHeader>
-        <SheetFooter className="px-0">
+        <SheetFooter className="pb-0 px-0">
           <Button
             className="text-xs lg:text-base py-0 lg:py-5 cursor-pointer"
             type="submit"

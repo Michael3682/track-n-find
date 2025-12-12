@@ -69,9 +69,9 @@ function Messages({
    return (
       <div className="w-auto h-screen relative overflow-hidden">
          <NavigationBar className="fixed" />
-         <div className="w-full h-full flex pt-12.5">
+         <div className="w-screen h-full flex pt-12.5">
             <div
-               className={`w-full lg:w-max h-full px-3 lg:px-5 pt-3 lg:pt-5 border-r bg-sidebar relative space-y-5 ${
+               className={`w-full lg:w-1/5 h-full px-3 lg:px-5 pt-3 lg:pt-5 border-r bg-sidebar relative space-y-5 ${
                   isMobile ? (showMessage ? "hidden" : "block") : "block"
                }`}>
                <header className="space-y-3 w-full sticky">
@@ -88,7 +88,7 @@ function Messages({
                   {filteredConversations.map((conversation) => (
                      <Card
                         key={conversation.id}
-                        className="w-full h-max bg-transparent overflow-hidden rounded-md flex flex-row gap-2 px-3 py-3 shadow-none border-none hover:bg-black/3 cursor-pointer"
+                        className="w-full h-max bg-transparent overflow-hidden rounded-md flex flex-row gap-2 px-3 py-3 shadow-none border-none hover:bg-muted cursor-pointer"
                         onClick={() => {
                            router.push(`/messages/${conversation.id}`);
                            setShowMessage(!showMessage);

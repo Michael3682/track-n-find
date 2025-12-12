@@ -65,7 +65,6 @@ export function BrowseCardSheet({
       getItems().then(([data]) => setItems(data.items));
    }, []);
 
-   console.log(items);
    return (
       <div className="flex flex-wrap justify-center lg:justify-start gap-4 p-8 lg:p-10">
          {filteredItems.length > 0 ? (

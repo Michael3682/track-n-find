@@ -121,11 +121,11 @@ export default function Messages() {
 
    return (
       <div
-         className={`w-full h-full ${
+         className={`w-full lg:w-4/5 h-full ${
             isMobile ? (showMessage ? "flex" : "hidden") : "flex"
          }`}>
          <div className="w-full h-full overflow-hidden relative flex flex-col">
-            <div className="w-full p-2 px-3 flex items-center gap-2 bg-sidebar border-b sticky">
+            <div className="w-full p-2 px-3 mt-0.5 flex items-center gap-2 bg-sidebar border-b sticky">
                <ArrowLeft
                   className="block lg:hidden"
                   color="rgb(50,50,50)"
@@ -253,33 +253,35 @@ export default function Messages() {
                            </Label>
                         </Button>
                      </TooltipTrigger>
-                     <TooltipContent>Attach a file</TooltipContent>
+                     <TooltipContent>Attach image</TooltipContent>
                   </Tooltip>
-                  <div className="px-1 h-max w-full border border-black/30 rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-3xl bg-input space-y-5">
-                     <div className="m-0 flex">
-                        {chatDetails.previewURL.map((src, i) => (
-                           <div key={i} className="p-2 mb-5 relative">
-                              <img
-                                 className="h-15 w-15 rounded-xl"
-                                 src={src}></img>
-                              <Button
-                                 size="icon"
-                                 className="pb-1 absolute top-0 right-0 border border-ring bg-secondary text-primary cursor-pointer hover:bg-muted-foreground rounded-full h-6 w-6"
-                                 onClick={() => {
-                                    setChatDetails((prev) => ({
-                                       ...prev,
-                                       previewURL: prev.previewURL.filter(
-                                          (_, index) => index !== i
-                                       ),
-                                    }));
-                                 }}>
-                                 x
-                              </Button>
-                           </div>
-                        ))}
+                  <div className="px-1 h-max w-full border border-black/30 rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-3xl bg-input space-y-5 overflow-x-hidden">
+                     <div className="w-full m-0 overflow-x-auto">
+                        <div className="flex w-max">
+                           {chatDetails.previewURL.map((src, i) => (
+                              <div key={i} className="p-2 mb-5 mt-1 relative">
+                                 <img
+                                    className="h-15 w-15 rounded-xl"
+                                    src={src}></img>
+                                 <Button
+                                    size="icon"
+                                    className="pb-1 absolute top-0 right-0 border border-ring bg-secondary text-primary cursor-pointer hover:bg-muted-foreground rounded-full h-6 w-6"
+                                    onClick={() => {
+                                       setChatDetails((prev) => ({
+                                          ...prev,
+                                          previewURL: prev.previewURL.filter(
+                                             (_, index) => index !== i
+                                          ),
+                                       }));
+                                    }}>
+                                    x
+                                 </Button>
+                              </div>
+                           ))}
+                        </div>
                      </div>
                      <Input
-                        className="border-none py-0 dark:bg-transparent rounded-full focus-visible:ring-0"
+                        className="w-full border-none py-0 dark:bg-transparent rounded-full focus-visible:ring-0"
                         placeholder="Type Here..."
                         value={chatDetails.text}
                         onChange={(e) =>

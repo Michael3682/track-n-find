@@ -220,13 +220,13 @@ function ActivityLogs() {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem className="cursor-pointer">
-                                       Test
+                                       ...
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="cursor-pointer">
-                                       Test
+                                       ...
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="cursor-pointer">
-                                       Test
+                                       ...
                                     </DropdownMenuItem>
                                  </DropdownMenuContent>
                               </DropdownMenu>

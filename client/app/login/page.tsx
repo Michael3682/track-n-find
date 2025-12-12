@@ -82,21 +82,17 @@ export default function Login() {
    };
 
    return (
-      <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
+      <div className="w-screen h-screen flex items-center justify-center bg-background">
          <Form {...form}>
             <form
                onSubmit={form.handleSubmit(onSubmit)}
-               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center">
+               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-secondary flex flex-col justify-center">
                <div className="flex flex-col items-center gap-3 mb-10">
-                  <img
-                     className="h-13 lg:h-15"
-                     src="track-n-find--logo.png"
-                     alt="logo"
-                  />
-                  <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
+                  <img className="h-13 lg:h-15" src="/logo.svg" alt="logo" />
+                  <h1 className="text-3xl lg:text-4xl text-primary font-extrabold tracking-tight">
                      TrackNFind
                   </h1>
-                  <small className="text-xs lg:text-sm text-black/80 leading-none font-medium">
+                  <small className="text-xs lg:text-sm text-muted-foreground leading-none font-medium">
                      Welcome back! Login to your account.
                   </small>
                </div>
@@ -105,11 +101,13 @@ export default function Login() {
                   name="studentId"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel className="ml-0.5">Student ID</FormLabel>
+                        <FormLabel className="text-primary ml-0.5">
+                           Student ID
+                        </FormLabel>
                         <FormControl>
                            <Input
                               maxLength={8}
-                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base bg-background"
                               placeholder="Ex. 12345678"
                               {...field}
                               onChange={(e) => field.onChange(e.target.value)}
@@ -124,12 +122,14 @@ export default function Login() {
                   name="password"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel className="ml-0.5">Password</FormLabel>
+                        <FormLabel className="text-primary ml-0.5">
+                           Password
+                        </FormLabel>
                         <FormControl>
                            <div className="w-full h-max relative">
                               <Input
                                  type={showPassword ? "text" : "password"}
-                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base bg-background"
                                  placeholder="Enter your password"
                                  {...field}
                                  onChange={(e) =>
@@ -159,20 +159,20 @@ export default function Login() {
                   )}
                />
                <Button
-                  className="mt-8 w-full lg:py-5 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
+                  className="mt-8 w-full lg:py-5 text-white bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                   type="submit"
                   disabled={isLoggingIn}>
                   {isLoggingIn ? "Logging in" : "Log in"}
                </Button>
                <div className="w-full flex items-center justify-center gap-2">
-                  <hr className="w-full border-gray-400" />
-                  <p className="text-sm text-black/80 leading-none font-medium">
+                  <hr className="w-full border-ring" />
+                  <p className="text-sm text-primary leading-none font-medium">
                      or
                   </p>
-                  <hr className="w-full border-gray-400" />
+                  <hr className="w-full border-ring" />
                </div>
                <GoogleButton />
-               <p className="text-center text-xs text-black/80 leading-none font-medium">
+               <p className="text-center text-xs text-primary leading-none font-medium">
                   Don't have an account?
                   <a
                      className="text-xs text-blue-500 leading-none font-medium cursor-pointer"

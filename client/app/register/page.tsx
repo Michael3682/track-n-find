@@ -86,17 +86,17 @@ export default function Register() {
    };
 
    return (
-      <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
+      <div className="w-screen h-screen flex items-center justify-center bg-background">
          <Form {...form}>
             <form
                onSubmit={form.handleSubmit(onSubmit)}
-               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center">
+               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border shadow-lg lg:rounded-xl px-8 lg:p-10 bg-secondary flex flex-col justify-center">
                <div className="flex flex-col items-center gap-3 mb-10">
-                  <img className="h-13 lg:h-15" src="track-n-find--logo.png" alt="logo" />
+                  <img className="h-13 lg:h-15" src="/logo.svg" alt="logo" />
                   <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
                      TrackNFind
                   </h1>
-                  <small className="text-xs lg:text-sm text-black/80 leading-none font-medium">
+                  <small className="text-xs lg:text-sm text-muted-foreground leading-none font-medium">
                      Welcome! Create an account.
                   </small>
                </div>
@@ -105,16 +105,14 @@ export default function Register() {
                   name="studentId"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel className="ml-0.5" >StudentID</FormLabel>
+                        <FormLabel className="ml-0.5">StudentID</FormLabel>
                         <FormControl>
                            <Input
                               maxLength={8}
                               placeholder="Ex. 12345678"
-                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base bg-background"
                               {...field}
-                              onChange={(e) =>
-                                 field.onChange(e.target.value)
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                            />
                         </FormControl>
                         <FormMessage />
@@ -126,15 +124,13 @@ export default function Register() {
                   name="name"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel className="ml-0.5" >Name</FormLabel>
+                        <FormLabel className="ml-0.5">Name</FormLabel>
                         <FormControl>
                            <Input
                               placeholder="Enter your name"
-                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base bg-background"
                               {...field}
-                              onChange={(e) =>
-                                 field.onChange(e.target.value)
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                            />
                         </FormControl>
                         <FormMessage />
@@ -146,13 +142,13 @@ export default function Register() {
                   name="password"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel className="ml-0.5" >Password</FormLabel>
+                        <FormLabel className="ml-0.5">Password</FormLabel>
                         <FormControl>
                            <div className="w-full h-max relative">
                               <Input
                                  type={showPassword ? "text" : "password"}
                                  placeholder="Enter your password"
-                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
+                                 className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base bg-background"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -161,15 +157,17 @@ export default function Register() {
                               <Eye
                                  size={15}
                                  color="rgb(100,100,100)"
-                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${showPassword ? "visible" : "hidden"
-                                    }`}
+                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                    showPassword ? "visible" : "hidden"
+                                 }`}
                                  onClick={handleShowPassword}
                               />
                               <EyeClosed
                                  size={15}
                                  color="rgb(100,100,100)"
-                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${showPassword ? "hidden" : "visible"
-                                    }`}
+                                 className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
+                                    showPassword ? "hidden" : "visible"
+                                 }`}
                                  onClick={handleShowPassword}
                               />
                            </div>
@@ -179,25 +177,25 @@ export default function Register() {
                   )}
                />
                <Button
-                  className="mt-8 w-full lg:py-5 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
+                  className="mt-8 w-full lg:py-5 text-white bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                   type="submit"
                   disabled={isSigningUp}>
                   {isSigningUp ? "Signing up" : "Sign up"}
                </Button>
                <div className="w-full flex items-center justify-center gap-2">
-                  <hr className="w-full border-gray-400" />
-                  <p className="text-sm text-black/80 leading-none font-medium">
+                  <hr className="w-full border-ring" />
+                  <p className="text-sm text-primary leading-none font-medium">
                      or
                   </p>
-                  <hr className="w-full border-gray-400" />
+                  <hr className="w-full border-ring" />
                </div>
                <Button
                   className="w-full lg:py-5 rounded-md cursor-pointer"
                   type="submit">
-                  <img src="google--icon.png" alt="google icon" /> Continue
-                  with Google
+                  <img src="google--icon.png" alt="google icon" /> Continue with
+                  Google
                </Button>
-               <p className="text-center text-xs text-black/80 leading-none font-medium">
+               <p className="text-center text-xs text-primary leading-none font-medium">
                   Already have an account?
                   <a
                      className="text-xs text-blue-500 leading-none font-medium cursor-pointer"
