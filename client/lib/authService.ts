@@ -187,8 +187,9 @@ export const toggleRole = async (userId: string) => {
 }
 
 export const changePassword = async (userId: string, password: string) => {
+    if (!userId) return []
     try {
-        const res = await fetch(`${API_URL}/auth/v1/user/${userId}/change-password}`, {
+        const res = await fetch(`${API_URL}/auth/v1/user/${userId}/change-password`, {
             method: "PATCH",
             credentials: 'include',
             headers: { "Content-Type": "application/json" },

@@ -25,11 +25,13 @@ export default function Profile() {
                   />
                   <AvatarFallback>CN</AvatarFallback>
                </Avatar>
-               <h1 className="text-4xl font-extrabold text-primary tracking-tight z-10 mb-5 lg:mb-10 flex flex-col items-center gap-2">
+               <h1 className="text-4xl font-extrabold text-primary tracking-tight z-10 flex flex-col items-center gap-2">
                   {user?.name}
-                  <span className="text-xs font-medium tracking-tight leading-none text-black border border-green-500 bg-green-300 px-4 py-1 rounded-full">
-                     {user?.role != "USER" ? user?.role : " "}
-                  </span>
+                  {user?.role != "USER" && (
+                     <span className="text-xs font-medium tracking-tight leading-none text-green-600 border border-green-500 bg-green-300 px-4 py-1 rounded-full">
+                        {user?.role}
+                     </span>
+                  )}
                </h1>
             </div>
          </div>

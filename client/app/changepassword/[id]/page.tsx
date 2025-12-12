@@ -1,13 +1,17 @@
 "use client";
 
 import { z } from "zod";
+import { toast } from "sonner";
+import { User } from "@/types/types";
 import { useForm } from "react-hook-form";
-import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams, useRouter } from "next/navigation";
+import { changePassword, getUserById } from "@/lib/authService";
 import {
    Form,
    FormControl,
@@ -16,9 +20,6 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import { useAuth } from "@/contexts/auth/AuthContext";
-import { toast } from "sonner";
-import { changePassword } from "@/lib/authService";
 
 interface ChangePasswordState {
    userId: string;
@@ -42,6 +43,7 @@ const formSchema = z.object({
 export default function ChangePassword() {
    const [isSaving, setIsSaving] = useState<boolean>(false);
    const [showPassword, setShowPassword] = useState<boolean>(false);
+   const [user, setUser] = useState<User>();
    const router = useRouter();
    const { refetch } = useAuth();
    const { id } = useParams();
@@ -58,7 +60,8 @@ export default function ChangePassword() {
       setIsSaving(true);
 
       const { userId, password } = form.getValues();
-      const [data, err] = await changePassword(userId, password);
+      console.log(userId)
+      const [data, err] = await changePassword(id as string, password);
 
       if (data.success) {
          await refetch();
@@ -84,6 +87,7 @@ export default function ChangePassword() {
 
    useEffect(() => {
       if (!id) return;
+      getUserById(id as string).then(([data]) => setUser(data.user));
    }, [id]);
 
    return (
@@ -96,6 +100,9 @@ export default function ChangePassword() {
                   <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
                      Change Password
                   </h1>
+                  <p className="text-center text-gray-400 text-sm font-semibold">
+                     You are changing password for {user?.name}
+                  </p>
                </div>
                <FormField
                   control={form.control}
