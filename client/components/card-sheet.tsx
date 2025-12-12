@@ -41,7 +41,7 @@ const CardSheet = ({ item }: { item: Item }) => {
     const messageSender =
       item.status === "CLAIMED"
         ? item.claims[item.claims.length - 1].claimerId
-        : "";
+        : undefined;
     const [data] = await findOrCreateConversation({
       itemId: item.id,
       hostId: item.author.id,

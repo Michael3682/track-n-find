@@ -1,6 +1,6 @@
 const API_URL = "http://localhost:9000/api"
 
-export const findOrCreateConversation = async ({ itemId, hostId, senderId }: { itemId: string, hostId: string, senderId: string}) => {
+export const findOrCreateConversation = async ({ itemId, hostId, senderId }: { itemId: string, hostId: string, senderId: string | undefined}) => {
     try {
         const res = await fetch(`${API_URL}/chat/v1/conversation`, {
             method: 'POST',
