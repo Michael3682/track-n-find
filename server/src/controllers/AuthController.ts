@@ -521,6 +521,33 @@ class AuthController {
         }
     }
 
+    async getUserById(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+
+            const user = await AuthService.getUserById(id)
+
+            if(!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                    user: null
+                })
+            }
+
+            res.json({
+                success: true,
+                user
+            })
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+                err: err.message
+            })
+        }
+    }
+
     async setTheme(req: Request, res: Response) {
         try {
             const userId = (req.user as JwtPayload).id

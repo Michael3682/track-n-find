@@ -42,6 +42,11 @@ const CardSheet = ({ item }: { item: Item }) => {
       item.status === "CLAIMED"
         ? item.claims[item.claims.length - 1].claimerId
         : undefined;
+
+    if(item.status !== "CLAIMED") {
+      return router.push(`/messages?item=${item.name}`);
+    }
+      
     const [data] = await findOrCreateConversation({
       itemId: item.id,
       hostId: item.author.id,

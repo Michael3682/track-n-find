@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import ChatRepository from "@/repositories/chat"
 import LogService from "@/services/logs"
+import AuthService from "@/services/auth"
 
 /**
  * @swagger
@@ -288,7 +289,11 @@ class ChatContoller {
         try {
             const userId = (req.user as JwtPayload).id;
 
-            const conversations = await ChatRepository.getUserConversations(userId)
+            const user = await AuthService.getUserById(userId)
+
+            const isMod = ["MODERATOR", "ADMIN"].includes(user?.role as string)
+
+            const conversations = await ChatRepository.getUserConversations(userId, isMod)
 
             res.json({
                 success: true,
