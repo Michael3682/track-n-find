@@ -31,8 +31,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getAllUser } from "@/lib/authService";
 import { User } from "@/types/types";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Log() {
+   const { user, isLoading } = useAuth()
+   const router = useRouter()
+
+   useEffect(() => {
+      if (!isLoading && (!user || user.role != "ADMIN")) {
+      router.push("/")
+      }
+   }, [user, isLoading, router])
+
+   if(isLoading || !user || user.role !== "ADMIN") return (
+      <div className="h-screen flex items-center justify-center">
+         <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
+      </div>
+   )
    return (
       <>
          <NavigationBar />

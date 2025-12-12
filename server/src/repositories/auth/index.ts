@@ -14,6 +14,11 @@ class AuthRepository {
             take: limit,
             orderBy: {
                 createdAt: "desc"
+            },
+            where: {
+                NOT: {
+                    id: '00000000'
+                }
             }
         })
     }

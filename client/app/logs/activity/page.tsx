@@ -21,8 +21,25 @@ import {
    useSidebar,
 } from "@/components/ui/sidebar";
 import { getLogs } from "@/lib/logService";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Log() {
+   const { user, isLoading } = useAuth()
+   const router = useRouter()
+
+   useEffect(() => {
+    if (!isLoading && (!user || user.role === "USER")) {
+      router.push("/")
+    }
+  }, [user, isLoading, router])
+
+   if(isLoading || !user || user.role === "USER") return (
+      <div className="h-screen flex items-center justify-center">
+         <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
+      </div>
+   )
+   
    return (
       <>
          <NavigationBar />
