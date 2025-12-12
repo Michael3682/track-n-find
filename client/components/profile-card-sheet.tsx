@@ -1,27 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Item } from "@/types/types";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { IconFolderCode } from "@tabler/icons-react";
-import { Separator } from "@/components/ui/separator";
-import { getArchivedItems, getUserArchivedItems, getUserFoundItems, getUserLostItems } from "@/lib/reportService";
-import {
-   Card,
-   CardDescription,
-   CardHeader,
-   CardTitle,
-} from "@/components/ui/card";
-import {
-   Sheet,
-   SheetContent,
-   SheetHeader,
-   SheetTitle,
-   SheetTrigger,
-   SheetFooter,
-} from "@/components/ui/sheet";
+import { getUserArchivedItems, getUserFoundItems, getUserLostItems } from "@/lib/reportService";
 import {
    Empty,
    EmptyHeader,
@@ -38,17 +20,6 @@ export function FoundItemsCardSheet() {
       lostItems: [],
       foundItems: [],
    });
-
-   const formattedDate = (date: string | number | Date) => {
-      if (!date) return;
-      return new Date(date).toLocaleDateString("en-US", {
-         year: "numeric",
-         month: "short",
-         day: "numeric",
-         hour: "numeric",
-         minute: "2-digit",
-      });
-   };
 
    useEffect(() => {
       const getUsers = async () =>
@@ -89,17 +60,6 @@ export function LostItemsCardSheet() {
       lostItems: [],
       foundItems: [],
    });
-
-   const formattedDate = (date: string | number | Date) => {
-      if (!date) return;
-      return new Date(date).toLocaleDateString("en-US", {
-         year: "numeric",
-         month: "short",
-         day: "numeric",
-         hour: "numeric",
-         minute: "2-digit",
-      });
-   };
 
    useEffect(() => {
       const getUsers = async () =>

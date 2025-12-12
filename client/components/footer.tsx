@@ -44,7 +44,7 @@ export function Footer() {
             <div className="w-full lg:w-max flex justify-evenly lg:gap-10">
                <img
                   className="h-7 w-7 object-contain lg:h-8 cursor-pointer"
-                  src="track-n-find--logo.png"
+                  src="logo.svg"
                   alt="logo"
                />
                <img

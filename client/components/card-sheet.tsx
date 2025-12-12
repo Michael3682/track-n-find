@@ -143,19 +143,19 @@ const CardSheet = ({ item }: { item: Item }) => {
                       <p className="text-xs lg:text-base font-medium text-primary flex justify-between">
                         Claimer's Name:{" "}
                         <span className="font-normal">
-                          {item.claims[item.claims.length - 1].claimerName}
+                          {item.claims[item.claims.length - 1]?.claimerName}
                         </span>
                       </p>
                       <p className="text-xs lg:text-base font-medium text-primary flex justify-between">
                         Course and Section:{" "}
                         <span className="font-normal">
-                          {item.claims[item.claims.length - 1].yearAndSection}
+                          {item.claims[item.claims.length - 1]?.yearAndSection}
                         </span>
                       </p>
                       <p className="text-xs lg:text-base font-medium text-primary flex justify-between">
                         Contact Number:{" "}
                         <span className="font-normal">
-                          {item.claims[item.claims.length - 1].contactNumber}
+                          {item.claims[item.claims.length - 1]?.contactNumber}
                         </span>
                       </p>
                       <p className="text-xs lg:text-base font-medium text-primary flex justify-between">

@@ -1,16 +1,13 @@
 "use client";
 
 import { z } from "zod";
-import { toast } from "sonner";
-import { useState } from "react";
-import { login } from "@/lib/authService";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "@/contexts/auth/AuthContext";
 import {
    Form,
    FormControl,
@@ -19,20 +16,19 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import GoogleButton from "@/components/google-button";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { toast } from "sonner";
+import { changePassword } from "@/lib/authService";
 
-interface LoginFormState {
-   studentId: string;
+interface ChangePasswordState {
+   userId: string;
    password: string;
 }
 
 const formSchema = z.object({
-   studentId: z
-      .string()
-      .regex(/^\d+$/, { message: "Student ID must contain only numbers." })
-      .min(8, { message: "Student ID should be 8 characters long." }),
+   userId: z.string(),
    password: z
-      .string() //Will be change
+      .string()
       .min(8, { message: "Password must be at least 8 characters long." })
       .regex(/[A-Z]/, {
          message: "Password must contain at least one uppercase letter.",
@@ -43,34 +39,39 @@ const formSchema = z.object({
       }),
 });
 
-export default function Login() {
-   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
+export default function ChangePassword() {
+   const [isSaving, setIsSaving] = useState<boolean>(false);
    const [showPassword, setShowPassword] = useState<boolean>(false);
    const router = useRouter();
    const { refetch } = useAuth();
+   const { id } = useParams();
 
-   const form = useForm<LoginFormState>({
+   const form = useForm<ChangePasswordState>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         studentId: "",
+         userId: "",
          password: "",
       },
    });
 
    async function onSubmit() {
-      setIsLoggingIn(true);
-      const [data, err] = await login(form.getValues());
+      setIsSaving(true);
+
+      const { userId, password } = form.getValues();
+      const [data, err] = await changePassword(userId, password);
 
       if (data.success) {
          await refetch();
          router.refresh();
-         setIsLoggingIn(false);
-         console.log("You successfully logged in!");
+         setIsSaving(false);
+         console.log("Password successfully changed!");
          toast.success(data.message);
+
+         router.back();
       }
 
       if (!data.success) toast.error(data.message);
-      setIsLoggingIn(false);
+      setIsSaving(false);
    }
 
    const handleShowPassword = () => {
@@ -81,56 +82,33 @@ export default function Login() {
       }
    };
 
+   useEffect(() => {
+      if (!id) return;
+   }, [id]);
+
    return (
       <div className="w-screen h-screen flex items-center justify-center bg-[rgb(245,245,245)]">
          <Form {...form}>
             <form
-               onSubmit={form.handleSubmit(onSubmit)}
-               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center">
+               className="h-full w-full lg:h-max lg:w-115 space-y-5 lg:border border-black/30 shadow-lg lg:rounded-xl px-8 lg:p-10 bg-white flex flex-col justify-center"
+               onSubmit={form.handleSubmit(onSubmit)}>
                <div className="flex flex-col items-center gap-3 mb-10">
-                  <img
-                     className="h-13 lg:h-15"
-                     src="track-n-find--logo.png"
-                     alt="logo"
-                  />
                   <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                     TrackNFind
+                     Change Password
                   </h1>
-                  <small className="text-xs lg:text-sm text-black/80 leading-none font-medium">
-                     Welcome back! Login to your account.
-                  </small>
                </div>
-               <FormField
-                  control={form.control}
-                  name="studentId"
-                  render={({ field }) => (
-                     <FormItem>
-                        <FormLabel className="ml-0.5">Student ID</FormLabel>
-                        <FormControl>
-                           <Input
-                              maxLength={8}
-                              className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
-                              placeholder="Ex. 12345678"
-                              {...field}
-                              onChange={(e) => field.onChange(e.target.value)}
-                           />
-                        </FormControl>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
                <FormField
                   control={form.control}
                   name="password"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel className="ml-0.5">Password</FormLabel>
+                        <FormLabel className="ml-0.5">New Password</FormLabel>
                         <FormControl>
                            <div className="w-full h-max relative">
                               <Input
                                  type={showPassword ? "text" : "password"}
                                  className="text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base"
-                                 placeholder="Enter your password"
+                                 placeholder="Enter new password"
                                  {...field}
                                  onChange={(e) =>
                                     field.onChange(e.target.value)
@@ -161,26 +139,9 @@ export default function Login() {
                <Button
                   className="mt-8 w-full lg:py-5 bg-blue-700 rounded-md hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                   type="submit"
-                  disabled={isLoggingIn}>
-                  {isLoggingIn ? "Logging in" : "Log in"}
+                  disabled={isSaving}>
+                  {isSaving ? "Saving Changes" : "Save Changes"}
                </Button>
-               <div className="w-full flex items-center justify-center gap-2">
-                  <hr className="w-full border-gray-400" />
-                  <p className="text-sm text-black/80 leading-none font-medium">
-                     or
-                  </p>
-                  <hr className="w-full border-gray-400" />
-               </div>
-               <GoogleButton />
-               <p className="text-center text-xs text-black/80 leading-none font-medium">
-                  Don't have an account?
-                  <a
-                     className="text-xs text-blue-500 leading-none font-medium cursor-pointer"
-                     onClick={() => router.push("/register")}>
-                     {" "}
-                     Sign Up
-                  </a>
-               </p>
             </form>
          </Form>
       </div>

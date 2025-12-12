@@ -36,6 +36,7 @@ import { useAuth } from "@/contexts/auth/AuthContext";
 import { uploadItemImage } from "@/lib/bucket";
 import { toast } from "sonner";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { NavigationBar } from "@/components/navigationbar";
 
 interface UpdateItemState {
    itemName: string;
@@ -238,12 +239,13 @@ export default function UpdateReport() {
    }, [item, form]);
 
    return (
-      <div className="w-screen h-full lg:h-screen flex flex-col items-center justify-center bg-secondary overflow-x-hidden">
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-background overflow-x-hidden">
+         <NavigationBar className="static lg:fixed" />
          <Form {...form}>
             <form
-               className="lg:mt-10 w-full lg:w-125 h-full lg:h-max flex flex-col items-center justify-center gap-10 lg:gap-13 lg:border border-black/30 lg:shadow-lg lg:rounded-xl p-8 py-5 lg:p-10 bg-white"
+               className="lg:mt-10 w-full lg:w-125 h-full lg:h-max flex flex-col items-center justify-around lg:justify-center gap-10 lg:gap-13 lg:border lg:shadow-lg lg:rounded-xl p-8 lg:p-10 bg-secondary"
                onSubmit={form.handleSubmit(onSubmit)}>
-               <h1 className="text-2xl lg:text-4xl font-extrabold tracking-tight">
+               <h1 className="text-4xl font-extrabold tracking-tight">
                   Manage Item
                </h1>
                {!!item && (
@@ -257,7 +259,7 @@ export default function UpdateReport() {
                               <FormControl>
                                  <Input
                                     placeholder={item?.name}
-                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
+                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm bg-background"
                                     {...field}
                                     onChange={(e) =>
                                        field.onChange(e.target.value)
@@ -362,7 +364,7 @@ export default function UpdateReport() {
                               <FormControl>
                                  <Input
                                     placeholder={item?.location}
-                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
+                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm bg-background"
                                     {...field}
                                     onChange={(e) =>
                                        field.onChange(e.target.value)
@@ -384,7 +386,7 @@ export default function UpdateReport() {
                                     <Input
                                        type="file"
                                        accept="image/*"
-                                       className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
+                                       className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm bg-background"
                                        onChange={async (e) => {
                                           const file = e.target.files?.[0];
                                           if (!file) return;
@@ -406,7 +408,7 @@ export default function UpdateReport() {
                               <FormControl>
                                  <Textarea
                                     placeholder={item?.description}
-                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm"
+                                    className="placeholder:text-xs lg:placeholder:text-sm text-xs lg:text-sm bg-background"
                                     {...field}
                                     onChange={(e) =>
                                        field.onChange(e.target.value)
@@ -418,7 +420,7 @@ export default function UpdateReport() {
                         )}
                      />
                      <Button
-                        className="w-full text-sm bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
+                        className="w-full text-sm text-[rgb(245,245,245)] bg-blue-700 hover:bg-blue-600 cursor-pointer disabled:opacity-50"
                         type="submit"
                         disabled={isSubmitting}>
                         {isSubmitting ? "Updating" : "Update Item"}
@@ -427,7 +429,7 @@ export default function UpdateReport() {
                )}
                <div className="w-full flex gap-2">
                   <Button
-                     className="flex-1 text-sm bg-tranparent text-inherit border hover:bg-gray-200 cursor-pointer disabled:opacity-50"
+                     className="flex-1 text-sm bg-tranparent text-inherit border border-ring hover:bg-secondary cursor-pointer disabled:opacity-50"
                      type="button"
                      disabled={isTrashing}
                      onClick={() =>

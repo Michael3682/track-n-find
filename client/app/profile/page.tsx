@@ -4,7 +4,11 @@ import { useAuth } from "@/contexts/auth/AuthContext";
 import { NavigationBar } from "@/components/navigationbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArchiveItemsCardSheet, FoundItemsCardSheet, LostItemsCardSheet } from "@/components/profile-card-sheet";
+import {
+   ArchiveItemsCardSheet,
+   FoundItemsCardSheet,
+   LostItemsCardSheet,
+} from "@/components/profile-card-sheet";
 
 export default function Profile() {
    const { user } = useAuth();
@@ -21,15 +25,18 @@ export default function Profile() {
                   />
                   <AvatarFallback>CN</AvatarFallback>
                </Avatar>
-               <h1 className="text-4xl font-extrabold text-primary tracking-tight z-10 mb-5 lg:mb-10">
+               <h1 className="text-4xl font-extrabold text-primary tracking-tight z-10 mb-5 lg:mb-10 flex flex-col items-center gap-2">
                   {user?.name}
+                  <span className="text-xs font-medium tracking-tight leading-none text-black border border-green-500 bg-green-300 px-4 py-1 rounded-full">
+                     {user?.role != "USER" ? user?.role : " "}
+                  </span>
                </h1>
             </div>
          </div>
          <div className="w-full flex justify-center border-t pt-10 px-8">
             <Tabs defaultValue="foundItems">
                <div className="w-full flex justify-center">
-                  <TabsList className="w-110 h-auto bg-muted border shadow-inner p-1">
+                  <TabsList className="w-90 lg:w-110 h-auto bg-muted border shadow-inner p-1">
                      <TabsTrigger
                         className="text-xs lg:text-sm text-primary cursor-pointer py-2 data-[state=active]:bg-background data-[state=active]:text-primary"
                         value="foundItems">
@@ -60,8 +67,7 @@ export default function Profile() {
                   </TabsContent>
                   <TabsContent
                      className="flex flex-wrap justify-start gap-4"
-                     value="archive"
-                  >
+                     value="archive">
                      <ArchiveItemsCardSheet />
                   </TabsContent>
                </div>

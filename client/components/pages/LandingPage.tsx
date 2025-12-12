@@ -24,10 +24,10 @@ export default function LandingPage() {
             <div className="h-fit flex items-center justify-center gap-2 py-3 lg:py-5 absolute top-0 z-50">
                <img
                   className="h-7 lg:h-8"
-                  src="track-n-find--logo.png"
+                  src="/logo.svg"
                   alt="log"
                />
-               <h1 className="text-lg lg:text-2xl font-medium tracking-tight">
+               <h1 className="text-white text-lg lg:text-2xl font-medium tracking-tight">
                   TrackNFind
                </h1>
             </div>

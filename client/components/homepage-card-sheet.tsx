@@ -1,30 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { Item } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { getItems } from "@/lib/reportService";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/auth/AuthContext";
-import { findOrCreateConversation } from "@/lib/chatService";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-} from "@/components/ui/card";
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-    SheetFooter,
-} from "@/components/ui/sheet";
 import {
     Carousel,
     CarouselContent,
@@ -37,8 +20,6 @@ import CardSheet from "./card-sheet";
 
 export function HomepageCardSheet() {
     const isMobile = useIsMobile();
-    const router = useRouter();
-    const { user } = useAuth()
     const [items, setItems] = useState<Item[]>([]);
     const [foundApi, setFoundApi] = useState<CarouselApi>();
     const [lostApi, setLostApi] = useState<CarouselApi>();

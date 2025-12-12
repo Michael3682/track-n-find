@@ -6,7 +6,7 @@ import { NavigationBar } from "@/components/navigationbar";
 import { HomepageCardSheet } from "@/components/homepage-card-sheet";
 import { Footer } from "@/components/footer";
 
-export default function Homepage() {
+export default function Homepage() {            
    const router = useRouter();
 
    return (
