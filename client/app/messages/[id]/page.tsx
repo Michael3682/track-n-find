@@ -26,14 +26,16 @@ import {
 import { rejectTurnover, requestTurnover, toggleItemStatus } from "@/lib/reportService";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { uploadItemImage } from "@/lib/bucket";
 
 export default function Messages() {
    const isMobile = useIsMobile();
    const router = useRouter();
    const [convo, setConvo] = useState<Conversation>();
+   const [progress, setProgress] = useState<number[]>([])
    const { showMessage, setShowMessage } = useMessage();
    const [messages, setMessages] = useState<Message[]>([]);
-   const [tempMessage, setTempMessage] = useState<string[]>([]);
+   const [tempMessage, setTempMessage] = useState<{content: string, authorName: string | undefined}[]>([]);
    const messagesRef = useRef<HTMLDivElement>(null);
 
    const [chatDetails, setChatDetails] = useState<{
@@ -51,7 +53,9 @@ export default function Messages() {
    const send = (e: FormEvent) => {
       e.preventDefault();
 
-      if (chatDetails.text.trim() == "") return;
+      if (chatDetails.text.trim() == "" && chatDetails.previewURL.length == 0) return;
+
+      uploadItemImage(chatDetails.attachment, user!, setProgress)
 
       socket?.emit("send_message", {
          text: chatDetails.text,
@@ -64,7 +68,10 @@ export default function Messages() {
             : convo?.senderId,
       });
 
-      setTempMessage((prev) => [...prev, chatDetails.text]);
+      setTempMessage((prev) => [...prev, {
+         content: chatDetails.text,
+         authorName: user?.name
+      }]);
       setChatDetails((prev) => ({
          ...prev,
          text: "",
@@ -97,7 +104,7 @@ export default function Messages() {
 
       socket?.on("recieve_message", (payload) => {
          if (payload.conversationId === conversationId) {
-            setTempMessage((prev) => prev.filter((m) => payload.content != m));
+            setTempMessage((prev) => prev.filter((m) => payload.content != m.content));
             setMessages((prev) => [...prev, payload]);
          }
       });
@@ -121,6 +128,7 @@ export default function Messages() {
       });
    }, [messages, tempMessage]);
 
+   console.log(messages)
    return (
       <div
          className={`w-full h-full ${
@@ -205,21 +213,27 @@ export default function Messages() {
                className="w-full max-h-full bg-background flex flex-col gap-0.5 px-3 p-2 overflow-y-auto flex-1"
                ref={messagesRef}>
                {messages?.map((message) => (
-                  <div
-                     key={message.id}
-                     className={`w-fit px-3 py-1.5 rounded-md text-[rgb(23,23,23)] ${
-                        user?.id === message.authorId
-                           ? "self-end bg-blue-200"
-                           : "bg-gray-200"
-                     }`}>
-                     {message.content}
+                  <div key={message.id} className={`${user?.id === message.authorId ? "self-end" : ""}`}>
+                     <span className="text-xs text-gray-400">{message.author.name}</span>
+                     <div
+                        key={message.id}
+                        className={`w-fit px-3 py-1.5 rounded-md text-[rgb(23,23,23)] ${
+                           user?.id === message.authorId
+                              ? "bg-blue-200"
+                              : "bg-gray-200"
+                        }`}>
+                        {message.content}
+                     </div>
                   </div>
                ))}
                {tempMessage?.map((message, i) => (
-                  <div
-                     key={i}
-                     className={`w-fit px-3 py-1.5 rounded-md self-end bg-blue-200`}>
-                     {message}
+                  <div key={i} className={`${user?.name === message.authorName ? "self-end" : ""}`}>
+                     <span className="text-xs text-gray-400">{message.authorName}</span>
+                     <div
+                        key={i}
+                        className={`w-fit px-3 py-1.5 rounded-md self-end bg-blue-200`}>
+                        {message.content}
+                     </div>
                   </div>
                ))}
             </div>

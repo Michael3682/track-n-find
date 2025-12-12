@@ -66,6 +66,7 @@ class ChatRepository {
       include: {
         item: { include: { turnovers: true }},
         messages: {
+          include: { author: true },
           orderBy: { createdAt: "asc" },
         },
         host: {
@@ -105,6 +106,9 @@ class ChatRepository {
         authorId,
         conversationId,
       },
+      include: {
+        author: true
+      }
     });
   }
 
