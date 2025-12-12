@@ -1,12 +1,12 @@
 "use client";
 
-import { Item } from "@/types/types";
+import { Ellipsis } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { getItems } from "@/lib/reportService";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { AdminSidebar } from "@/components/admin-sidebar";
 import { NavigationBar } from "@/components/navigationbar";
+import { ManageUserSidebar } from "@/components/admin-sidebar";
 import {
    Table,
    TableBody,
@@ -21,8 +21,18 @@ import {
    SidebarTrigger,
    useSidebar,
 } from "@/components/ui/sidebar";
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuLabel,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { getAllUser } from "@/lib/authService";
+import { User } from "@/types/types";
 
-export default function Logs() {
+export default function Log() {
    return (
       <>
          <NavigationBar />
@@ -36,32 +46,27 @@ export default function Logs() {
 function ActivityLogs() {
    const { open } = useSidebar();
    const isMobile = useIsMobile();
-   const [items, setItems] = useState<Item[]>([]);
+   const [users, setUsers] = useState<User[]>([]);
+   const [query, setQuery] = useState({ page: 1, limit: 20 });
    const [searchItem, setSearchItem] = useState("");
    const [activeSortBy, setActiveSortBy] = useState("");
    const [activeDate, setActiveDate] = useState("");
-   const [activeStatus, setActiveStatus] = useState("");
+   const [activeRole, setActiveRole] = useState("");
 
-   console.log(items)
-
-   const filteredItems = items
-      .filter(
-         (item) =>
-            item.author.name.toLowerCase().includes(searchItem.toLowerCase()) ||
-            item.name.toLowerCase().includes(searchItem.toLowerCase())
-      )
-      .filter((item) =>
-         activeStatus ? item.status == activeStatus.toUpperCase() : true
-      )
-      .filter((item) => {
+   const filteredUsers = users
+      .filter((user) =>
+         user.name.toLowerCase().includes(searchItem.toLowerCase())
+   )
+      .filter((user) => activeRole ? user.role == activeRole.toUpperCase() : true)
+      .filter((user) => {
          if (!activeDate) return true;
 
-         const itemDate = new Date(item.date_time);
+         const userDate = new Date(user.createdAt as Date);
          const now = new Date();
 
          switch (activeDate) {
             case "Today": {
-               return itemDate.toDateString() === now.toDateString();
+               return userDate.toDateString() === now.toDateString();
             }
 
             case "This Week": {
@@ -72,18 +77,18 @@ function ActivityLogs() {
                const weekEnd = new Date(weekStart);
                weekEnd.setDate(weekStart.getDate() + 7);
 
-               return itemDate >= weekStart && itemDate < weekEnd;
+               return userDate >= weekStart && userDate < weekEnd;
             }
 
             case "This Month": {
                return (
-                  itemDate.getFullYear() === now.getFullYear() &&
-                  itemDate.getMonth() === now.getMonth()
+                  userDate.getFullYear() === now.getFullYear() &&
+                  userDate.getMonth() === now.getMonth()
                );
             }
 
             case "This Year": {
-               return itemDate.getFullYear() === now.getFullYear();
+               return userDate.getFullYear() === now.getFullYear();
             }
 
             default:
@@ -95,13 +100,13 @@ function ActivityLogs() {
          switch (activeSortBy) {
             case "Newest First":
                return (
-                  new Date(b.date_time).getTime() -
-                  new Date(a.date_time).getTime()
+                  new Date(b.createdAt as Date).getTime() -
+                  new Date(a.createdAt as Date).getTime()
                );
             case "Oldest First":
                return (
-                  new Date(a.date_time).getTime() -
-                  new Date(b.date_time).getTime()
+                  new Date(a.createdAt as Date).getTime() -
+                  new Date(b.createdAt as Date).getTime()
                );
             case "Alphabetical (A-Z)":
                return a.name.localeCompare(b.name);
@@ -124,20 +129,22 @@ function ActivityLogs() {
    };
 
    useEffect(() => {
-      getItems().then(([data]) => setItems(data.items));
-   }, []);
+      getAllUser({ page: query.page, limit: query.limit }).then(([data]) =>
+         setUsers(data.users)
+      );
+   }, [query.page, query.limit]);
 
    return (
       <>
-         <AdminSidebar
+         <ManageUserSidebar
             searchItem={searchItem}
             setSearchItem={setSearchItem}
             activeSortBy={activeSortBy}
             setActiveSortBy={setActiveSortBy}
             activeDate={activeDate}
             setActiveDate={setActiveDate}
-            activeStatus={activeStatus}
-            setActiveStatus={setActiveStatus}
+            activeRole={activeRole}
+            setActiveRole={setActiveRole}
          />
          <SidebarInset className="mt-13">
             <header className="flex items-center border-b px-5 py-1 bg-sidebar">
@@ -161,40 +168,28 @@ function ActivityLogs() {
             </header>
             <div className="p-8">
                <h1 className="text-4xl font-extrabold tracking-tight mb-8">
-                  Activity Logs
+                  Manage Users
                </h1>
                <Table className="rounded-full">
                   <TableHeader>
                      <TableRow className="bg-muted">
-                        <TableHead>Item</TableHead>
-                        <TableHead>User</TableHead>
-                        <TableHead>Time</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Activity</TableHead>
+                        <TableHead>User Id</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Date Registered</TableHead>
+                        <TableHead></TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
-                     {filteredItems.map((item) => (
-                        <TableRow key={item.id}>
-                           <TableCell>{item.name}</TableCell>
-                           <TableCell>{item.author.name}</TableCell>
+                     {filteredUsers.map((user) => (
+                        <TableRow key={user.id}>
+                           <TableCell>{user.id}</TableCell>
+                           <TableCell>{user.name}</TableCell>
+                           <TableCell>{user.email}</TableCell>
+                           <TableCell>{user.role}</TableCell>
                            <TableCell>
-                              {formattedDate(item.date_time)}
-                           </TableCell>
-                           <TableCell
-                              className={`font-semibold ${
-                                 item.status == "CLAIMED"
-                                    ? "text-green-400"
-                                    : "text-red-400"
-                              }`}>
-                              {item.status == "CLAIMED" ? (
-                                 "CLAIMED"
-                              ) : (
-                                 <span>
-                                    UNCLAIMED{" "}
-                                    <span className="text-primary font-normal lowercase">{`(${item.type})`}</span>
-                                 </span>
-                              )}
+                              {formattedDate(user.createdAt)}
                            </TableCell>
                         </TableRow>
                      ))}

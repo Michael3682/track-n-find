@@ -15,32 +15,36 @@ export default function LandingPage() {
 
    return (
       <div className="w-auto h-auto flex flex-col">
-         <div className="h-screen flex flex-col items-center justify-center gap-5 relative text-[rgb(230,230,230)]">
+         <div className="h-screen flex flex-col items-center justify-center gap-5 relative">
             <img
                className="w-screen h-screen absolute top-0 left-0 object-cover brightness-20 z-0 pointer-events-none"
                src="landing-page--hero-section---background.jpg"
                alt=""
             />
             <div className="h-fit flex items-center justify-center gap-2 py-3 lg:py-5 absolute top-0 z-50">
-               <img className="h-7 lg:h-8" src="track-n-find--logo.png" alt="log" />
+               <img
+                  className="h-7 lg:h-8"
+                  src="track-n-find--logo.png"
+                  alt="log"
+               />
                <h1 className="text-lg lg:text-2xl font-medium tracking-tight">
                   TrackNFind
                </h1>
             </div>
             <div className="w-full h-screen flex flex-col items-center lg:items-start justify-center px-8 lg:px-32 gap-3 lg:gap-5 z-10">
-               <h1 className="text-center lg:text-start font-extrabold tracking-tight text-secondary text-4xl lg:text-7xl text-balance">
-                 Track What’s Lost,
+               <h1 className="text-center lg:text-start font-extrabold tracking-tight text-[rgb(245,245,245)] text-4xl lg:text-7xl text-balance">
+                  Track What’s Lost,
                   <br />
                   Find What’s Found.
                </h1>
-               <small className="text-sm text-center lg:text-start lg:text-xl font-medium text-secondary text-balance">
-                   Join TrackNFind to connect with others and track down lost
+               <small className="text-sm text-center lg:text-start lg:text-xl font-medium text-[rgb(245,245,245)] text-balance">
+                  Join TrackNFind to connect with others and track down lost
                   items quickly.
                   <br className="hidden lg:block" />
                   Lost something? Or found something? Let the community know!
                </small>
                <Button
-                  className="mt-3 bg-blue-700 hover:bg-blue-600 lg:text-base lg:p-5 cursor-pointer"
+                  className="mt-3 bg-blue-700 hover:bg-blue-600 lg:text-base text-[rgb(245,245,245)] lg:p-5 cursor-pointer"
                   onClick={() => router.push("/login")}>
                   Get Started
                </Button>
@@ -82,7 +86,9 @@ export default function LandingPage() {
          </div>
          <footer className="bg-primary p-8 lg:px-32 lg:py-10">
             <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-8">
-               <h1 className="text-5xl lg:text-6xl text-secondary font-bold">TrackNFind</h1>
+               <h1 className="text-5xl lg:text-6xl text-[rgb(245,245,245)] font-bold">
+                  TrackNFind
+               </h1>
                <div className="flex gap-4 lg:gap-5 text-muted-foreground">
                   <Link href="/about">About</Link>
                   <Link href="/contact">Contact</Link>
