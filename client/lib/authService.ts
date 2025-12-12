@@ -155,3 +155,18 @@ export const changeTheme = async (theme: "LIGHT" | "DARK") => {
         return [null, err]
     }
 }
+
+export const toggleRole = async (userId: string) => {
+    try {
+        const res = await fetch(`${API_URL}/auth/v1/user/${userId}`, {
+            method: "PATCH",
+            credentials: 'include'
+        })
+        const data = await res.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
+}

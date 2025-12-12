@@ -45,6 +45,15 @@ class AuthRepository {
             }
         })
     }
+    
+    async setRole(id: string, role: "USER" | "MODERATOR" ) {
+        return prisma.user.update({
+            where: { id },
+            data: {
+                role
+            }
+        })
+    }
 }
 
 export default new AuthRepository()

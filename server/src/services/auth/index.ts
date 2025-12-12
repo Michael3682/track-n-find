@@ -28,6 +28,10 @@ class AuthService {
     async setTheme(id: string, theme: "DARK" | "LIGHT") {
         return AuthRepository.setTheme(id, theme)
     }
+
+    async toggleRole(id: string, role: "USER" | "MODERATOR") {
+        return AuthRepository.setRole(id, role)
+    }
 }
 
 export default new AuthService()
