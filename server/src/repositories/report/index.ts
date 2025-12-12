@@ -44,6 +44,25 @@ class ReportRepository {
    async returnItem(data: Return) {
       return prisma.return.create({ data })
    }
+
+   async createTurnover(itemId: string) {
+      return prisma.turnover.create({ data: { itemId }})
+   }
+
+   async confirmTurnover(itemId: string, proofOfTurnover: string) {
+      return prisma.turnover.update({
+         where: { itemId },
+         data: {
+            proofOfTurnover
+         }
+      })
+   }
+
+   async rejectTurnover(itemId: string) {
+      return prisma.turnover.delete({
+         where: { itemId }
+      })
+   }
 }
 
 export default new ReportRepository()

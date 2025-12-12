@@ -38,19 +38,14 @@ const CardSheet = ({ item }: { item: Item }) => {
   const router = useRouter();
 
   const handleMessageUser = async (item: Item) => {
-    const messageSender =
-      item.status === "CLAIMED"
-        ? item.claims[item.claims.length - 1].claimerId
-        : undefined;
-
-    if(item.status !== "CLAIMED") {
+    if(item.author.id == user?.id) {
       return router.push(`/messages?item=${item.name}`);
     }
       
     const [data] = await findOrCreateConversation({
       itemId: item.id,
       hostId: item.author.id,
-      senderId: messageSender,
+      senderId: undefined,
     });
 
     router.push(`/messages/${data.conversation.id}`);
@@ -190,9 +185,9 @@ const CardSheet = ({ item }: { item: Item }) => {
               <div>
                 <Link href={`update/${item.id}`}>Manage Item</Link>
               </div>
-            ) : (
+            ) : item.status != "CLAIMED" ? (
               <p onClick={() => handleMessageUser(item)}>Message User</p>
-            )}
+            ) : null}
           </Button>
           {
             item.associated_person == user?.id &&

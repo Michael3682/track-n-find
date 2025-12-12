@@ -107,6 +107,18 @@ class ReportService {
   async reportReturn(data: any) {
     return ReportRepository.returnItem(data)
   }
+
+  async requestTurnover(itemId: string) {
+    return ReportRepository.createTurnover(itemId)
+  }
+
+  async confirmTurnover(itemId: string, proofOfTurnover: string) {
+    return ReportRepository.confirmTurnover(itemId, proofOfTurnover)
+  }
+
+  async rejectTurnover(itemId: string) {
+    return ReportRepository.rejectTurnover()
+  }
 }
 
 export default new ReportService();

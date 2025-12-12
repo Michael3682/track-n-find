@@ -29,7 +29,7 @@ export type Item = {
   date_time: string | number | Date;
   location: string;
   attachments: string[];
-  status: "CLAIMED" | "UNCLAIMED";
+  status: "CLAIMED" | "UNCLAIMED" | "TURNEDOVER";
   type: "FOUND" | "LOST";
   associated_person: string;
   author: User;
