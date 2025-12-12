@@ -187,3 +187,18 @@ export const changePassword = async (userId: string, password: string) => {
         return [null, err]
     }
 }
+
+export const deleteAccount = async (id: string) => {
+    try {
+        const res = await fetch(`${API_URL}/auth/v1/user/${id}/delete`, {
+            method: "DELETE",
+            credentials: 'include'
+        })
+        const data = await res.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
+}
