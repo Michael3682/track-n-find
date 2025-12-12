@@ -18,6 +18,21 @@ export const getAuthUser =  async () => {
     }
 }
 
+export const getAllUser =  async ({ page, limit }: { page: number, limit: number}) => {
+    try {
+        const res = await fetch(`${API_URL}/auth/v1/users?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await res.json()
+
+        return [data, null]
+    } catch (err) {
+        console.log(err)
+        return [null, err]
+    }
+}
+
 export const signup = async ({ studentId, name, password}: { studentId: string, name: string, password: string}) => {
     try {
         const res = await fetch(`${API_URL}/auth/v1/signup`, {

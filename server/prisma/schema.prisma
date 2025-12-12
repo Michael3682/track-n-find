@@ -164,8 +164,8 @@ model Logs {
   actorId       String
   actorName     String
   action        String
-  target        LOG_TARGETS
-  targetId      String
-  metaData      String
+  target        LOG_TARGETS?
+  targetId      String?
+  metaData      String?
   createdAt     DateTime @default(now())
 }

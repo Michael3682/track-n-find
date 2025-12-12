@@ -8,6 +8,16 @@ class AuthRepository {
         return prisma.user.create({ data });
     }
 
+    async find({ offset, limit }: { offset: number, limit: number}) {
+        return prisma.user.findMany({
+            skip: offset,
+            take: limit,
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+    }
+
     async findById(id: string) {
         return prisma.user.findUnique({
             where: { id }

@@ -5,6 +5,7 @@ import { signupSchema, loginSchema } from '@/lib/validations/auth';
 import AuthService from '@/services/auth'
 import { v4 as uuidV4 } from 'uuid'
 import message from '@/socket/services/message';
+import LogService from '@/services/logs'
 
 class AuthController {
     /**
@@ -91,6 +92,13 @@ class AuthController {
     
             const localUser = JSON.parse(JSON.stringify(newUser))
             delete localUser.password
+
+            await LogService.record({
+                actorId: newUser.id,
+                action: "Signed up",
+                target: "USER",
+                targetId: newUser.id
+            })
     
             res.cookie('auth_token', token, {
                 httpOnly: true,
@@ -202,6 +210,13 @@ class AuthController {
     
             const localUser = JSON.parse(JSON.stringify(user))
             delete localUser.password
+
+            await LogService.record({
+                actorId: user.id,
+                action: "Logged in",
+                target: "USER",
+                targetId: user.id
+            })
     
             res.cookie('auth_token', token, {
                 httpOnly: true,
@@ -249,6 +264,13 @@ class AuthController {
     
             const localUser = JSON.parse(JSON.stringify(user))
             delete localUser.password
+
+            await LogService.record({
+                actorId: user.id,
+                action: "Signed up with email",
+                target: "USER",
+                targetId: user.id
+            })
     
             res.cookie('auth_token', token, {
                 httpOnly: true,
@@ -297,6 +319,13 @@ class AuthController {
     
             const localUser = JSON.parse(JSON.stringify(user))
             delete localUser.password
+
+            await LogService.record({
+                actorId: user.id,
+                action: "Logged in with email",
+                target: "USER",
+                targetId: user.id
+            })
     
             res.cookie('auth_token', token, {
                 httpOnly: true,
@@ -346,6 +375,13 @@ class AuthController {
      */
     async logout(req: Request, res: Response) {
         try {
+            await LogService.record({
+                actorId: (req.user as JwtPayload).id,
+                action: "Logged out",
+                target: "USER",
+                targetId: (req.user as JwtPayload).id
+            })
+
             res.clearCookie('auth_token', {
                 httpOnly: true,
                 secure: true,
@@ -413,6 +449,27 @@ class AuthController {
         res.json({ message: "Authenticated",  user })
     }
 
+    async getAllUsers(req: Request, res: Response) {
+        try {
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 20;
+
+            const offset = (page - 1) * limit;
+            const users = AuthService.getAllUsers({ offset, limit })
+
+            res.json({
+                success: true,
+                users
+            })
+        } catch(err: any) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: "Internal Server Error",
+                err: err.message
+            })
+        }
+    }
+
     async setTheme(req: Request, res: Response) {
         try {
             const userId = (req.user as JwtPayload).id
@@ -420,7 +477,14 @@ class AuthController {
 
             const theme = themeParam as "DARK" | "LIGHT"
             
-            const user = AuthService.setTheme(userId, theme)
+            const user = await AuthService.setTheme(userId, theme)
+
+            await LogService.record({
+                actorId: user.id,
+                action: `Changed theme to ${theme.toLowerCase()}`,
+                target: "USER",
+                targetId: user.id
+            })
 
             res.json({
                 success: true,
