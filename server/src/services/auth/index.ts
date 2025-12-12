@@ -36,6 +36,10 @@ class AuthService {
     async updatePassword(id: string, password: string) {
         return AuthRepository.updatePassword(id, password)
     }
+
+    async deleteUser(id: string) {
+        return AuthRepository.delete(id)
+    }
 }
 
 export default new AuthService()

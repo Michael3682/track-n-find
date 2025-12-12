@@ -30,6 +30,12 @@ class AuthRepository {
         })
     }
 
+    async delete(id: string) {
+        return prisma.user.delete({
+            where: { id }
+        })
+    }
+
     async bindEmail(id: string, email: string) {
         return prisma.user.update({
             where: { id },
