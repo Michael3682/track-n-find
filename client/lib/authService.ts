@@ -88,13 +88,13 @@ export const signInWithGoogle = async () => {
     }
 }
 
-export const saveId = async (id: string, email: string, name: string) => {
+export const saveId = async (id: string, email: string, name: string, password: string) => {
     try {
         const res = await fetch(`${API_URL}/auth/v1/signup/email`, {
             method: "POST",
             credentials: 'include',
             headers: { "Content-Type": "application/json"},
-            body: JSON.stringify({ id, email, name })
+            body: JSON.stringify({ id, email, name, password })
         })
         const data = await res.json()
 

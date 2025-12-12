@@ -12,6 +12,10 @@ const page = () => {
     const [isFormShowing, setIsFormShowing] = useState(false)
     const [role, setRole] = useState<"Teacher" | "Student" | "">("")
     const [formValue, setFormValue] = useState("")
+    const [studentForm, setStudentForm] = useState({
+        studentId: "",
+        password: ""
+    })
     const [error, setError] = useState("")
     const [user] = useAuthState(auth)
     const { refetch } = useAuth()
@@ -19,11 +23,19 @@ const page = () => {
 
     const handleLoginAsStudent = () => {
         setFormValue("")
+        setStudentForm({
+            studentId: "",
+            password: ""
+        })
         setRole("Student")
         setIsFormShowing(true)
     }
 
     const handleLoginAsTeacher = () => {
+        setStudentForm({
+            studentId: "",
+            password: ""
+        })
         setFormValue(user?.displayName!)
         setRole("Teacher")
         setIsFormShowing(true)
@@ -35,19 +47,35 @@ const page = () => {
         if(role == "Student") {
             setError("")
     
-            if (!/^\d+$/.test(formValue)) {
+            if (!/^\d+$/.test(studentForm.studentId)) {
                 return setError("Student ID must contain only numbers.")
             }
     
-            if(formValue.length !== 8) {
+            if(studentForm.studentId.length !== 8) {
                 return setError("Student ID should be 8 characters long.")
             }
     
             if(!user?.email || !user?.displayName) {
                 return setError("Email or Display Name is not defined. Please sign in with google first.")
             }
+
+            if(studentForm.password.length < 8) {
+                return setError("Password must be at least 8 characters long.")
+            }
+            
+            if(!/[A-Z]/.test(studentForm.password)) {
+                return setError("Password must contain at least one uppercase letter.")
+            }
+
+            if(!/[0-9]/.test(studentForm.password)) {
+                return setError("Password must contain at least one number.")
+            }
+
+            if(!/[@$!%*?&]/.test(studentForm.password)) {
+                return setError("Password must contain at least one special character.")
+            }
     
-            const [data] = await saveId(formValue, user?.email, user?.displayName)
+            const [data] = await saveId(studentForm.studentId, user?.email, user?.displayName, studentForm.password)
     
             if(data.success) {
                 await refetch()
@@ -92,7 +120,11 @@ const page = () => {
                     role == "Student" ? 
                         <>
                             <label htmlFor="id" className="font-bold text-sm">Student ID</label>
-                            <input id="id" type="text" value={formValue} placeholder={`Enter Student ID`} onChange={e => setFormValue(e.target.value)} className="border py-2 px-4 rounded" required/>
+                            <input id="id" type="text" value={studentForm.studentId} placeholder={`Enter Student ID`} onChange={e => setStudentForm(prev => ({...prev, studentId: e.target.value}))} className="border py-2 px-4 rounded" required/>
+
+                            <label htmlFor="password" className="font-bold text-sm">Password</label>
+                            <input id="password" type="text" value={studentForm.password} placeholder={`Enter password`} onChange={e => setStudentForm(prev => ({...prev, password: e.target.value}))} className="border py-2 px-4 rounded" required/>
+                            
                         </>
                         :
                         <>
