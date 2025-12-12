@@ -9,6 +9,10 @@ class AuthService {
         return AuthRepository.findByEmail(email)
     }
 
+    async getAllUsers({ offset, limit }: { offset: number, limit: number}) {
+        return AuthRepository.find({ offset, limit })
+    }
+
     async createUser(studentId: string, name: string, password: string) {
         return AuthRepository.create({ id: studentId, name: name, password: password})
     }

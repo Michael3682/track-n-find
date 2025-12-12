@@ -6,6 +6,7 @@ import { claimSchema, itemSchema, returnSchema, updateItemSchema } from "@/lib/v
 import { JwtPayload } from "jsonwebtoken";
 import { it } from "node:test";
 import message from "@/socket/services/message";
+import LogService from "@/services/logs"
 
 /**
  * @swagger
@@ -507,6 +508,13 @@ class ReportController {
         userId,
       });
 
+      await LogService.record({
+          actorId: userId,
+          action: "Found an item",
+          target: "ITEM",
+          targetId: item.id
+      })
+
       res.json({
         success: true,
         item,
@@ -546,6 +554,13 @@ class ReportController {
         description,
         userId,
       });
+
+      await LogService.record({
+          actorId: userId,
+          action: "Lost an item",
+          target: "ITEM",
+          targetId: item.id
+      })
 
       res.json({
         success: true,
@@ -720,6 +735,17 @@ class ReportController {
         status
       });
 
+      await LogService.record({
+          actorId: userId,
+          action: "Updated an item",
+          target: "ITEM",
+          targetId: item.id,
+          metaData: `
+            from: ${JSON.stringify(item)}
+            to: ${JSON.stringify(updatedItem)}
+          `
+      })
+
       return res.json({
         success: true,
         item: updatedItem,
@@ -757,6 +783,14 @@ class ReportController {
       }
 
       const deletedItem = await ReportService.deleteItem(id)
+
+      await LogService.record({
+          actorId: userId,
+          action: "Deleted an item",
+          target: "ITEM",
+          targetId: item.id,
+          metaData: JSON.stringify(deletedItem)
+      })
 
       res.json({
         success: true,
@@ -798,6 +832,13 @@ class ReportController {
 
       const deletedItem = await ReportService.archiveItem(id)
 
+      await LogService.record({
+          actorId: userId,
+          action: "Archived an item",
+          target: "ITEM",
+          targetId: item.id
+      })
+
       res.json({
         success: true,
         message: "Item Moved to Trash",
@@ -836,6 +877,13 @@ class ReportController {
       }
 
       const restoredItem = await ReportService.restoreItem(id)
+
+      await LogService.record({
+          actorId: userId,
+          action: "Restored an item",
+          target: "ITEM",
+          targetId: item.id
+      })
 
       res.json({
         success: true,
@@ -952,6 +1000,20 @@ class ReportController {
       // update item as claimed
       const updatedItem = await ReportService.updateItem(itemId, { status: "CLAIMED" })
       
+      await LogService.record({
+          actorId: userId,
+          action: "Reported an item as claimed",
+          target: "ITEM",
+          targetId: item.id
+      })
+
+      await LogService.record({
+          actorId: claimerId,
+          action: "Claimed an item",
+          target: "ITEM",
+          targetId: item.id
+      })
+
       res.json({
         success: true,
         claim,
@@ -1028,6 +1090,20 @@ class ReportController {
       // update item as claimed
       const updatedItem = await ReportService.updateItem(itemId, { status: "CLAIMED" })
       
+      await LogService.record({
+          actorId: userId,
+          action: "Reported an item as returned",
+          target: "ITEM",
+          targetId: item.id
+      })
+
+      await LogService.record({
+          actorId: returnerId,
+          action: "Returned an item",
+          target: "ITEM",
+          targetId: item.id
+      })
+
       res.json({
         success: true,
         returned,

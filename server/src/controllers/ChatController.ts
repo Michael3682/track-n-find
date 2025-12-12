@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import ChatRepository from "@/repositories/chat"
+import LogService from "@/services/logs"
 
 /**
  * @swagger
@@ -241,6 +242,13 @@ class ChatContoller {
 
             const conversation = await ChatRepository.findOrCreateConversation({ itemId, hostId, senderId})
 
+            await LogService.record({
+                actorId: (req.user as JwtPayload).id,
+                action: `Opened a new conversation`,
+                target: "CONVERSATION",
+                targetId: conversation.id
+            })
+
             res.json({
                 success: true,
                 conversation
@@ -320,6 +328,16 @@ class ChatContoller {
 
             const updatedMessage = await ChatRepository.updateMessage(id, content)
 
+            await LogService.record({
+                actorId: userId,
+                action: "Updated a message",
+                target: "MESSAGE",
+                targetId: updatedMessage.id,
+                metaData: `
+                    from: ${message.content}
+                    to: ${updatedMessage.content}`
+            })
+
             res.json({
                 success: true,
                 message: "Message updated",
@@ -357,6 +375,14 @@ class ChatContoller {
             }
 
             const deletedMessage = await ChatRepository.deleteMessage(id)
+
+            await LogService.record({
+                actorId: userId,
+                action: "Deleted a message",
+                target: "MESSAGE",
+                targetId: deletedMessage.conversationId,
+                metaData: JSON.stringify(deletedMessage)
+            })
 
             res.json({
                 success: true,

@@ -1,9 +1,9 @@
 import { Router } from "express";
 import LogsContoller from "@/controllers/LogsContoller";
-import { authenticate } from "@/middlewares/AuthMiddleware";
+import { authenticate, authorizeModerators } from "@/middlewares/AuthMiddleware";
 
 const router = Router();
 
-router.post("/v1/log", authenticate, LogsContoller.record)
+router.get("/", authenticate, authorizeModerators, LogsContoller.getLogs)
 
 export default router;

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Logs" ALTER COLUMN "targetId" DROP NOT NULL,
+ALTER COLUMN "metaData" DROP NOT NULL;
