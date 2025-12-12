@@ -51,6 +51,7 @@ export type Message = {
   content: string;
   conversationId: string;
   authorId: string;
+  author: User;
 }
 
 export type Conversation = {
