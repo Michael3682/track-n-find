@@ -50,10 +50,15 @@ class ReportRepository {
    }
 
    async confirmTurnover(itemId: string, proofOfTurnover: string) {
+      await prisma.item.update({
+         where: { id: itemId },
+         data: { status: "TURNEDOVER" }
+      })
       return prisma.turnover.update({
          where: { itemId },
          data: {
-            proofOfTurnover
+            proofOfTurnover,
+            status: "APPROVED"
          }
       })
    }

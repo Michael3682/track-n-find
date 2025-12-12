@@ -117,7 +117,7 @@ class ReportService {
   }
 
   async rejectTurnover(itemId: string) {
-    return ReportRepository.rejectTurnover()
+    return ReportRepository.rejectTurnover(itemId)
   }
 }
 

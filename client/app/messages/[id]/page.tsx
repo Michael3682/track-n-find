@@ -23,7 +23,7 @@ import {
    TooltipContent,
    TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toggleItemStatus } from "@/lib/reportService";
+import { rejectTurnover, requestTurnover, toggleItemStatus } from "@/lib/reportService";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
@@ -77,6 +77,8 @@ export default function Messages() {
       const [data] = await getConversation(String(conversationId));
       setConvo(data.conversation);
    };
+
+   console.log(convo)
 
    const handleToggleItemStatus = async () => {
       const [data] = await toggleItemStatus(convo?.itemId!);
@@ -145,14 +147,21 @@ export default function Messages() {
                      {convo?.isMine ? "🏷️ My Item" : "💬 Claiming Item"}
                      <span>-</span>
                      {convo?.name}
-                     {convo?.item.status == "CLAIMED" && (
+                     {convo?.item.status != "UNCLAIMED" && (
                         <span className="text-emerald-400 text-md ml-4">
-                           Claimed
+                           {convo?.item.status.toLocaleLowerCase()}
                         </span>
                      )}
+                     {convo?.item.turnovers?.status == "PENDING" && <span className="text-pink-400">{convo?.item.turnovers?.status}</span>}
                   </span>
                </small>
-               {convo?.isMine && (
+               {["MODERATOR", "ADMIN"].includes(user?.role!) && convo?.item.turnovers?.status == "PENDING" &&
+               <div className="flex gap-2 item-center ml-5">
+                  <button className="bg-red-200 px-4 py-1 rounded-sm cursor-pointer" onClick={() => rejectTurnover(convo?.itemId!)}>Reject</button>
+                  <button className="bg-green-200 px-4 py-1 rounded-sm cursor-pointer" onClick={() => router.push(`/report/turnover/${convo?.itemId}`)}>Confirm</button>
+               </div>
+               }
+               {convo?.isMine || (user?.role != "USER" && convo?.item.turnovers?.status == "APPROVED") && (
                   <div className="ml-auto">
                      <DropdownMenu>
                         <DropdownMenuTrigger className="p-0.5 lg:px-2 lg:py-1 rounded cursor-pointer">
@@ -179,11 +188,14 @@ export default function Messages() {
                                     : "returned"}
                               </button>
                            </DropdownMenuItem>
-                           <DropdownMenuItem>
-                              <button className="ml-auto text-sm px-4 py-2 rounded-sm text-primary cursor-pointer">
+                           {!convo?.item.turnovers && <DropdownMenuItem>
+                              <button 
+                                 className="ml-auto text-sm px-4 py-2 rounded-sm text-primary cursor-pointer"
+                                 onClick={() => requestTurnover(convo.itemId).then(([data]) => console.log(data))}
+                              >
                                  Turnover to admin
                               </button>
-                           </DropdownMenuItem>
+                           </DropdownMenuItem>}
                         </DropdownMenuContent>
                      </DropdownMenu>
                   </div>
@@ -211,7 +223,7 @@ export default function Messages() {
                   </div>
                ))}
             </div>
-            {convo?.item.status != "CLAIMED" ? (
+            {convo?.item.status != "CLAIMED" && (!(convo?.item.turnovers?.status == "PENDING") || user?.role == "USER") ? (
                <form
                   className={`flex ${
                      chatDetails.previewURL.length > 0
@@ -314,7 +326,7 @@ export default function Messages() {
                </form>
             ) : (
                <div className="text-center p-4 bg-sidebar text-gray-500 border-t">
-                  Item is claimed. Nothing to discuss further
+                  You are unauthorized to send a message in this conversation
                </div>
             )}
          </div>

@@ -64,7 +64,7 @@ class ChatRepository {
     const conv = await prisma.conversation.findUnique({ 
       where: { id: conversationId }, 
       include: {
-        item: true,
+        item: { include: { turnovers: true }},
         messages: {
           orderBy: { createdAt: "asc" },
         },
@@ -147,13 +147,15 @@ class ChatRepository {
         OR: [{ hostId: userId }, { senderId: userId },
           isMod ? {
             item: {
-              status: "TURNEDOVER",
+              OR: [{ status: "TURNEDOVER"}, { turnovers: { status: "PENDING"}}]
             },
           } : {}
         ],
       },
       include: {
-        item: true,
+        item: {
+          include: { turnovers:  true }
+        },
         messages: {
           include: { author: true },
           orderBy: { createdAt: "desc" },
