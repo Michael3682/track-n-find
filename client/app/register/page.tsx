@@ -19,6 +19,7 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
+import GoogleButton from "@/components/google-button";
 
 interface SignupFormState {
    studentId: string;
@@ -189,12 +190,7 @@ export default function Register() {
                   </p>
                   <hr className="w-full border-ring" />
                </div>
-               <Button
-                  className="w-full lg:py-5 rounded-md cursor-pointer"
-                  type="submit">
-                  <img src="google--icon.png" alt="google icon" /> Continue with
-                  Google
-               </Button>
+               <GoogleButton />
                <p className="text-center text-xs text-primary leading-none font-medium">
                   Already have an account?
                   <a
